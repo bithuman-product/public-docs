@@ -4,15 +4,16 @@
       "artifact": {
         "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.9.2",
-        "digest": "sha256:92c1fde5b38a07f972b276fc5cb6520741aea2b12d54f090c1eb6d6ee95bc051",
-        "filename": "essence2-android-0.9.2.aar",
-        "resolved_on": "2026-10-02"
+        "version": "0.9.3",
+        "digest": "sha256:b1f5534669793012468f32fdeb0ad7115a25f27d15e9994d046608334cc806d7",
+        "filename": "essence2-android-0.9.3.aar",
+        "resolved_on": "2026-10-03"
       },
       "surface": {
         "artifact_facts": {
           "manifest_package": "ai.bithuman.elevate",
           "uses_permissions": [
+            "android.permission.ACCESS_NETWORK_STATE",
             "android.permission.INTERNET"
           ],
           "min_sdk": 29,
@@ -2863,6 +2864,159 @@
             ]
           },
           {
+            "name": "ai.bithuman.elevate.Essence2DownloadJob",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [
+              "JobService"
+            ],
+            "companion": "Companion",
+            "nested_public": [
+              "Companion"
+            ],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [
+              {
+                "signature": "constructor()",
+                "jvm": "<init>()V",
+                "loadable": true
+              }
+            ],
+            "functions": [
+              {
+                "name": "onStartJob",
+                "signature": "fun onStartJob(params: JobParameters): Boolean",
+                "suspend": false,
+                "jvm": "onStartJob(Landroid/app/job/JobParameters;)Z",
+                "loadable": true
+              },
+              {
+                "name": "onStopJob",
+                "signature": "fun onStopJob(params: JobParameters): Boolean",
+                "suspend": false,
+                "jvm": "onStopJob(Landroid/app/job/JobParameters;)Z",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "Companion",
+                "jvm": "field CompanionLai/bithuman/elevate/Essence2DownloadJob$Companion;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "object-instance"
+              },
+              {
+                "name": "access$getChanged$cp",
+                "jvm": "access$getChanged$cp()Ljava/util/concurrent/locks/Condition;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "access$getInFlight$cp",
+                "jvm": "access$getInFlight$cp()Ljava/util/HashMap;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "access$getLock$cp",
+                "jvm": "access$getLock$cp()Ljava/util/concurrent/locks/ReentrantLock;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.elevate.Essence2DownloadJob$Companion",
+            "kind": "companion-object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "access": [
+                  "public",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              },
+              {
+                "name": "access$active",
+                "jvm": "access$active(Lai/bithuman/elevate/Essence2DownloadJob$Companion;)Z",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "begin$essence2_android_release",
+                "jvm": "begin$essence2_android_release(Landroid/content/Context;Ljava/lang/String;)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "end$essence2_android_release",
+                "jvm": "end$essence2_android_release(Landroid/content/Context;Ljava/lang/String;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              }
+            ]
+          },
+          {
             "name": "ai.bithuman.elevate.Essence2HardwareFrame",
             "kind": "class",
             "modality": "final",
@@ -3340,6 +3494,51 @@
                 "jvm_setter": null,
                 "jvm_field": "field urlResolverLai/bithuman/elevate/Essence2ModelStore$UrlResolver;",
                 "loadable": true
+              },
+              {
+                "name": "bundleLinks",
+                "signature": "var bundleLinks: Boolean",
+                "mutable": true,
+                "jvm_getter": "getBundleLinks()Z",
+                "jvm_setter": "setBundleLinks(Z)V",
+                "jvm_field": "field bundleLinksZ",
+                "loadable": true
+              },
+              {
+                "name": "downloadParallel",
+                "signature": "var downloadParallel: Int",
+                "mutable": true,
+                "jvm_getter": "getDownloadParallel()I",
+                "jvm_setter": "setDownloadParallel(I)V",
+                "jvm_field": "field downloadParallelI",
+                "loadable": true
+              },
+              {
+                "name": "keepAliveInBackground",
+                "signature": "var keepAliveInBackground: Boolean",
+                "mutable": true,
+                "jvm_getter": "getKeepAliveInBackground()Z",
+                "jvm_setter": "setKeepAliveInBackground(Z)V",
+                "jvm_field": "field keepAliveInBackgroundZ",
+                "loadable": true
+              },
+              {
+                "name": "revalidateInBackground",
+                "signature": "var revalidateInBackground: Boolean",
+                "mutable": true,
+                "jvm_getter": "getRevalidateInBackground()Z",
+                "jvm_setter": "setRevalidateInBackground(Z)V",
+                "jvm_field": "field revalidateInBackgroundZ",
+                "loadable": true
+              },
+              {
+                "name": "revalidateMinIntervalMs",
+                "signature": "var revalidateMinIntervalMs: Long",
+                "mutable": true,
+                "jvm_getter": "getRevalidateMinIntervalMs()J",
+                "jvm_setter": "setRevalidateMinIntervalMs(J)V",
+                "jvm_field": "field revalidateMinIntervalMsJ",
+                "loadable": true
               }
             ],
             "loadable_undeclared": [
@@ -3388,6 +3587,17 @@
                 "kind": "internal"
               },
               {
+                "name": "COMPOSE_V2_SCHEMA",
+                "jvm": "field COMPOSE_V2_SCHEMALjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": "compose-v2-structure-v1",
+                "kind": "internal"
+              },
+              {
                 "name": "CONNECT_TIMEOUT_MS",
                 "jvm": "field CONNECT_TIMEOUT_MSI",
                 "access": [
@@ -3409,6 +3619,50 @@
                 "kind": "object-instance"
               },
               {
+                "name": "DOWNLOAD_PARALLEL",
+                "jvm": "field DOWNLOAD_PARALLELI",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 4,
+                "kind": "internal"
+              },
+              {
+                "name": "LEGACY_COMPOSE_TOKEN",
+                "jvm": "field LEGACY_COMPOSE_TOKENLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": "LEGACY COMPOSE REFUSED",
+                "kind": "internal"
+              },
+              {
+                "name": "LINK_EXPIRY_MARGIN_MS",
+                "jvm": "field LINK_EXPIRY_MARGIN_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 120000,
+                "kind": "internal"
+              },
+              {
+                "name": "LINK_TTL_DEFAULT_S",
+                "jvm": "field LINK_TTL_DEFAULT_SJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 3600,
+                "kind": "internal"
+              },
+              {
                 "name": "MAX_ATTEMPTS",
                 "jvm": "field MAX_ATTEMPTSI",
                 "access": [
@@ -3416,7 +3670,7 @@
                   "static",
                   "final"
                 ],
-                "constant": 4,
+                "constant": 12,
                 "kind": "internal"
               },
               {
@@ -3427,7 +3681,62 @@
                   "static",
                   "final"
                 ],
-                "constant": 8000,
+                "constant": 15000,
+                "kind": "internal"
+              },
+              {
+                "name": "MAX_LINK_REFRESHES",
+                "jvm": "field MAX_LINK_REFRESHESI",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 4,
+                "kind": "internal"
+              },
+              {
+                "name": "MEMBERS_ALL",
+                "jvm": "field MEMBERS_ALLLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": "members=all",
+                "kind": "internal"
+              },
+              {
+                "name": "OFFLINE_BUDGET_MS",
+                "jvm": "field OFFLINE_BUDGET_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 300000,
+                "kind": "internal"
+              },
+              {
+                "name": "OFFLINE_MAX_STEP_MS",
+                "jvm": "field OFFLINE_MAX_STEP_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 5000,
+                "kind": "internal"
+              },
+              {
+                "name": "OFFLINE_STEP_MS",
+                "jvm": "field OFFLINE_STEP_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 1000,
                 "kind": "internal"
               },
               {
@@ -3449,7 +3758,7 @@
                   "static",
                   "final"
                 ],
-                "constant": 8,
+                "constant": 16,
                 "kind": "internal"
               },
               {
@@ -3461,6 +3770,17 @@
                   "final"
                 ],
                 "constant": 600000,
+                "kind": "internal"
+              },
+              {
+                "name": "REVALIDATED_MARKER",
+                "jvm": "field REVALIDATED_MARKERLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": ".revalidated",
                 "kind": "internal"
               },
               {
@@ -3483,6 +3803,17 @@
                   "final"
                 ],
                 "constant": 4000,
+                "kind": "internal"
+              },
+              {
+                "name": "REVALIDATE_MIN_INTERVAL_MS",
+                "jvm": "field REVALIDATE_MIN_INTERVAL_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 3600000,
                 "kind": "internal"
               },
               {
@@ -3515,7 +3846,7 @@
                   "static",
                   "final"
                 ],
-                "constant": 60000,
+                "constant": 90000,
                 "kind": "internal"
               },
               {
@@ -3528,6 +3859,17 @@
                 ],
                 "constant": ".swap.json",
                 "kind": "internal"
+              },
+              {
+                "name": "access$getLINK_REFUSED$cp",
+                "jvm": "access$getLINK_REFUSED$cp()Ljava/util/Set;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
               },
               {
                 "name": "access$getSAFE_SEGMENT$cp",
@@ -3552,6 +3894,17 @@
                 "kind": "synthetic"
               },
               {
+                "name": "access$getSIGNED_QUERY$cp",
+                "jvm": "access$getSIGNED_QUERY$cp()Lkotlin/text/Regex;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
                 "name": "access$getSLOT_ROLES$cp",
                 "jvm": "access$getSLOT_ROLES$cp()Ljava/util/Map;",
                 "access": [
@@ -3561,6 +3914,16 @@
                   "synthetic"
                 ],
                 "kind": "synthetic"
+              },
+              {
+                "name": "composeV2Gap$essence2_android_release",
+                "jvm": "composeV2Gap$essence2_android_release(Ljava/io/File;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "internal"
               },
               {
                 "name": "fetch",
@@ -3641,6 +4004,16 @@
                 "jvm": "getLastRevalidation$essence2_android_release()Lai/bithuman/elevate/Essence2ModelStore$Revalidation;",
                 "access": [
                   "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "outdatedOrNull$essence2_android_release",
+                "jvm": "outdatedOrNull$essence2_android_release(Ljava/lang/String;Ljava/lang/Throwable;)Lai/bithuman/elevate/Essence2StoreException;",
+                "access": [
+                  "public",
+                  "static",
                   "final"
                 ],
                 "kind": "internal"
@@ -4058,6 +4431,61 @@
                 "kind": "synthetic"
               },
               {
+                "name": "askBundle$essence2_android_release",
+                "jvm": "askBundle$essence2_android_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;II)Lai/bithuman/elevate/Essence2ModelStore$BundleAnswer;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "askBundle$essence2_android_release$default",
+                "jvm": "askBundle$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;IIILjava/lang/Object;)Lai/bithuman/elevate/Essence2ModelStore$BundleAnswer;",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "bundleUrl$essence2_android_release",
+                "jvm": "bundleUrl$essence2_android_release(Lai/bithuman/elevate/Essence2ModelStore$MeteredDoorResolver;Ljava/lang/String;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "bytesOnDiskFor$essence2_android_release",
+                "jvm": "bytesOnDiskFor$essence2_android_release(Ljava/io/File;Ljava/lang/String;Lai/bithuman/elevate/Essence2ModelStore$Member;)J",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "commitInstall$essence2_android_release",
+                "jvm": "commitInstall$essence2_android_release(Ljava/io/File;Ljava/lang/String;Ljava/lang/String;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "composeV2Gap$essence2_android_release",
+                "jvm": "composeV2Gap$essence2_android_release(Ljava/io/File;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "contentRangeTotal$essence2_android_release",
                 "jvm": "contentRangeTotal$essence2_android_release(Ljava/lang/String;)Ljava/lang/Long;",
                 "access": [
@@ -4067,8 +4495,8 @@
                 "kind": "internal"
               },
               {
-                "name": "fetchMember$essence2_android_release",
-                "jvm": "fetchMember$essence2_android_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Lai/bithuman/elevate/Essence2ModelStore$Member;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function1;)V",
+                "name": "doorCatalog$essence2_android_release",
+                "jvm": "doorCatalog$essence2_android_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function0;)Lai/bithuman/elevate/Essence2ModelStore$Catalog;",
                 "access": [
                   "public",
                   "final"
@@ -4076,8 +4504,37 @@
                 "kind": "internal"
               },
               {
+                "name": "doorCatalog$essence2_android_release$default",
+                "jvm": "doorCatalog$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lai/bithuman/elevate/Essence2ModelStore$Catalog;",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "fetchMember$essence2_android_release",
+                "jvm": "fetchMember$essence2_android_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Lai/bithuman/elevate/Essence2ModelStore$Member;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lai/bithuman/elevate/Essence2ModelStore$MemberLinks;Lkotlin/jvm/functions/Function1;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "fetchMember$essence2_android_release$default",
+                "jvm": "fetchMember$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Lai/bithuman/elevate/Essence2ModelStore$Member;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lai/bithuman/elevate/Essence2ModelStore$MemberLinks;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "fetchText$essence2_android_release",
-                "jvm": "fetchText$essence2_android_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;II)Ljava/lang/String;",
+                "jvm": "fetchText$essence2_android_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;IILjava/util/concurrent/atomic/AtomicBoolean;Z)Ljava/lang/String;",
                 "access": [
                   "public",
                   "final"
@@ -4086,7 +4543,7 @@
               },
               {
                 "name": "fetchText$essence2_android_release$default",
-                "jvm": "fetchText$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;IIILjava/lang/Object;)Ljava/lang/String;",
+                "jvm": "fetchText$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/lang/String;IILjava/util/concurrent/atomic/AtomicBoolean;ZILjava/lang/Object;)Ljava/lang/String;",
                 "access": [
                   "public",
                   "static",
@@ -4116,7 +4573,7 @@
               },
               {
                 "name": "installInto$essence2_android_release",
-                "jvm": "installInto$essence2_android_release(Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;I)Lkotlin/Pair;",
+                "jvm": "installInto$essence2_android_release(Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/functions/Function0;I)Lkotlin/Pair;",
                 "access": [
                   "public",
                   "final"
@@ -4125,11 +4582,20 @@
               },
               {
                 "name": "installInto$essence2_android_release$default",
-                "jvm": "installInto$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;IILjava/lang/Object;)Lkotlin/Pair;",
+                "jvm": "installInto$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/functions/Function0;IILjava/lang/Object;)Lkotlin/Pair;",
                 "access": [
                   "public",
                   "static",
                   "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "isOffline$essence2_android_release",
+                "jvm": "isOffline$essence2_android_release(Ljava/lang/Throwable;)Z",
+                "access": [
+                  "public",
+                  "final"
                 ],
                 "kind": "internal"
               },
@@ -4143,8 +4609,44 @@
                 "kind": "internal"
               },
               {
+                "name": "keptAcrossOutputs$essence2_android_release",
+                "jvm": "keptAcrossOutputs$essence2_android_release(Ljava/lang/String;Ljava/lang/String;)Ljava/util/Set;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "memberNames$essence2_android_release",
                 "jvm": "memberNames$essence2_android_release(Lorg/json/JSONObject;)Ljava/util/Map;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "noteConclusiveCheck$essence2_android_release",
+                "jvm": "noteConclusiveCheck$essence2_android_release(Ljava/io/File;Lai/bithuman/elevate/Essence2ModelStore$Revalidation;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "outdatedOrNull$essence2_android_release",
+                "jvm": "outdatedOrNull$essence2_android_release(Ljava/lang/String;Ljava/lang/Throwable;)Lai/bithuman/elevate/Essence2StoreException;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "parseBundleAnswer$essence2_android_release",
+                "jvm": "parseBundleAnswer$essence2_android_release(Ljava/lang/String;)Lai/bithuman/elevate/Essence2ModelStore$BundleAnswer;",
                 "access": [
                   "public",
                   "final"
@@ -4189,11 +4691,48 @@
                 "kind": "internal"
               },
               {
+                "name": "recentlyChecked$essence2_android_release",
+                "jvm": "recentlyChecked$essence2_android_release(Ljava/io/File;JJ)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "recoverPendingSwap$essence2_android_release",
                 "jvm": "recoverPendingSwap$essence2_android_release(Ljava/io/File;)Z",
                 "access": [
                   "public",
                   "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "redacted$essence2_android_release",
+                "jvm": "redacted$essence2_android_release(Ljava/lang/String;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "refusedBundle$essence2_android_release",
+                "jvm": "refusedBundle$essence2_android_release(Ljava/lang/String;Ljava/lang/Throwable;)Lai/bithuman/elevate/Essence2StoreException;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "refusedBundle$essence2_android_release$default",
+                "jvm": "refusedBundle$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)Lai/bithuman/elevate/Essence2StoreException;",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
                 ],
                 "kind": "internal"
               },
@@ -4218,7 +4757,7 @@
               },
               {
                 "name": "revalidateInstalled$essence2_android_release",
-                "jvm": "revalidateInstalled$essence2_android_release(Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;III)Lai/bithuman/elevate/Essence2ModelStore$Revalidation;",
+                "jvm": "revalidateInstalled$essence2_android_release(Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;IIZLai/bithuman/elevate/Essence2ModelStore$MemberLinks;I)Lai/bithuman/elevate/Essence2ModelStore$Revalidation;",
                 "access": [
                   "public",
                   "final"
@@ -4227,7 +4766,7 @@
               },
               {
                 "name": "revalidateInstalled$essence2_android_release$default",
-                "jvm": "revalidateInstalled$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;IIIILjava/lang/Object;)Lai/bithuman/elevate/Essence2ModelStore$Revalidation;",
+                "jvm": "revalidateInstalled$essence2_android_release$default(Lai/bithuman/elevate/Essence2ModelStore$Companion;Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lai/bithuman/elevate/Essence2ModelStore$Retry;Lai/bithuman/elevate/Essence2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;IIZLai/bithuman/elevate/Essence2ModelStore$MemberLinks;IILjava/lang/Object;)Lai/bithuman/elevate/Essence2ModelStore$Revalidation;",
                 "access": [
                   "public",
                   "static",
@@ -4238,6 +4777,15 @@
               {
                 "name": "safeMemberName$essence2_android_release",
                 "jvm": "safeMemberName$essence2_android_release(Ljava/lang/String;)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "scrubbed$essence2_android_release",
+                "jvm": "scrubbed$essence2_android_release(Ljava/lang/String;)Ljava/lang/String;",
                 "access": [
                   "public",
                   "final"
@@ -4263,6 +4811,54 @@
                 "kind": "internal"
               }
             ]
+          },
+          {
+            "name": "ai.bithuman.elevate.Essence2ModelStore$MemberLinks$Link",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [
+              {
+                "signature": "constructor(url: String, generation: Int)",
+                "jvm": "<init>(Ljava/lang/String;I)V",
+                "loadable": true
+              }
+            ],
+            "functions": [],
+            "properties": [
+              {
+                "name": "generation",
+                "signature": "val generation: Int",
+                "mutable": false,
+                "jvm_getter": "getGeneration()I",
+                "jvm_setter": null,
+                "jvm_field": "field generationI",
+                "loadable": true
+              },
+              {
+                "name": "url",
+                "signature": "val url: String",
+                "mutable": false,
+                "jvm_getter": "getUrl()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field urlLjava/lang/String;",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": []
           },
           {
             "name": "ai.bithuman.elevate.Essence2ModelStore$MeteredDoorResolver",
@@ -4845,7 +5441,9 @@
               "RuntimeException"
             ],
             "companion": null,
-            "nested_public": [],
+            "nested_public": [
+              "Code"
+            ],
             "enum_entries": [],
             "sealed_subclasses": [],
             "constructors": [
@@ -4853,11 +5451,43 @@
                 "signature": "constructor(message: String, cause: Throwable? = …)",
                 "jvm": "<init>(Ljava/lang/String;Ljava/lang/Throwable;)V",
                 "loadable": true
+              },
+              {
+                "signature": "constructor(message: String, cause: Throwable?, code: Essence2StoreException.Code)",
+                "jvm": "<init>(Ljava/lang/String;Ljava/lang/Throwable;Lai/bithuman/elevate/Essence2StoreException$Code;)V",
+                "loadable": true
               }
             ],
             "functions": [],
-            "properties": [],
+            "properties": [
+              {
+                "name": "retriable",
+                "signature": "val retriable: Boolean",
+                "mutable": false,
+                "jvm_getter": "getRetriable()Z",
+                "jvm_setter": null,
+                "jvm_field": null,
+                "loadable": true
+              },
+              {
+                "name": "code",
+                "signature": "var code: Essence2StoreException.Code",
+                "mutable": true,
+                "jvm_getter": "getCode()Lai/bithuman/elevate/Essence2StoreException$Code;",
+                "jvm_setter": null,
+                "jvm_field": "field codeLai/bithuman/elevate/Essence2StoreException$Code;",
+                "loadable": true
+              }
+            ],
             "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Ljava/lang/String;)V",
+                "access": [
+                  "public"
+                ],
+                "kind": "jvm-overload"
+              },
               {
                 "name": "<init>",
                 "jvm": "<init>(Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V",
@@ -4866,6 +5496,192 @@
                   "synthetic"
                 ],
                 "kind": "default-argument-bridge"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.elevate.Essence2StoreException$Code",
+            "kind": "enum-class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final",
+              "enum"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [
+              "Enum<Essence2StoreException.Code>"
+            ],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [
+              "NETWORK_TRANSIENT",
+              "OFFLINE",
+              "AUTH",
+              "NOT_FOUND",
+              "OUTDATED",
+              "CORRUPT",
+              "REFUSED",
+              "CANCELLED",
+              "STORAGE",
+              "INVALID_ARGUMENT",
+              "UNKNOWN"
+            ],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [],
+            "properties": [
+              {
+                "name": "retriable",
+                "signature": "val retriable: Boolean",
+                "mutable": false,
+                "jvm_getter": "getRetriable()Z",
+                "jvm_setter": null,
+                "jvm_field": "field retriableZ",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": [
+              {
+                "name": "AUTH",
+                "jvm": "field AUTHLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "CANCELLED",
+                "jvm": "field CANCELLEDLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "CORRUPT",
+                "jvm": "field CORRUPTLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "INVALID_ARGUMENT",
+                "jvm": "field INVALID_ARGUMENTLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "NETWORK_TRANSIENT",
+                "jvm": "field NETWORK_TRANSIENTLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "NOT_FOUND",
+                "jvm": "field NOT_FOUNDLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "OFFLINE",
+                "jvm": "field OFFLINELai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "OUTDATED",
+                "jvm": "field OUTDATEDLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "REFUSED",
+                "jvm": "field REFUSEDLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "STORAGE",
+                "jvm": "field STORAGELai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "UNKNOWN",
+                "jvm": "field UNKNOWNLai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "getEntries",
+                "jvm": "getEntries()Lkotlin/enums/EnumEntries;",
+                "access": [
+                  "public",
+                  "static"
+                ],
+                "kind": "enum-static"
+              },
+              {
+                "name": "valueOf",
+                "jvm": "valueOf(Ljava/lang/String;)Lai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static"
+                ],
+                "kind": "enum-static"
+              },
+              {
+                "name": "values",
+                "jvm": "values()[Lai/bithuman/elevate/Essence2StoreException$Code;",
+                "access": [
+                  "public",
+                  "static"
+                ],
+                "kind": "enum-static"
               }
             ]
           },
@@ -4901,6 +5717,342 @@
                 "kind": "internal"
               }
             ]
+          },
+          {
+            "name": "ai.bithuman.elevate.NetworkWaiter$Companion",
+            "kind": "companion-object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "from",
+                "signature": "fun from(context: Context): NetworkWaiter",
+                "suspend": false,
+                "jvm": "from(Landroid/content/Context;)Lai/bithuman/elevate/NetworkWaiter;",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "access": [
+                  "public",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.elevate.TailJournal$Claim",
+            "kind": "interface",
+            "modality": "abstract",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "abstract",
+              "interface"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "done",
+                "signature": "fun done(delivered: Boolean)",
+                "suspend": false,
+                "jvm": "done(Z)V",
+                "loadable": true
+              }
+            ],
+            "properties": [
+              {
+                "name": "record",
+                "signature": "val record: TailJournal.Record",
+                "mutable": false,
+                "jvm_getter": "getRecord()Lai/bithuman/elevate/TailJournal$Record;",
+                "jvm_setter": null,
+                "jvm_field": null,
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": []
+          },
+          {
+            "name": "ai.bithuman.elevate.TailJournal$Companion",
+            "kind": "companion-object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [],
+            "properties": [
+              {
+                "name": "CLAIMED",
+                "signature": "const val CLAIMED: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field CLAIMEDI",
+                "loadable": true,
+                "value": 0
+              },
+              {
+                "name": "CORRUPT",
+                "signature": "const val CORRUPT: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field CORRUPTI",
+                "loadable": true,
+                "value": 4
+              },
+              {
+                "name": "EXPIRED",
+                "signature": "const val EXPIRED: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field EXPIREDI",
+                "loadable": true,
+                "value": 5
+              },
+              {
+                "name": "FOREIGN",
+                "signature": "const val FOREIGN: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field FOREIGNI",
+                "loadable": true,
+                "value": 3
+              },
+              {
+                "name": "GONE",
+                "signature": "const val GONE: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field GONEI",
+                "loadable": true,
+                "value": 2
+              },
+              {
+                "name": "LIVE",
+                "signature": "const val LIVE: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field LIVEI",
+                "loadable": true,
+                "value": 1
+              }
+            ],
+            "loadable_undeclared": []
+          },
+          {
+            "name": "ai.bithuman.elevate.TailJournal$Record",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [
+              {
+                "signature": "constructor(sessionId: String, installId: String, product: String, billingType: String, seq: Long, servedS: Double, talkingS: Double, accrued: Boolean, version: Int, claimId: String = …)",
+                "jvm": "<init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JDDZILjava/lang/String;)V",
+                "loadable": true
+              }
+            ],
+            "functions": [],
+            "properties": [
+              {
+                "name": "accrued",
+                "signature": "val accrued: Boolean",
+                "mutable": false,
+                "jvm_getter": "getAccrued()Z",
+                "jvm_setter": null,
+                "jvm_field": "field accruedZ",
+                "loadable": true
+              },
+              {
+                "name": "billingType",
+                "signature": "val billingType: String",
+                "mutable": false,
+                "jvm_getter": "getBillingType()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field billingTypeLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "claimId",
+                "signature": "val claimId: String",
+                "mutable": false,
+                "jvm_getter": "getClaimId()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field claimIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "installId",
+                "signature": "val installId: String",
+                "mutable": false,
+                "jvm_getter": "getInstallId()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field installIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "product",
+                "signature": "val product: String",
+                "mutable": false,
+                "jvm_getter": "getProduct()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field productLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "seq",
+                "signature": "val seq: Long",
+                "mutable": false,
+                "jvm_getter": "getSeq()J",
+                "jvm_setter": null,
+                "jvm_field": "field seqJ",
+                "loadable": true
+              },
+              {
+                "name": "servedS",
+                "signature": "val servedS: Double",
+                "mutable": false,
+                "jvm_getter": "getServedS()D",
+                "jvm_setter": null,
+                "jvm_field": "field servedSD",
+                "loadable": true
+              },
+              {
+                "name": "sessionId",
+                "signature": "val sessionId: String",
+                "mutable": false,
+                "jvm_getter": "getSessionId()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field sessionIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "talkingS",
+                "signature": "val talkingS: Double",
+                "mutable": false,
+                "jvm_getter": "getTalkingS()D",
+                "jvm_setter": null,
+                "jvm_field": "field talkingSD",
+                "loadable": true
+              },
+              {
+                "name": "version",
+                "signature": "val version: Int",
+                "mutable": false,
+                "jvm_getter": "getVersion()I",
+                "jvm_setter": null,
+                "jvm_field": "field versionI",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JDDZILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "access": [
+                  "public",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.elevate.TailJournal$Session",
+            "kind": "interface",
+            "modality": "abstract",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "abstract",
+              "interface"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "close",
+                "signature": "fun close(deleteRecord: Boolean)",
+                "suspend": false,
+                "jvm": "close(Z)V",
+                "loadable": true
+              },
+              {
+                "name": "write",
+                "signature": "fun write(seq: Long, servedS: Double, talkingS: Double, accrued: Boolean): Boolean",
+                "suspend": false,
+                "jvm": "write(JDDZ)Z",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": []
           },
           {
             "name": "ai.bithuman.elevate.TesseraBorrowRefused",
@@ -4994,6 +6146,24 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.Essence2ModelStore$BundleAnswer",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.Essence2ModelStore$Catalog",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.Essence2ModelStore$Companion$DEFAULT_MEMBERS$1",
               "declared_visibility": "local",
               "runtime_access": [
@@ -5022,6 +6192,15 @@
             },
             {
               "name": "ai.bithuman.elevate.Essence2ModelStore$MemberChanged",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.Essence2ModelStore$MemberLinks",
               "declared_visibility": "internal",
               "runtime_access": [
                 "public",
@@ -5133,6 +6312,31 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.NativeTailJournal",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.NetworkWaiter",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.NetworkWaiter$await$cb$1",
+              "declared_visibility": "local",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.Opener",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -5159,6 +6363,15 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.TailJournal",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "abstract",
+                "interface"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.Wiring",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -5168,13 +6381,13 @@
             }
           ],
           "public_classes_without_metadata": [],
-          "synthetic_classes": 6,
+          "synthetic_classes": 7,
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 78,
-          "declared_classes": 70,
-          "public_classes": 41
+          "class_files": 97,
+          "declared_classes": 88,
+          "public_classes": 50
         }
       }
     },
@@ -5185,7 +6398,7 @@
         "version": "0.5.2",
         "digest": "sha256:7415aad6c9b73cd8fb91a4f1aa34fbcc79010657c33120a77274bbf619161bcd",
         "filename": "expression2-android-0.5.2.aar",
-        "resolved_on": "2026-10-02"
+        "resolved_on": "2026-10-03"
       },
       "surface": {
         "artifact_facts": {

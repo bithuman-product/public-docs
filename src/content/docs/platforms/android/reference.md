@@ -16,7 +16,7 @@ Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expres
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.9.2` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.9.3` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.essence2.*`.
 
@@ -86,6 +86,11 @@ class Essence2ModelStore
     val cacheBudgetBytes: Long
     val rootDir: File
     val urlResolver: Essence2UrlResolver
+    var bundleLinks: Boolean
+    var downloadParallel: Int
+    var keepAliveInBackground: Boolean
+    var revalidateInBackground: Boolean
+    var revalidateMinIntervalMs: Long
     fun bytesOnDisk(): Long
     fun cached(code: String): Essence2Bundle?
     fun evict(code: String): Boolean
@@ -165,6 +170,9 @@ class Essence2MeteringRefused : IllegalStateException
 ```kotlin
 class Essence2StoreException : RuntimeException
     constructor(message: String, cause: Throwable? = …)
+    constructor(message: String, cause: Throwable?, code: Essence2StoreException.Code)
+    val retriable: Boolean
+    val code: Essence2StoreException.Code
 ```
 
 ### Essence2RenderFailed
