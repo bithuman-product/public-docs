@@ -58,6 +58,10 @@ const docs = defineCollection({
     searchTitle: z.string().optional(),
     // 1–3 docs paths shown as the "Next" cards at the foot of the page
     next: z.array(z.string()).max(3).optional(),
+    // where the "Need help? Join us on Discord" line sits (src/components/Stuck.astro) on a
+    // page that is not a quickstart or troubleshooting page (those always end with it):
+    // `end` after the body (the FAQ), `top` above it (Support & community leads with it)
+    help: z.enum(["top", "end"]).optional(),
   }),
 });
 

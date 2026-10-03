@@ -130,8 +130,10 @@ const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.d
 const demoAtEnd = data.type === "hub";
 // A quickstart (each platform page) and a troubleshooting page (each platform's, and
 // /resources/troubleshooting, which is in the troubleshooting llms section) end with
-// "Stuck?" (#support on Discord).
-const stuck = data.type === "platform" || data.type === "troubleshooting" || data.llms === "troubleshooting";
+// "Need help? Join us on Discord"; any other page places it by its `help` (the FAQ at
+// the end, Support & community on top).
+const help: "top" | "end" | undefined =
+  data.help ?? (data.type === "platform" || data.type === "troubleshooting" || data.llms === "troubleshooting" ? "end" : undefined);
 // Release notes are records and the generated references are lookups: both
 // searchable, but ranked below the pages a reader starts from.
 // An example page names its platform in its title ("iOS Expression 2"), so it
@@ -171,8 +173,9 @@ const weight = data.type === "changelog" ? "0.2" : (data.type === "reference" ||
           <div class="doc-head-actions"><PageActions md={`${currentPath}.md`} /></div>
         </header>
         {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} eager /></div>}
+        {help === "top" && <Stuck at="top" />}
         <div class="doc-body"><slot /></div>
-        {stuck && <Stuck />}
+        {help === "end" && <Stuck />}
         {data.moved && <MovedAnchors moved={data.moved} />}
         {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>

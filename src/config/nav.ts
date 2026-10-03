@@ -83,18 +83,20 @@ export const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
 /** The header's "Console": the developer dashboard on bithuman.ai. */
 export const CONSOLE_URL = "https://www.bithuman.ai/developer";
 
-/** The footer's first row (one design everywhere); the second row is LEGAL_LINKS and the ©. */
-/** The bitHuman Discord. The docs site's own tracked invite (permanent, lands in
- *  #start-here), so joins from the docs count apart from the website's. */
-export const DISCORD_URL = "https://discord.gg/99yuGCKGgR";
+/** The bitHuman Discord, THE community home (owner 2026-10-03: "emphasize Discord").
+ *  Always bithuman.ai's /discord path, the tracked invite redirect, never a raw
+ *  discord.gg invite: the header, the footer and every "Need help?" line use it. */
+export const DISCORD_URL = "https://www.bithuman.ai/discord";
 
+/** The footer's first row (one design everywhere); the second row is LEGAL_LINKS and the ©.
+ *  Discord leads the community links (with its mark), then GitHub. */
 export const FOOTER_LINKS: NavLink[] = [
   { label: "Status", href: "https://status.bithuman.ai", external: true },
   { label: "Changelog", href: "/changelog" },
   { label: "Downloads", href: "/downloads" },
   { label: "llms.txt", href: "/llms.txt" },
+  { label: "Discord", href: DISCORD_URL, external: true },
   { label: "GitHub", href: "https://github.com/bithuman-product", external: true },
-  { label: "Join the Discord", href: DISCORD_URL, external: true },
   { label: "bithuman.ai", href: "https://www.bithuman.ai", external: true },
 ];
 

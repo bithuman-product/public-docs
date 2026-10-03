@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Button from "./Button.astro";
+import { DISCORD_URL } from "../config/nav";
 
 interface Props {
   title: string;
@@ -21,7 +22,7 @@ const { title, kicker = "Documentation", intro = "" } = Astro.props;
       <div class="stub-cta">
         <Button href="/">Back to home</Button>
         <Button href="/api/reference" variant="secondary">API reference</Button>
-        <Button href="https://discord.gg/99yuGCKGgR" variant="ghost" external>Ask on Discord →</Button>
+        <Button href={DISCORD_URL} variant="ghost" external>Ask on Discord →</Button>
       </div>
     </div>
   </section>

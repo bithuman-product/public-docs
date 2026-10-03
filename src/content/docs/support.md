@@ -6,11 +6,12 @@ group: "Help"
 order: 40
 type: reference
 llms: none
+help: top
 ---
 
 ## Get help
 
-- **Discord**: [join the bitHuman Discord](https://discord.gg/99yuGCKGgR). Share what you are building and ask the team.
+- **Discord**: [the bitHuman community](https://www.bithuman.ai/discord). Share what you are building and meet other developers.
 - **The bitHuman app on Discord**: [what it does and what it stores](/legal/discord-app).
 - **Email**: [hello@bithuman.ai](mailto:hello@bithuman.ai) for anything that should not be public.
 - **Status**: [status.bithuman.ai](https://status.bithuman.ai) for live platform and API status.
