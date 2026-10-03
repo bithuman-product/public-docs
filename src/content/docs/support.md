@@ -11,6 +11,7 @@ llms: none
 ## Get help
 
 - **Discord**: [join the bitHuman Discord](https://discord.gg/99yuGCKGgR). Share what you are building and ask the team.
+- **The bitHuman app on Discord**: [what it does and what it stores](/legal/discord-app).
 - **Email**: [hello@bithuman.ai](mailto:hello@bithuman.ai) for anything that should not be public.
 - **Status**: [status.bithuman.ai](https://status.bithuman.ai) for live platform and API status.
 - **Releases**: [@bithuman_ai](https://x.com/bithuman_ai) and the [changelog](/changelog).

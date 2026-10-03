@@ -118,6 +118,7 @@ const LLMS_NONE = {
   "/changelog": "a record of releases; agents read versions from /downloads and the key facts",
   "/changelog/archive": "older changelog entries, a record",
   "/legal/android-ffmpeg-lgpl": "a licence notice, not integration text (the llms files already link it where it applies)",
+  "/legal/discord-app": "the Discord app's data notice, not integration text",
   "/legal/eu-ai-act": "a legal statement, not integration text (the llms files already link it where it applies)",
   "/support": "people and channels to contact, not integration text",
   "/news": "dated announcements; the News hub gets its llms line with the nav wave (docs v2 W2b)",
