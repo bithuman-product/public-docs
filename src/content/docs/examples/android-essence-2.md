@@ -142,7 +142,7 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 
 | Symptom | Fix |
 |---|---|
-| `MeteringRefused` on the first `pull()` | set `bithuman.apiSecret` in `local.properties`, rebuild |
+| `Essence2MeteringRefused` (`ai.bithuman.elevate.MeteringRefused` in stack traces) on the first `pull()` | set `bithuman.apiSecret` in `local.properties`, rebuild |
 | Manifest merge fails on `minSdk` | Essence 2 needs `minSdk 29`; the example already sets it |
 | `UnsatisfiedLinkError` | run on a physical arm64 phone, not an emulator |
 | The build refuses the JDK | use JDK 17 (`java -version`) |

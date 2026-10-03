@@ -361,9 +361,6 @@ function memberLine(sig, extra = {}) {
   return line;
 }
 
-/** A class as one ```kotlin fence: its header, constructors, properties,
- *  functions, and its companion's members. Returns the fence and the number
- *  of members withheld. */
 // MEMBERS THAT ARE PUBLIC IN THE BYTECODE BUT NOT API (audit #68). Engine
 // bookkeeping a caller never reads or sets: kept in the record (the surface diff
 // still grades it), withheld from the page. The product marks them `internal` in
@@ -376,12 +373,53 @@ export const HIDDEN_MEMBERS = {
 };
 const memberName = (sig) => (/(?:fun|val|var)\s+(?:[\w.<>, ]+\.)?(\w+)/.exec(sig) || [])[1];
 
-function renderClass(c, companion, aliases, undocumented = new Set()) {
-  const name = displayName(c, aliases);
+/** Split a parameter list on the commas at its top level (not inside `<>`,
+ *  `()` or a function type's `->`). */
+function splitParams(list) {
+  const out = [];
+  let depth = 0, cur = "";
+  for (let i = 0; i < list.length; i++) {
+    const ch = list[i];
+    if (ch === "<" || ch === "(") depth++;
+    else if ((ch === ">" && list[i - 1] !== "-") || ch === ")") depth--;
+    if (ch === "," && depth === 0) { out.push(cur.trim()); cur = ""; continue; }
+    cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+/** The part of a signature a caller cannot avoid: the name, every REQUIRED
+ *  parameter and the result. A parameter with a default (`= …`) is left out: a
+ *  caller omits it, so a type it names does not make the member unusable. */
+export function unavoidable(sig) {
+  const open = sig.indexOf("(");
+  if (open < 0) return sig;
+  let depth = 0, close = -1;
+  for (let i = open; i < sig.length; i++) {
+    if (sig[i] === "(") depth++;
+    else if (sig[i] === ")" && --depth === 0) { close = i; break; }
+  }
+  if (close < 0) return sig;
+  const required = splitParams(sig.slice(open + 1, close)).filter((p) => !/=\s*…$/.test(p));
+  return [sig.slice(0, open), ...required, sig.slice(close + 1)].join(" ");
+}
+
+/** A class's lines inside its ```kotlin fence: its header, enum entries,
+ *  constructors, properties, functions, its companion's members, and its
+ *  nested public enum classes (with their entries), indented one level. */
+function classLines(c, companion, aliases, undocumented, nested = [], ownName = null) {
+  const name = ownName ?? displayName(c, aliases);
   const hidden = new Set(HIDDEN_MEMBERS[name] || []);
-  // a member whose signature names a class this page does not document is not
-  // API a caller can use either (Essence2Frames, Routing, Expression2Backend, …)
-  const namesUndocumented = (sig) => [...undocumented].some((u) => new RegExp(`(?<![\\w.])${u}(?![\\w])`).test(sig));
+  // A member a caller cannot use without spelling or receiving a class this
+  // page does not document (Essence2Frames, Routing, …) is not API a caller can
+  // use either. A DEFAULTED parameter of such a type does not count: the caller
+  // omits it (Essence2Avatar.create's `frames`), and withholding the whole
+  // member for it dropped the one entry point every Essence 2 snippet calls.
+  const namesUndocumented = (sig) => {
+    const must = unavoidable(sig);
+    return [...undocumented].some((u) => new RegExp(`(?<![\\w.])${u}(?![\\w])`).test(must));
+  };
   const sp = (sig) => spell(sig, aliases);
   const lines = [];
   let withheld = 0;
@@ -392,7 +430,9 @@ function renderClass(c, companion, aliases, undocumented = new Set()) {
   withheld += written.length - supers.length;
   if (supers.length) header += ` : ${supers.join(", ")}`;
   lines.push(header);
-  if (c.enum_entries.length) lines.push(`    ${c.enum_entries.join(", ")}`);
+  const entries = c.enum_entries.filter(allowed);
+  withheld += c.enum_entries.length - entries.length;
+  if (entries.length) lines.push(`    ${entries.join(", ")}`);
   if (c.sealed_subclasses.length) {
     const subs = c.sealed_subclasses.map(sp).filter(allowed);
     withheld += c.sealed_subclasses.length - subs.length;
@@ -416,8 +456,11 @@ function renderClass(c, companion, aliases, undocumented = new Set()) {
     for (const x of cls.functions) {
       if (cls.is_data && DATA_GENERATED.test(x.signature)) { generated++; continue; }
       if (hidden.has(memberName(x.signature)) || namesUndocumented(sp(x.signature))) { withheld++; continue; }
-      const l = memberLine(sp(x.signature), { deprecated: x.deprecated });
-      if (l === null) withheld++; else out.push(l);
+      let l = memberLine(sp(x.signature), { deprecated: x.deprecated });
+      if (l === null) { withheld++; continue; }
+      // `@JvmStatic`: Java calls it on the class itself, as Kotlin does
+      if (x.jvm_static) l = l.replace(/(^|\n)(?!@Deprecated)([^\n]*)$/, "$1@JvmStatic $2");
+      out.push(l);
     }
     if (generated) out.push(`// data class: copy, componentN, equals, hashCode and toString as Kotlin generates them`);
     return out;
@@ -427,6 +470,18 @@ function renderClass(c, companion, aliases, undocumented = new Set()) {
     lines.push("    companion object");
     for (const l of members(companion)) lines.push(...l.split("\n").map((s) => "        " + s));
   }
+  for (const n of nested) {
+    const inner = classLines(n, null, aliases, undocumented, [], n.name.slice(n.name.lastIndexOf("$") + 1));
+    withheld += inner.withheld;
+    lines.push(...inner.lines.map((s) => "    " + s));
+  }
+  return { lines, withheld, name };
+}
+
+/** A class as one ```kotlin fence. Returns the fence and the number of members
+ *  withheld. */
+function renderClass(c, companion, aliases, undocumented = new Set(), nested = []) {
+  const { lines, withheld, name } = classLines(c, companion, aliases, undocumented, nested);
   return { fence: "```kotlin\n" + lines.join("\n") + "\n```", withheld, name };
 }
 
@@ -454,12 +509,15 @@ export const PUBLIC_CLASSES = {
     Essence2MeteredDoorResolver: "Downloads with a secret you pass here instead: `Essence2MeteredDoorResolver(secret)`.",
     Essence2PublicMirrorResolver: "Downloads from your own mirror of the avatar files.",
     Essence2UrlResolver: "The interface both resolvers implement.",
-    Essence2Bundle: "A downloaded avatar; pass `dir` to `Essence2Avatar.create`.",
+    Essence2Bundle: "A downloaded avatar; pass `dir` and `options` to `Essence2Avatar.create`.",
+    Essence2Options: "Output size: `outputHeight = Essence2Options.HD_720` for the avatar's 1280×720 output where it publishes one, `NATIVE` (the default) for full size. Pass the same options to `fetch` and `create`; `bundle.options` carries them.",
     Essence2ProgressListener: "Download progress callback.",
+    Essence2RequestHeaders: "Implement it beside `Essence2UrlResolver` to send headers with each download, as `Essence2MeteredDoorResolver` does.",
     Essence2Metering: "`stateDir` keeps usage that could not be sent. `apiSecret` is deprecated: use `Essence2Credential`.",
     Essence2MeteringRefused: "Thrown when the service refuses the session (no secret, rejected secret, or offline too long).",
     Essence2StoreException: "Thrown when a download fails.",
     Essence2RenderFailed: "Thrown by `checkRender()` when the engine stopped.",
+    Essence2BorrowRefused: "Thrown by `pull()` or `pullHardwareBuffer()` when the engine refuses to render a frame. The session is over: close the avatar and create a new one.",
   },
   "expression2-android": {
     Expression2Avatar: "One Expression 2 session: `feed`, `pull` frames into a `Bitmap`, `flushTail`, `idleLoop`, `resetState` to interrupt.",
@@ -477,8 +535,23 @@ export const PUBLIC_CLASSES = {
     Expression2Exception: "Thrown when a session cannot start or is refused.",
     Accelerator: "Which accelerator a session uses.",
     Expression2Backend: "Read-only, one per model part: the device it runs on and, on the accelerator, whether the prepared decoder was reused and how long preparing it took.",
+    Device: "Where a model part runs, as `Expression2Backend.device` reports it.",
   },
 };
+
+// THE REST OF THE PRODUCT PACKAGE. `import ai.bithuman.essence2.*` brings in
+// every public type alias there, so each one has a row in the class table even
+// when the page does not document its members: a name a developer meets in
+// autocomplete is never missing from the reference. These rows get no fence.
+// An alias in neither map still gets a row (DEFAULT_NOT_FOR_APPS), so a new
+// alias in a later AAR cannot go missing silently.
+export const LISTED_CLASSES = {
+  "essence2-android": {
+    Essence2Frames: "The lower-level render session that `Essence2Bundle.open()` returns. Apps use `Essence2Avatar.create` instead; its members are not documented here.",
+    Essence2RenderStatus: "The engine's own record behind `checkRender()`. Call `Essence2Avatar.checkRender()` instead.",
+  },
+};
+export const DEFAULT_NOT_FOR_APPS = "Used inside the SDK; an app does not need it.";
 
 export function renderRegion(record) {
   const out = [];
@@ -495,6 +568,17 @@ export function renderRegion(record) {
     // An artifact with no documented-surface entry lists every public class,
     // so a new artifact is never silently printed empty.
     const pub = PUBLIC_CLASSES[id] ?? Object.fromEntries([...byName.keys()].filter(allowed).sort().map((n) => [n, ""]));
+    // Table-only rows: every public alias the documented list does not cover.
+    const listedOnly = Object.fromEntries(aliases
+      .filter((t) => !(t.name in pub) && byName.has(t.name) && allowed(t.name))
+      .map((t) => t.name).sort()
+      .map((nm) => [nm, LISTED_CLASSES[id]?.[nm] ?? DEFAULT_NOT_FOR_APPS]));
+    // Each documented class's nested public enum classes, printed inside its
+    // fence with their entries (Essence2StoreException.Code).
+    const nestedOf = (c) => (c.nested_public || [])
+      .filter((nm) => nm !== c.companion)
+      .map((nm) => s.classes.find((x) => x.name === `${c.name}$${nm}`))
+      .filter((x) => x && x.loadable && x.kind === "enum-class" && allowed(x.name.slice(x.name.lastIndexOf("$") + 1)));
 
     out.push(`## ${product}`);
     out.push("");
@@ -529,19 +613,36 @@ export function renderRegion(record) {
         let line = `Import: ${code(`import ${ranked[0][0]}.*`)}.`;
         const rest = ranked.slice(1).flatMap(([pkg, names]) => [...names].sort().map((nm) => code(`import ${pkg}.${nm}`)));
         if (rest.length) line += ` Not in that package yet, so import ${rest.length === 1 ? "it" : "them"} by name: ${rest.join(", ")}.`;
+        // A Kotlin type alias does not reach a class nested inside its target
+        // (kotlinc: `unresolved reference 'Code'`), so a nested enum printed
+        // under an aliased class is imported from its own package.
+        const viaAlias = Object.keys(pub)
+          .map((nm) => byName.get(nm))
+          .filter((c) => c && aliases.some((t) => t.target === c.name))
+          .flatMap((c) => nestedOf(c));
+        if (viaAlias.length) {
+          const one = viaAlias.length === 1;
+          line += ` ${viaAlias.map((x) => code(displayName(x, aliases))).join(", ")} ${one ? "is a nested class" : "are nested classes"}, ` +
+            `which a type alias does not reach, so import ${one ? "it" : "them"} by name: ` +
+            `${viaAlias.map((x) => code(`import ${pkgOf(x.name)}.${simpleOf(x.name)}`)).join(", ")}.`;
+        }
         out.push(line);
         out.push("");
       }
     }
     out.push(table([["Class", "Purpose"], ["---", "---"],
-      ...Object.entries(pub).filter(([n]) => byName.has(n)).map(([n, why]) => [code(n), why || "—"])]));
+      ...Object.entries(pub).filter(([n]) => byName.has(n)).map(([n, why]) => [code(n), why || "—"]),
+      ...Object.entries(listedOnly).map(([n, why]) => [code(n), why])]));
     out.push("");
+    const printedNested = new Set(Object.keys(pub).map((nm) => byName.get(nm)).filter(Boolean)
+      .flatMap((c) => nestedOf(c)).map((x) => displayName(x, aliases)));
+    const undocumented = new Set([...byName.keys()]
+      .filter((k) => !(k in pub) && !printedNested.has(k)).map((k) => k.split(".").pop()));
     for (const [n] of Object.entries(pub)) {
       const c = byName.get(n);
       if (!c) continue;
       const comp = c.companion ? companions.get(`${c.name}$${c.companion}`) : null;
-      const undocumented = new Set([...byName.keys()].filter((k) => !(k in pub)).map((k) => k.split(".").pop()));
-      const { fence } = renderClass(c, comp, aliases, undocumented);
+      const { fence } = renderClass(c, comp, aliases, undocumented, nestedOf(c));
       out.push(`### ${n}`);
       out.push("");
       out.push(fence);
@@ -549,6 +650,20 @@ export function renderRegion(record) {
     }
   }
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+}
+
+/** Every public class of every artifact in a record, by the name the page
+ *  calls it (its product alias where one exists). The snippet arm of
+ *  check-android-api-current uses it to tell "a class the reference leaves
+ *  out" from a name that is not this SDK's at all. */
+export function publicNames(record) {
+  const out = new Set();
+  for (const { surface: s } of record.artifacts) {
+    const aliases = s.packages.flatMap((p) => p.typealiases.filter((t) => t.visibility === "public"));
+    for (const c of s.classes) if (c.loadable && c.kind !== "companion-object") out.add(displayName(c, aliases));
+    for (const a of aliases) out.add(a.name);
+  }
+  return out;
 }
 
 /* ----------------------------------------------------------------- the page */
@@ -581,7 +696,8 @@ export function flatten(surface) {
   for (const c of surface.classes) {
     out.set(c.name, `${c.kind} ${c.modality}${c.is_data ? " data" : ""} : ${c.supertypes.join(", ")}${c.enum_entries.length ? " {" + c.enum_entries.join(",") + "}" : ""}`);
     for (const x of c.constructors) out.set(`${c.name}.${x.jvm}`, x.signature + (x.loadable ? "" : " [not loadable]") + (x.deprecated !== undefined ? " @Deprecated" : ""));
-    for (const x of c.functions) out.set(`${c.name}.${x.jvm}`, x.signature + (x.loadable ? "" : " [not loadable]") + (x.deprecated !== undefined ? " @Deprecated" : ""));
+    // `@JvmStatic` is part of the signature a Java caller binds to: losing it is a change
+    for (const x of c.functions) out.set(`${c.name}.${x.jvm}`, x.signature + (x.loadable ? "" : " [not loadable]") + (x.deprecated !== undefined ? " @Deprecated" : "") + (x.jvm_static ? " @JvmStatic" : ""));
     for (const x of c.properties) out.set(`${c.name}.${x.name}`, x.signature + (x.value !== undefined ? ` = ${JSON.stringify(x.value)}` : "") + (x.loadable ? "" : " [not loadable]") + (x.deprecated !== undefined ? " @Deprecated" : ""));
     for (const u of c.loadable_undeclared) out.set(`${c.name} [${u.kind}] ${u.jvm}`, u.access.join(" "));
   }

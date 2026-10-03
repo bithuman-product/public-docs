@@ -60,6 +60,9 @@
 //                           caller cannot) and anything unexplained.
 //   `not_loadable`          declared public by the metadata with no public
 //                           class-file member behind it.
+//   `jvm_static`            on a function of an `object` or a companion: true
+//                           when the class file carries the static form a Java
+//                           caller binds to (`@JvmStatic`); absent otherwise.
 //   per artifact
 //   `internal_classes`      classes the metadata marks `internal` or `private`
 //                           that the class file marks `public`.
@@ -828,6 +831,21 @@ public class AndroidApiExtract {
       }
       properties.sort(Comparator.comparing(o -> (String) ((Map<?, ?>) o).get("signature")));
       cls.put("properties", properties);
+
+      // ★WHICH OBJECT AND COMPANION FUNCTIONS ARE `@JvmStatic`. The metadata does
+      // not say; the class file does: an `object`'s @JvmStatic function is itself
+      // static, and a companion's has a public static copy on the OUTER class with
+      // the same name and descriptor. That copy is what lets a Java caller write
+      // `Essence2Avatar.create(…)` instead of `Essence2Avatar.Companion.create(…)`,
+      // so the page prints it; the flag sits beside `jvm` on the function's row.
+      ClassKind kind = Attributes.getKind(kc);
+      if (kind == ClassKind.OBJECT || (outer != null && kind == ClassKind.COMPANION_OBJECT)) {
+        for (Object o : functions) {
+          @SuppressWarnings("unchecked") Map<String, Object> fn = (Map<String, Object>) o;
+          RtMember st = callable(kind == ClassKind.OBJECT ? rc : outer, (String) fn.get("jvm"));
+          if (st != null && isStatic(st.access)) fn.put("jvm_static", true);
+        }
+      }
 
       if (outer != null && Attributes.getKind(kc) == ClassKind.COMPANION_OBJECT) {
         claimedBy.computeIfAbsent(outer.name, k -> new HashSet<>()).addAll(onOuter);
