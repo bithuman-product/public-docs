@@ -43,6 +43,15 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Swift package 2.20.2 — 2026-10-03
+
+Tag `v2.20.2`.
+
+- **App Store privacy manifest:** the package now ships `PrivacyInfo.xcprivacy`, so Xcode's privacy report includes the SDK. See [Storage and privacy](/platforms/swift/reference#storage-and-privacy).
+- **Essence 2 downloads stay out of backups:** the avatar files `Essence2Download` keeps and Essence 2's runtime files are excluded from iCloud and computer backups (`isExcludedFromBackup`). They are downloaded again when needed. A directory you pass in is not flagged as a whole.
+- Essence 2 (1.15.3), Expression 2 (2.20.1) and the macOS engine core (1.0.2) are unchanged.
+- **Action:** `.package(url: …, from: "2.20.2")`.
+
 ### Flutter plugin 2.6.35 — 2026-10-03
 
 Tag `flutter-plugin-v2.6.35`.
