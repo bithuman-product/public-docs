@@ -43,6 +43,13 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.34 — 2026-10-03
+
+Tag `flutter-plugin-v2.6.34`. Android Essence 2 engine: `essence2-android` 0.9.3.
+
+- **Android, Essence 2:** an avatar already on the phone opens in about 3 s (2.5–4.3 s on a Galaxy Z Flip5, from 6.0–11.2 s); the first open after an install takes about 5 s. A first download continues in the background when the app leaves the screen. An avatar file installed before the October 1 re-publish refreshes itself. Your app's merged manifest gains `ACCESS_NETWORK_STATE` and the engine's job service.
+- **Action:** pin `ref: flutter-plugin-v2.6.34`.
+
 ### essence2-android 0.9.3 — 2026-10-03
 
 - **An avatar opens in about 3 seconds:** the SDK keeps the GPU programs it compiles for the phone and prepares the avatar's teeth data while your app checks its credential. In bitHuman Live on a Galaxy Z Flip5, opening an installed avatar took 6–11 s with 0.9.1 and 0.9.2 and takes 2.7–4.3 s with 0.9.3. The first open after the app is installed (or after a GPU driver update) still compiles those programs once, about 5 s.
