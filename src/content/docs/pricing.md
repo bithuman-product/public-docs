@@ -16,7 +16,7 @@ Prices are in credits: **100 credits = $1**, so 4 credits a minute is about $0.0
 
 ## Serving — credits per live minute
 
-The first table is the avatar-only rate per model; the second is the all-inclusive managed-agent rate (both defined below the tables). The tables are generated from [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) (`data.realtime`).
+The first table is the avatar-only rate per model; the second is the all-inclusive managed-agent rate (both defined below the tables).
 
 <!-- PRICING:REALTIME -->
 | Model | Cloud | Self-hosted and on-device |
@@ -26,7 +26,7 @@ The first table is the avatar-only rate per model; the second is the all-inclusi
 | [Essence 1](/models/first-generation#essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/models/first-generation#expression-1) (`expression-1`) | 4 credits/min | — |
 
-A managed conversational agent bills ONE all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.
+A managed conversational agent bills one all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.
 
 | Surface | Rate |
 |---|---|
@@ -43,7 +43,7 @@ Two ways to pay for a live avatar:
 - **Avatar only:** you bring the conversation (your own speech-to-text, language model and voice, through an SDK, the plugin or the API) and pay only the model's rate in the first table.
 - **Managed agent:** bitHuman runs the whole conversation (listening, the replies, the voice) and the avatar, as in the web embed, for one all-inclusive rate in the second table.
 
-A session bills while it is **running**, whether the avatar is talking or idle, to the exact second. A stopped or disconnected session accrues nothing. File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
 Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 
@@ -112,7 +112,7 @@ Offline license is only available to Business and Enterprise clients who want to
 
 Packs start at 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection. Which models run offline on which computers, and the setup: [Fully offline](/deploy/offline).
 
-[Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
+[Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license.
 
 ## What is not billed
 

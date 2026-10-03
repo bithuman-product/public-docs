@@ -2,7 +2,7 @@
 title: "Windows"
 description: "Render Essence 2 and Expression 2 on a Windows 11 PC, with no GPU."
 section: platforms
-group: "Apps"
+group: "Windows"
 order: 10
 type: platform
 llms: platforms

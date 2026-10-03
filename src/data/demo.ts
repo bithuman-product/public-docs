@@ -35,7 +35,7 @@ export interface Demo {
 export const FRONT_DOOR_DEMO: DemoModel[] = ["expression-2", "essence-2"];
 
 /** The live session ends after this many seconds on screen. */
-export const DEMO_CAP_SECONDS = 180;
+export const DEMO_CAP_SECONDS = 120;
 
 export const embedUrl = (code: string) => `https://www.bithuman.ai/embed/${code}`;
 
