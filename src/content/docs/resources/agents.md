@@ -66,8 +66,8 @@ curl -fsSL https://docs.bithuman.ai/skills/bithuman-integrate/SKILL.md -o .claud
 
 1. Send `model` (`"essence-2"` or `"expression-2"`) on every agent you create, and poll until `status` is `ready` or `failed`.
 2. API and SDK use requires the Creator plan or higher.
-3. Read the API secret from the environment (`BITHUMAN_API_SECRET`); never write it into code or a command line. In a LiveKit worker, name it `BITHUMAN_MASTER_SECRET` and pass a minted token.
-4. Say where things happen: the avatar renders (device, browser, server, cloud); the conversation runs (your stack, the CLI's local conversation brain, or bitHuman's servers).
+3. Read the API secret from the environment (`BITHUMAN_API_SECRET`); never write it into code or a command line. In a LiveKit worker the secret is read as `BITHUMAN_MASTER_SECRET` (the same secret under another name, so the plugin never copies it into the room) and the plugin gets a minted token ([LiveKit](/platforms/livekit#authenticate)).
+4. When explaining, say where the avatar renders and where the conversation runs: the avatar renders (device, browser, server, cloud); the conversation runs (your stack, the CLI's local conversation brain, or bitHuman's servers).
 5. Take versions from [/versions.json](/versions.json), speed from [/performance.json](/performance.json) and prices from `GET https://api.bithuman.ai/v1/pricing` (send the `api-secret` header; without it the call returns `401`), not from memory or an older sample.
 
 ## Next

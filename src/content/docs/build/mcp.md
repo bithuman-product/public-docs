@@ -8,6 +8,7 @@ type: recipe
 llms: build
 artifacts: ["cli"]
 moved:
+  first-frame: /build/mcp#connect-your-client
   before-you-start: /build/mcp#what-youll-build
   integrate-into-your-app: /build/mcp#make-it-your-own
   platform-notes: /build/mcp#how-it-works
@@ -18,10 +19,7 @@ moved:
 
 ## What you'll build
 
-| Detail | Expression 2 | Essence 2 |
-|---|---|---|
-| **Create agents** | `generate_agent` with `model: "expression-2"` | `generate_agent` with `model: "essence-2"` |
-| **Render locally** | `render` tool | `render` tool |
+Your MCP client can create avatars, render talking videos, embed agents and check your credits by calling bitHuman tools.
 
 You need:
 
@@ -51,7 +49,7 @@ Run `bithuman login` once, or set `BITHUMAN_API_SECRET` in the client's configur
 After `bithuman login`, `bithuman account` shows your plan and credit balance.
 ```
 
-### First frame
+### Connect your client
 
 Register the server with your client.
 

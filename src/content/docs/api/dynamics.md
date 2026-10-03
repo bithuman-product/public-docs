@@ -1,6 +1,6 @@
 ---
 title: "Gestures API"
-description: "Generate and manage conversational gesture animations — waves, nods, laughs, idle motions — for an avatar."
+description: "Generate gestures (wave, nod, laugh) for an Essence 1 avatar, and trigger them."
 section: api
 group: "Media"
 order: 30
@@ -32,7 +32,6 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `agent_id` | string | yes | — | Agent ID to generate dynamics for. |
 | `image_url` | string | no | from agent | Source image URL. Defaults to the agent's primary image. |
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
-| `model` | string | no | — | Leave it out. (`auto` and `seedance` are accepted and select the same gesture model.) |
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/dynamics/generate \
@@ -90,14 +89,13 @@ Before generation completes, `url` is `null` and `gestures` is an empty object.
 
 ## Update dynamics
 
-Update the dynamics configuration. After a
-successful update, background-movements regeneration is automatically triggered.
+Update the gestures configuration. After a successful update, the avatar's idle motion is regenerated automatically.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `dynamics` | object | yes | Configuration to merge with existing data. |
 | `dynamics.enabled` | boolean | no | Enable or disable dynamics for this agent. |
-| `toggle_enabled` | boolean | no | `true` switches to the dynamics model; `false` restores the default talking model. |
+| `toggle_enabled` | boolean | no | `true` turns gestures on for live sessions; `false` turns them off. |
 
 ```bash
 curl -X PUT https://api.bithuman.ai/v1/dynamics/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET" \

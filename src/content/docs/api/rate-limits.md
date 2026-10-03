@@ -40,7 +40,7 @@ table
 
 A session over the allowance is refused at start with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors#plan-and-credit-refusals), whose `upgrade_url` links the plans; a live session is never cut off by this limit. Every cloud avatar counts as its own session, including avatars that share a room name. Agent and dynamics generation jobs queue and run as capacity frees up.
 
-A session stops counting the moment it ends: the room closes, the last user leaves, or you remove `bithuman-avatar-agent`. That holds for every cloud session: the bitHuman app, the web embed, and a cloud avatar in your own LiveKit room. To end one yourself and free its slot at once, [terminate the session](/api/runtime-sessions#terminate-a-session).
+A session stops counting the moment it ends: the room closes, the last user leaves, or you remove the avatar participant (`bithuman-avatar-agent`) from your LiveKit room. That holds for every cloud session: the bitHuman app, the web embed, and a cloud avatar in your own LiveKit room. To end one yourself and free its slot at once, [terminate the session](/api/runtime-sessions#terminate-a-session).
 
 **Session length.** One continuous session can run up to 24 hours in the cloud and 7 days self-hosted. It then ends with `403 SESSION_DURATION_LIMIT`; start a new session to continue. For longer unattended installs (kiosks), [contact sales](https://www.bithuman.ai/enterprise?topic=api-rate-limits#contact).
 

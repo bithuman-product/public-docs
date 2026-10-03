@@ -13,6 +13,16 @@ next: ["/start", "/deploy", "/pricing"]
 
 Short answers, each with the page that has the detail.
 
+## Getting started
+
+### What is bitHuman?
+
+Real-time talking avatars for your app: you give an avatar speech audio and it lip-syncs to it, live, rendered on the device, in the browser, on your own computer or in the bitHuman cloud. The words it uses are on [Key terms](/models/how-it-works#key-terms).
+
+### Which model should I use?
+
+A real person: [Essence 2](/models/essence-2). Any other character (a cartoon, an animal, a mascot): [Expression 2](/models/expression-2), the default. More on [Choosing a model](/models#choosing-a-model).
+
 ## Building an app
 
 ### Is there an iOS and Android SDK?
@@ -45,7 +55,7 @@ Expression 2 runs in the iOS Simulator. Essence 2 on Apple needs a physical iPho
 
 ### Does a computer need a GPU?
 
-No. Both models run live on a standard Linux PC with no GPU; see [CPU only (no GPU)](/deploy/cpu) for the measured speed.
+No. Essence 2 and Expression 2 run live on a standard Linux PC with no GPU; see [CPU only (no GPU)](/deploy/cpu) for the measured speed.
 
 ## Pricing and plans
 

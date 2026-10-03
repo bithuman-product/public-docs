@@ -10,9 +10,15 @@ llms: api
 
 ## Overview
 
-See and control the avatar sessions running on your account — list live sessions with their
-burn rate, read a session's transcript, terminate one, or (in an emergency) revoke every
-runtime key at once.
+See and control the avatar sessions running on your account: list live sessions with the
+credits they use per minute, read a session's transcript, terminate one, or (in an emergency)
+revoke every runtime key at once.
+
+Which one to use:
+
+- **Stop a cloud avatar you started:** [End a cloud avatar session](#end-a-cloud-avatar-session).
+- **Stop any session on your account:** [Terminate a session](#terminate-a-session).
+- **A secret leaked:** [Revoke all keys](#revoke-all-keys).
 
 Base URL `https://api.bithuman.ai`. Authenticate with your `api-secret`. The `{user_id}` in the
 path is your own account id — get it from [`GET /v1/me`](/api/billing#account-status).
@@ -29,7 +35,7 @@ export USER_ID=$(curl -s https://api.bithuman.ai/v1/me \
 
 ## List sessions
 
-`GET /v2/{user_id}/runtime-sessions` — derived sessions plus live account KPIs.
+`GET /v2/{user_id}/runtime-sessions`: your sessions, plus account-wide totals.
 
 | Query | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -52,7 +58,7 @@ curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions?window=live" \
     "sessions": [
       {
         "id": "a3f1c8e2-…-9b02",
-        "agent_code": "agent_greeter",
+        "agent_code": "A80HVD8577",
         "agent_name": "Greeter",
         "billing_type": "usage_essence_2_model_cloud",
         "key_alias": "prod-server",
@@ -70,7 +76,7 @@ curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions?window=live" \
 }
 ```
 
-The KPIs (`active_count`, `live_burn_rate_cr_per_min`, `credits_this_hour`) are account-wide over
+The totals (`active_count`, `live_burn_rate_cr_per_min`, `credits_this_hour`) are account-wide over
 the last hour; `sessions` is the filtered list. `billing_type` is the pricing code the session bills under; see `GET /v1/pricing`. Use a session's `id` for the calls below.
 
 ## Read a transcript
@@ -87,7 +93,7 @@ curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions/a3f1c8e2-…/messages
   "success": true,
   "data": {
     "session_id": "a3f1c8e2-…",
-    "agent_code": "agent_greeter",
+    "agent_code": "A80HVD8577",
     "started": "2026-07-15T15:20:00Z",
     "ended": "2026-07-15T15:33:00Z",
     "live": true,
@@ -191,6 +197,8 @@ curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime/revoke-all" \
 
 This does **not** delete your API secrets — it suspends runtime token issuance. It's self-recoverable:
 creating a new API secret clears the suspension.
+
+The two calls below are made for you by the bitHuman SDKs, the CLI and the plugins on self-hosted and on-device sessions; you need them only to build your own runtime.
 
 ```endpoint
 validateSelfHostedKey

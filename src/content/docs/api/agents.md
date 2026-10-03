@@ -25,7 +25,7 @@ Starts an asynchronous creation and returns an `agent_id` at once. Credits are r
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | always send it | `essence-2` (a photoreal person), `expression-2` (any character), `auto` (the platform picks from the image), `essence-1` or `expression-1` (both need a real person). Omitted, the API still creates an `expression-1` agent and warns (`MODEL_DEFAULT_DEPRECATED`), so a character is refused with `422`: send `expression-2` or `auto` for one; **from 2026-12-26 `model` is required**, and the bare names `essence` and `expression` (and the `version` field) are refused with a `400` naming the replacement. |
+| `model` | string | always send it | `essence-2` (a real person), `expression-2` (any character) or `auto` (picks from the image). `essence-1` and `expression-1` are the first generation. Always send it: it becomes required on 2026-12-26 (see Notes). |
 | `image` | string | no | Portrait URL (publicly fetchable) or base64. Used as a reference; a portrait is generated from `prompt` when omitted |
 | `prompt` | string | no | System prompt and personality |
 | `audio` | string | no | Voice sample URL or base64, for voice cloning |
@@ -67,6 +67,7 @@ print(resp.json())
 
 ### Notes
 
+- Omitted, `model` still creates an `expression-1` agent and warns (`MODEL_DEFAULT_DEPRECATED`), so a character is refused with `422`. From 2026-12-26 `model` is required, and the bare names `essence` and `expression` (and the `version` field) are refused with a `400` naming the replacement.
 - Creation takes minutes for `essence-1` and `expression-1`, and about 2–2.5 hours for `essence-2` and `expression-2`. Set your polling timeout per model.
 - Every model except `expression-2` needs a clear, real human face. For `essence-2`, `essence-1` or `expression-1`, a cartoon, stylized character, animal, robot or creature in the photo or prompt, or a photo with no face found, returns `422 MODEL_SUBJECT_MISMATCH` before anything is charged; the message tells you to use Expression 2. An `essence-2` creation or add also checks the photo's face before charging: a face too small in frame, or several similar-sized faces, returns `422 IMAGE_FACE_UNSUITABLE` — upload a closer photo of one person. `auto` routes people to `essence-2` and everything else to `expression-2`.
 - A `200` does not mean the image was fetched. An unreachable `image` fails the creation a few seconds later (refunded); poll [status](#poll-status) to confirm. Creation is image-only: a `video` field returns `400 VIDEO_INPUT_NOT_SUPPORTED`.
@@ -215,9 +216,7 @@ Name the output file yourself (`-o`). Add `?redirect=false` to get the URL as JS
 
 ## List the freely downloadable showcase models
 
-Lists the **Essence 2** and **Expression 2** showcase identities whose model weights anyone may download, with no api-secret and no account. Each entry's `url` is [Download an agent's model](#download-an-agents-model): a `302` to a 1-hour signed URL that costs the agent's owner **0 credits**. Being public in the gallery is not enough; an agent is listed only when its owner has authorised distribution of the weights.
-
-`bithuman list` and `bithuman pull` read this catalogue. `sha256` is empty for now and the CLI skips verification on an empty value; check `size` instead. Frame rates are on the [performance page](/performance). Throttled per IP; the reply is cached for 60 seconds.
+Lists the sample avatars anyone can download, with no API secret and no account: slug, agent code, model and size. Each entry's `url` is [Download an agent's model](#download-an-agents-model). `bithuman list` and `bithuman pull` read this list.
 
 ```bash
 curl https://api.bithuman.ai/v1/models/showcase

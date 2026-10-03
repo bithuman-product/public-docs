@@ -98,6 +98,8 @@ you registered to the agent that should use it.
 
 `POST /v1/agent/{agent_code}` — set the per-capability selection. Send only the
 capabilities you want to change; the rest of the agent's settings are preserved.
+The capabilities: `llm` is the language model, `stt` speech-to-text, `tts` text-to-speech,
+and `realtime` one speech-to-speech model that does all three.
 
 | Capability | Value | Meaning |
 |---|---|---|
@@ -159,9 +161,8 @@ Requests to your endpoint carry the visitor's identifier in the standard OpenAI
 The value is resolved in this order, and the first one present wins:
 
 1. the **`fingerprint`** your backend passed when it minted the visitor's embed
-   token with [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token)
-   (it travels in the token as its `endUserId` claim);
-2. the **session correlator** — a per-conversation identifier we generate.
+   token with [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token);
+2. a **per-conversation id** that bitHuman generates.
 
 To get a durable value, mint the embed token on your backend with your own id for
 the end user as its `fingerprint`, and pass the token to the iframe:
@@ -187,13 +188,10 @@ const { data: { token } } = await res.json();
 ```
 
 Mint the same `fingerprint` for a returning visitor and your endpoint sees the same
-`user` on every call, across sessions. The session correlator is the automatic
+`user` on every call, across sessions. The per-conversation id is the automatic
 fallback so the field is **never empty**, but it changes each session — if you see
 a value that varies per conversation, the embed was opened without a token minted
 this way.
-
-> If you mint tokens with a stable `fingerprint` and still see a changing value,
-> tell us — that is a bug, not a configuration issue.
 
 Two limits worth knowing:
 

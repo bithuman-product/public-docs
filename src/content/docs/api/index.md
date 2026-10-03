@@ -17,7 +17,7 @@ Plain HTTPS and JSON from any language, for backends and scripts where a native 
 
 ## Base URL
 
-Every path on these pages is relative to `https://api.bithuman.ai`. Every endpoint, one row each: [API reference](/api/reference).
+Every path on these pages is relative to `https://api.bithuman.ai`. First call: [REST API](/platforms/rest#run-your-first-avatar). Every endpoint: [API reference](/api/reference).
 
 ## What you can build
 

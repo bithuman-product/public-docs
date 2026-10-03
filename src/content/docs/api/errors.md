@@ -74,7 +74,7 @@ A plan or credit refusal names its fix in a link field of `error`: send the user
 
 | Code | HTTP | Resolution |
 |---|---|---|
-| `PLAN_REQUIRED` | 403 | Your plan does not include this; the `message` says what. From **2026-10-12 00:00 UTC**, a Free account's API secret gets "API and SDK access starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing to keep using your API secret." A Free account creating an agent gets "Creating agents starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing.", and buying a top-up "Credit top-ups start at the Creator plan. Upgrade at https://www.bithuman.ai/pricing." A model outside your plan: the message names the plan; [contact sales](https://www.bithuman.ai/enterprise?topic=api-errors#contact). Link: `upgrade_url`. |
+| `PLAN_REQUIRED` | 403 | Your plan does not include this; the `message` says what, and `upgrade_url` links the fix. From **2026-10-12 00:00 UTC**, a Free account's API secret is refused, and Free accounts cannot create agents or buy top-ups. A model outside your plan: the message names the plan; [contact sales](https://www.bithuman.ai/enterprise?topic=api-errors#contact). |
 | `AGENT_LIMIT_REACHED` | 403 | A new agent would pass your plan's agent limit (Creator 7, Pro 40, Business 200, Enterprise unlimited): "Your {Plan} plan includes {N} agents and you have {M}. Existing agents keep working; delete one or upgrade at https://www.bithuman.ai/pricing to create more." Link: `upgrade_url`. |
 | `CONCURRENCY_LIMIT_REACHED` | 403 | A new session would pass your plan's [concurrent cloud sessions](/api/rate-limits#session-concurrency); the message names the limit and how many are running. End a session or upgrade; live sessions are never cut off. An ended session frees its slot at once; to end one, [terminate it](/api/runtime-sessions#terminate-a-session). Link: `upgrade_url`, also in `details`. |
 | `INSUFFICIENT_BALANCE` | 402 | Not enough credits for this action. Top up (Creator plan or higher; on Free, choose a plan), then retry. Link: `topup_url`. |
@@ -97,22 +97,22 @@ Until 2026-10-12, a Free account's runtime-token and meter responses carry a `pl
 
 ### Model errors
 
-The model-release surfaces — [creation](/api/agents#generate-an-agent),
-[model add](/api/agents#add-a-model-to-an-existing-agent),
-[model download](/api/agents#download-an-agents-model), the
-[embed-token `model` field](/api/embedding), and
-[talking video](/api/video) — share these codes:
+[Agent creation](/api/agents#generate-an-agent),
+[adding a model](/api/agents#add-a-model-to-an-existing-agent),
+[model download](/api/agents#download-an-agents-model),
+[embed tokens](/api/embedding) and
+[talking video](/api/video) share these codes:
 
 | Code | HTTP | Resolution |
 |---|---|---|
-| `MODEL_NOT_GENERATED` | 409 | The requested model family isn't in the agent's `supported_models` — it can't be launched (or downloaded) as that family yet. **The message names the fix**: the exact [model-add](/api/agents#add-a-model-to-an-existing-agent) call and its cost when this agent qualifies for it, or the missing asset when it doesn't. Trained families (`expression-2`, `essence-2`): `"agent <code>'s <model> model hasn't been generated yet — add it with POST /v1/agent/<code>/models …"`. `expression-1` reads `"isn't enabled on this agent yet"` instead — nothing is ever trained for it, and the add takes effect at once and is **free** (see [Add a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent)). Checked **before any charge**. |
+| `MODEL_NOT_GENERATED` | 409 | The agent does not have that model yet. **The message gives the fix**: the exact [add-a-model](/api/agents#add-a-model-to-an-existing-agent) call and its cost (adding `expression-1` is free and immediate), or the missing input when the agent cannot get it. Nothing is charged. |
 | `AGENT_NOT_READY` | 409 | [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent) on an agent that is still generating or failed. Wait for the current generation to finish, or fix/re-create a failed agent first. |
 | `MODEL_SUBJECT_MISMATCH` | 422 | Every model except Expression 2 needs a clear, real human face. A creation or model add for `essence-2`, `essence-1` or `expression-1` (also when `model` is omitted) is refused when the photo or prompt is a cartoon, a stylized character, an animal, a robot or a creature, or when no face can be found in the photo — e.g. `"Expression 1 needs a clear, real human face, and this image looks like an animal. Use Expression 2, which animates any character: cartoons, animals, robots and stylized art. Nothing was charged."` Nothing is billed and no agent is created. Use `expression-2`, or `model: "auto"` to route automatically. See [Choosing a model](/models#choosing-a-model). |
-| `MODEL_PREREQUISITE_MISSING` | 422 | A [model add](/api/agents#add-a-model-to-an-existing-agent) needs a stored asset this agent doesn't have — a stored identity video for `essence-2` (generated internally by Essence creations, never uploaded), face image for `expression-2`, image + voice for `expression-1`, stored identity video or image for `essence-1`. Add the missing image/voice asset, then retry. |
-| `MODEL_NOT_DOWNLOADABLE` | 400 | [Model download](/api/agents#download-an-agents-model) for a family with no per-identity artifact — `expression-1` renders server-side from the agent's image. A `400` because no state change can fix it (unlike the 409s). |
+| `MODEL_PREREQUISITE_MISSING` | 422 | Adding that model needs an input this agent lacks: for `essence-2`, the video an Essence creation makes; for `expression-2`, a face image; for `expression-1`, an image and a voice; for `essence-1`, an image or that video. Add the missing image or voice, then retry. |
+| `MODEL_NOT_DOWNLOADABLE` | 400 | [Model download](/api/agents#download-an-agents-model) for a model with no file: `expression-1` renders in the bitHuman cloud from the agent's image. |
 | `MODEL_NOT_OFFERED` | 400 | The request names a model that is not currently offered to any account; the `message` names it. Nothing is launched or charged, and no other model is used in its place. Pick one of the [models](/models). |
 | `MODEL_NOT_YET_AVAILABLE` | 503 | A model is paused for your account (not returned in normal operation). Nothing is charged; retry later or use another model. |
-| `MODEL_ARTIFACT_NOT_READY` | 404 | [Model download](/api/agents#download-an-agents-model) for a **supported** family whose artifact hasn't been published to the download store yet. Retryable — the message carries a per-family retry hint; poll on this code. |
+| `MODEL_ARTIFACT_NOT_READY` | 404 | [Model download](/api/agents#download-an-agents-model) before the file is published (shortly after the agent is ready). Retry; the message says when. |
 
 ### File operations
 
@@ -167,7 +167,7 @@ else:
     print(resp.status_code, "retry after", resp.headers.get("Retry-After"))
 ```
 
-Retry `429` and `5xx` with exponential backoff and jitter ([rate limits](/api/rate-limits)). For a [plan or credit refusal](#plan-and-credit-refusals), follow its link field; fix the request for any other `4xx`.
+Retry `429` and `5xx` with exponential backoff and jitter ([rate limits](/api/rate-limits)). For a [plan or credit refusal](#plan-and-credit-refusals), follow its link field; fix the request for any other `4xx`. Is the API down? Check [status.bithuman.ai](https://status.bithuman.ai).
 
 ```endpoint
 getReadiness

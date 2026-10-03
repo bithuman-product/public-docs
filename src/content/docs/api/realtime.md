@@ -7,14 +7,17 @@ order: 50
 type: endpoint
 llms: api
 next: ["/api/authentication", "/pricing", "/api/errors"]
+moved:
+  retired-the-client-secret-mint: /resources/renamed#older-names
 ---
 
 ## Overview
 
-The Realtime API opens an OpenAI-Realtime voice session **through bitHuman**. Your API secret
-never leaves your server or app, no OpenAI key is involved, and the session is billed on your
-bitHuman balance as the chat line (see [Limits & billing](#limits--billing)). There are two
-ways in:
+A voice conversation (speech in, speech out) with no OpenAI key of your own: the relay opens an
+OpenAI-Realtime voice session **through bitHuman** and bills it in bitHuman credits as the chat
+line, 10 credits a minute, all-inclusive ([Limits & billing](#limits--billing)). Your API secret
+never leaves your server or app. Pair it with an on-device avatar to give the voice a face, as
+the Flutter plugin and the CLI do. There are two ways in:
 
 - **WebSocket relay:** `wss://api.bithuman.ai/v1/realtime`, the OpenAI Realtime WebSocket
   protocol, unchanged.
@@ -89,9 +92,3 @@ connection times out, usually 8–10 seconds later, and those seconds are billed
 - **Length:** one session lasts at most one hour.
 - Other errors: `401` missing or invalid key · `503` the relay is at capacity (retry after the
   `Retry-After` seconds).
-
-## Retired: the client-secret mint
-
-The earlier realtime token mint, which handed the client an OpenAI client secret (`ek_…`),
-is **retired** and answers `410 ENDPOINT_RETIRED`. Connect through the relay or
-`/v1/realtime/connect` instead; CLI 2.8.1 and later already do.
