@@ -43,6 +43,16 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Swift package 2.20.1 — 2026-10-03
+
+Tag `v2.20.1`.
+
+- **Opening an avatar that is already on the device no longer waits for the network:** `Essence2Download.identity` and `Expression2Download.avatar` return it at once and check for a newer file in the background; the next call picks it up. On an iPhone 18 Pro, `Essence2Download.identity` for an avatar on the phone took a median of 90 ms instead of 571 ms.
+- **A service outage no longer stops an avatar you already have:** with a copy on the device the call succeeds even when the download service fails or cannot be reached. Without a copy it fails as before.
+- `revalidateInBackground = false` on either type restores the check before returning.
+- Expression 2 is now 2.20.1. Essence 2 (1.15.3) and the macOS engine core (1.0.2) are unchanged.
+- **Action:** `.package(url: …, from: "2.20.1")`.
+
 ### Flutter plugin 2.6.34 — 2026-10-03
 
 Tag `flutter-plugin-v2.6.34`. Android Essence 2 engine: `essence2-android` 0.9.3.

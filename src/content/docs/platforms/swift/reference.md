@@ -73,6 +73,7 @@ let width: Int, height: Int
 static func Expression2Download.avatar(   // download an avatar file; sha256-checked, cached
     agentCode: String,
     directory: URL? = nil) async throws -> URL   // nil: Caches/bitHuman/expression2/avatars
+static var Expression2Download.revalidateInBackground: Bool   // default true (2.20.1)
 ```
 
 `create` throws `Expression2LoadError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start; `meteringRefusal` carries the message. `pull()` never blocks; poll it. `Expression2Download.avatar` throws `Expression2Download.Failure` when the download is refused, fails, or does not match its sha256.
@@ -127,7 +128,10 @@ Essence2Resources.releaseTag                     // the release they come from
 static func Essence2Download.identity(   // download an avatar file; sha256-checked, cached
     agentCode: String,
     directory: URL? = nil) async throws -> URL   // nil: Caches/bitHuman/essence2/avatars
+static var Essence2Download.revalidateInBackground: Bool   // default true (2.20.1)
 ```
+
+From 2.20.1, `Essence2Download.identity` and `Expression2Download.avatar` return an avatar that is already on the device at once, after checking its sha256, and ask the download service for a newer file in the background. A newer file is downloaded and checked while your session runs, and the next call returns it. When the service cannot be reached, a call with a copy on the device still succeeds; a call with no copy fails as before. Set `revalidateInBackground = false` to check before returning, as 2.20.0 did.
 
 Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(into:)`) draws from the same engine and hands out at most 25 frames a second. A reply's first speech frame anchors its timeline: frame *k* is due *k*/25 s later, and a frame that would be shown a full frame late is skipped, so a reply never drifts from its audio.
 
