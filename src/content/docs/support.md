@@ -15,7 +15,7 @@ help: top
 - **The bitHuman app on Discord**: [what it does and what it stores](/legal/discord-app).
 - **Email**: [hello@bithuman.ai](mailto:hello@bithuman.ai) for anything that should not be public.
 - **Status**: [status.bithuman.ai](https://status.bithuman.ai) for live platform and API status.
-- **Releases**: [@bithuman_ai](https://x.com/bithuman_ai) and the [changelog](/changelog).
+- **News and releases**: [X](https://x.com/steve_gu_1984), [LinkedIn](https://www.linkedin.com/company/bithuman-ai), [Bluesky](https://bsky.app/profile/bithuman.ai), [GitHub](https://github.com/bithuman-product) and the [changelog](/changelog).
 
 When you ask for help, include the command you ran, the version (`bithuman --version`, or `pip show bithuman`), and the full error. Every SDK page ends with a Troubleshooting table that maps common messages to fixes.
 
