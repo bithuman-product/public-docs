@@ -150,6 +150,12 @@
   "/models/how-it-works#serving-tiers": "/performance/method#pin-a-tier-for-a-benchmark",
   "/models/first-generation#naming--migration": "/resources/renamed#retired-model-and-file-names",
   "/models/avatar-file#caching-for-offline-use": "/models/avatar-file#download-an-avatar-file",
-  "/models/avatar-file#file-format-stability": "/models/avatar-file#disk-use-and-compatibility"
+  "/models/avatar-file#file-format-stability": "/models/avatar-file#disk-use-and-compatibility",
+  "/api/realtime#retired-the-client-secret-mint": "/resources/renamed#older-names",
+  "/build/mcp#first-frame": "/build/mcp#connect-your-client",
+  "/resources/troubleshooting#before-you-start": "/resources/troubleshooting#troubleshooting",
+  "/resources/troubleshooting#1-connect": "/resources/troubleshooting#troubleshooting",
+  "/resources/troubleshooting#2-idle-and-speaking": "/resources/troubleshooting#troubleshooting",
+  "/resources/troubleshooting#check-it-worked": "/resources/troubleshooting#troubleshooting"
  }
 }

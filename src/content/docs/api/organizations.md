@@ -21,13 +21,11 @@ one or inviting members on a lower plan returns `403`.
 each call needs; insufficient role returns `403`. Seat caps by plan: Enterprise 50, Business 25,
 Pro 10.
 
-These endpoints are not in the [OpenAPI spec](/api/reference) yet; this page is their reference.
-
 ## Organizations
 
 ### Create
 
-`POST /v2/organizations` — create an org (Pro+). Adds you as `owner`. One org per user today.
+`POST /v2/organizations` — create an org (Pro+). Adds you as `owner`. You can own one organization.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|

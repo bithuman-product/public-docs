@@ -28,12 +28,12 @@ Limits: up to **120 seconds** of output.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, or `essence-2`. All four render talking video today. A model outside your plan returns `403 PLAN_REQUIRED`. |
+| `model` | string | yes | Model: `essence-1`, `expression-1`, `expression-2`, or `essence-2`. All four render talking video today. A model outside your plan returns `403 PLAN_REQUIRED`. |
 | `agent_code` | string | yes | An agent you own, or a public sample — supplies the avatar identity. |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `audio`. |
 | `input.audio_url` | string | yes | Public URL to a WAV or MP3 file. |
-| `wait` | boolean | no | Blocking mode. `false` (default) returns a `job_id` to poll. `true` blocks until the render finishes (up to ~90s) and returns the finished `video_url` — plus `duration_seconds` and `credits_charged` — directly in this response; if it exceeds the cap you get the async `{ job_id }` to poll instead. Accepted as a JSON/multipart field or as a `?wait=true` query parameter. |
+| `wait` | boolean | no | `true` returns the finished video in this response (up to ~90 s, else a `job_id`); `false` (default) returns a `job_id` to poll. See [Blocking mode](#blocking-mode-wait-true). |
 
 ### Audio input
 

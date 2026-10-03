@@ -6,9 +6,14 @@ group: "Help"
 order: 10
 type: guide
 llms: troubleshooting
+moved:
+  before-you-start: /resources/troubleshooting#troubleshooting
+  1-connect: /resources/troubleshooting#troubleshooting
+  2-idle-and-speaking: /resources/troubleshooting#troubleshooting
+  check-it-worked: /resources/troubleshooting#troubleshooting
 ---
 
-Every platform and recipe page ends with a Troubleshooting table for its own problems; this page links them all, then covers the live session itself.
+Every platform and recipe page ends with a Troubleshooting table for its own problems; this page links them all, then covers common session errors.
 
 ## By platform
 
@@ -37,33 +42,11 @@ Every platform and recipe page ends with a Troubleshooting table for its own pro
 | Persona and gestures | [Persona](/build/persona#troubleshooting) · [Gestures](/build/gestures#troubleshooting) |
 | Claude, Cursor and other MCP clients | [MCP server](/build/mcp#troubleshooting) |
 
-## A live session
-
-### Before you start
-
-- An agent whose status is `ready` ([poll status](/api/agents#poll-status)).
-
-### 1. Connect
-
-| Situation | Expect |
-|---|---|
-| A session on an agent that has served recently | the avatar appears in a few seconds |
-| The first session on a new agent, or at a busy time | up to tens of seconds while capacity starts; later sessions are fast |
-
-If sessions keep failing to connect, check [status.bithuman.ai](https://status.bithuman.ai).
-
-### 2. Idle and speaking
-
-During silence the avatar keeps moving: Expression 2 plays its idle clip and Essence 2 its identity video, both looping smoothly. When speech starts, the lips follow the audio; on Expression 2, the idle motion covers the start of each reply. A running session bills whether the avatar is talking or idle ([pricing](/pricing)); end sessions you are not using.
-
-### Check it worked
-
-The avatar appears, moves while idle, and its lips follow the agent's speech. Frozen frames or motion that looks reversed are faults: report them with the agent code and the time.
-
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
+| The first session on a new agent is slow | capacity is starting | wait: up to tens of seconds the first time; later sessions connect in seconds. If sessions keep failing, check [status.bithuman.ai](https://status.bithuman.ai) |
 | The agent will not launch right after creation | it is not `ready` yet, or its model is still being prepared for serving | poll until `ready`; retry the first session after a short wait |
 | `409 MODEL_NOT_GENERATED` | the session asked for a model the agent does not have | check `supported_models`; [add the model](/api/agents#add-a-model-to-an-existing-agent) |
 | The session ends at once with `avatar_error: "model_not_generated"` | a `?model=` in the URL named a model the agent does not have | remove `?model=`, or add the model |

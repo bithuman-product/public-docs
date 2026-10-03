@@ -10,8 +10,13 @@ moved:
   manage-webhooks: /api/webhooks#list-webhooks
 ---
 
-Agent generation and talking-video renders are asynchronous — agent creation takes
-minutes for the first-generation models and about 2 to 2.5 hours for either
+Two kinds of notification share this page:
+
+- **Job webhooks** (agent ready, video done): registered through the API and signed. Most of this page.
+- **[Session events](#session-events)** (each message of a live chat): set in the dashboard and not signed.
+
+Agent generation and talking-video renders are asynchronous: agent creation takes
+minutes for the first-generation models and about 2 hours for either
 second-generation one. Instead of polling `GET /v1/agent/status/{id}` or
 `GET /v1/video/{job_id}`, register a **webhook** and bitHuman will POST a
 signed event to your endpoint the moment the work finishes.

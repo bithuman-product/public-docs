@@ -15,7 +15,7 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## Highlights
 
-The releases of September 2026 worth a look first.
+Recent releases worth a look first.
 
 ```highlights
 ```

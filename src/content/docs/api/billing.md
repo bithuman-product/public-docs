@@ -41,7 +41,7 @@ curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
 
 ## Get the pricing schedule
 
-Returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with the `rounding` rule and `basis` in force. [Pricing & credits](/pricing) is generated from this response. The call needs the `api-secret` header; without one it returns `401 MISSING_AUTH`.
+Returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with its `rounding` rule (`seconds_floor_carry`: billed per exact second, rounded down per session, the remainder carried to your next session). [Pricing & credits](/pricing) is generated from this response. The call needs the `api-secret` header; without one it returns `401 MISSING_AUTH`.
 
 ```bash
 curl https://api.bithuman.ai/v1/pricing \
@@ -144,7 +144,7 @@ model** — read the key for the model you actually run:
 | `essence_1_cloud` | Essence 1 on bitHuman cloud | balance ÷ 2 |
 | `essence_1_self_hosted` | Essence 1 on your hardware | balance ÷ 1 |
 | `expression_1_cloud` | Expression 1 on bitHuman cloud | balance ÷ 4 |
-| `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
+| `voice_chat` | Managed agent voice chat (the all-inclusive chat line) | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
 
 `essence_cloud`, `essence_self_hosted` and `expression_cloud` are older aliases of the `essence_1_*` and `expression_1_*` keys, **not** Essence 2 or Expression 2. Ignore `expression_1_self_hosted` and `expression_self_hosted`: Expression 1 has no self-hosted mode. The estimates are advisory; the server computes the actual charge.
