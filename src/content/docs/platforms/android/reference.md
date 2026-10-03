@@ -18,7 +18,7 @@ Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expres
 
 Generated from `ai.bithuman:essence2-android:0.9.3` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
-Import: `import ai.bithuman.essence2.*`.
+Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import it by name: `import ai.bithuman.elevate.Essence2Options`. `Essence2StoreException.Code` is a nested class, which a type alias does not reach, so import it by name: `import ai.bithuman.elevate.Essence2StoreException.Code`.
 
 | Class | Purpose |
 | --- | --- |
@@ -29,12 +29,18 @@ Import: `import ai.bithuman.essence2.*`.
 | `Essence2MeteredDoorResolver` | Downloads with a secret you pass here instead: `Essence2MeteredDoorResolver(secret)`. |
 | `Essence2PublicMirrorResolver` | Downloads from your own mirror of the avatar files. |
 | `Essence2UrlResolver` | The interface both resolvers implement. |
-| `Essence2Bundle` | A downloaded avatar; pass `dir` to `Essence2Avatar.create`. |
+| `Essence2Bundle` | A downloaded avatar; pass `dir` and `options` to `Essence2Avatar.create`. |
+| `Essence2Options` | Output size: `outputHeight = Essence2Options.HD_720` for the avatar's 1280×720 output where it publishes one, `NATIVE` (the default) for full size. Pass the same options to `fetch` and `create`; `bundle.options` carries them. |
 | `Essence2ProgressListener` | Download progress callback. |
+| `Essence2RequestHeaders` | Implement it beside `Essence2UrlResolver` to send headers with each download, as `Essence2MeteredDoorResolver` does. |
 | `Essence2Metering` | `stateDir` keeps usage that could not be sent. `apiSecret` is deprecated: use `Essence2Credential`. |
 | `Essence2MeteringRefused` | Thrown when the service refuses the session (no secret, rejected secret, or offline too long). |
 | `Essence2StoreException` | Thrown when a download fails. |
 | `Essence2RenderFailed` | Thrown by `checkRender()` when the engine stopped. |
+| `Essence2BorrowRefused` | Thrown by `pull()` or `pullHardwareBuffer()` when the engine refuses to render a frame. The session is over: close the avatar and create a new one. |
+| `Essence2ArmLayout` | Used inside the SDK; an app does not need it. |
+| `Essence2Frames` | The lower-level render session that `Essence2Bundle.open()` returns. Apps use `Essence2Avatar.create` instead; its members are not documented here. |
+| `Essence2RenderStatus` | The engine's own record behind `checkRender()`. Call `Essence2Avatar.checkRender()` instead. |
 
 ### Essence2Avatar
 
@@ -61,6 +67,8 @@ class Essence2Avatar : AutoCloseable
     fun useHardwareBuffers(slots: Int = …)
     companion object
         const val W2V_MEMBER: String = "w2v_ess_fp16_v1.onnx"
+        @JvmStatic fun create(bundleDir: File, options: Essence2Options, w2v: File? = …, threads: Int = …, frames: Essence2Frames? = …): Essence2Avatar
+        @JvmStatic fun create(bundleDir: File, w2v: File? = …, threads: Int = …, frames: Essence2Frames? = …): Essence2Avatar
 ```
 
 ### Essence2HardwareFrame
@@ -75,7 +83,7 @@ class Essence2HardwareFrame : AutoCloseable
 
 ```kotlin
 object Essence2Credential
-    fun set(apiSecret: String?)
+    @JvmStatic fun set(apiSecret: String?)
 ```
 
 ### Essence2ModelStore
@@ -93,10 +101,13 @@ class Essence2ModelStore
     var revalidateMinIntervalMs: Long
     fun bytesOnDisk(): Long
     fun cached(code: String): Essence2Bundle?
+    fun cached(code: String, options: Essence2Options): Essence2Bundle?
     fun evict(code: String): Boolean
     fun fetch(code: String, force: Boolean = …, cancelled: AtomicBoolean? = …, progress: Essence2ProgressListener? = …): Essence2Bundle
+    fun fetch(code: String, options: Essence2Options, force: Boolean = …, cancelled: AtomicBoolean? = …, progress: Essence2ProgressListener? = …): Essence2Bundle
     fun listCached(): List<Essence2ModelStore.CachedIdentity>
     fun verifyDeep(code: String): Boolean
+    fun verifyDeep(code: String, options: Essence2Options): Boolean
     companion object
         const val BUNDLE_MANIFEST: String = "manifest.json"
         const val DEFAULT_DOOR_URL: String = "https://api.bithuman.ai"
@@ -135,6 +146,19 @@ fun interface Essence2UrlResolver
 class Essence2Bundle
     val code: String
     val dir: File
+    val options: Essence2Options
+```
+
+### Essence2Options
+
+```kotlin
+data class Essence2Options
+    constructor(outputHeight: Int = …)
+    val outputHeight: Int
+    // data class: copy, componentN, equals, hashCode and toString as Kotlin generates them
+    companion object
+        const val HD_720: Int = 720
+        const val NATIVE: Int = 0
 ```
 
 ### Essence2ProgressListener
@@ -142,6 +166,13 @@ class Essence2Bundle
 ```kotlin
 fun interface Essence2ProgressListener
     fun onProgress(memberName: String, bytesDone: Long, bytesTotal: Long)
+```
+
+### Essence2RequestHeaders
+
+```kotlin
+interface Essence2RequestHeaders
+    fun headers(): Map<String, String>
 ```
 
 ### Essence2Metering
@@ -173,6 +204,9 @@ class Essence2StoreException : RuntimeException
     constructor(message: String, cause: Throwable?, code: Essence2StoreException.Code)
     val retriable: Boolean
     val code: Essence2StoreException.Code
+    enum class Code
+        NETWORK_TRANSIENT, OFFLINE, AUTH, NOT_FOUND, OUTDATED, CORRUPT, REFUSED, CANCELLED, STORAGE, INVALID_ARGUMENT, UNKNOWN
+        val retriable: Boolean
 ```
 
 ### Essence2RenderFailed
@@ -181,6 +215,13 @@ class Essence2StoreException : RuntimeException
 class Essence2RenderFailed : IllegalStateException
     constructor(message: String, detail: String)
     val detail: String
+```
+
+### Essence2BorrowRefused
+
+```kotlin
+class Essence2BorrowRefused : IllegalStateException
+    constructor(message: String)
 ```
 
 ## Expression 2
@@ -206,6 +247,7 @@ Import: `import ai.bithuman.expression2.*`.
 | `Expression2Exception` | Thrown when a session cannot start or is refused. |
 | `Accelerator` | Which accelerator a session uses. |
 | `Expression2Backend` | Read-only, one per model part: the device it runs on and, on the accelerator, whether the prepared decoder was reused and how long preparing it took. |
+| `Device` | Where a model part runs, as `Expression2Backend.device` reports it. |
 
 ### Expression2Avatar
 
@@ -243,15 +285,15 @@ class Expression2Avatar : AutoCloseable
         const val FRAME_HEIGHT: Int = 720
         const val FRAME_WIDTH: Int = 416
         const val SAMPLE_RATE: Int = 16000
-        fun create(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar
-        fun warmUp(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar
+        @JvmStatic fun create(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar
+        @JvmStatic fun warmUp(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar
 ```
 
 ### Expression2Credential
 
 ```kotlin
 object Expression2Credential
-    fun set(apiSecret: String?)
+    @JvmStatic fun set(apiSecret: String?)
 ```
 
 ### Expression2ModelStore
@@ -326,8 +368,8 @@ class Expression2Model
     fun toString(): String
     companion object
         const val CANON_BYTES: Long = 299520
-        fun combined(modelPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …, idleClipPath: File? = …): Expression2Model
-        fun split(sharedEncPath: File, identityPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …): Expression2Model
+        @JvmStatic fun combined(modelPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …, idleClipPath: File? = …): Expression2Model
+        @JvmStatic fun split(sharedEncPath: File, identityPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …): Expression2Model
 ```
 
 ### Expression2Options
@@ -407,6 +449,7 @@ enum class Accelerator
 ```kotlin
 data class Expression2Backend
     constructor(modelPath: String, device: Device, modelLoadMs: Double, interpreterCreateMs: Double, qnnContextCacheWasWarm: Boolean, qnnContextCacheBytesBefore: Long, qnnContextCacheBytesAfter: Long)
+    val device: Device
     val interpreterCreateMs: Double
     val modelLoadMs: Double
     val modelPath: String
@@ -421,6 +464,13 @@ data class Expression2Backend
     var qnnPersistMs: Double
     var qnnRestoreDegraded: Boolean
     // data class: copy, componentN, equals, hashCode and toString as Kotlin generates them
+```
+
+### Device
+
+```kotlin
+enum class Device
+    CPU, NPU, REFERENCE
 ```
 <!-- ANDROIDAPI:END -->
 

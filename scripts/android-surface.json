@@ -1604,7 +1604,8 @@
                 "signature": "fun open(avatar: String): Avatar",
                 "suspend": false,
                 "jvm": "open(Ljava/lang/String;)Lai/bithuman/elevate/Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [],
@@ -2099,7 +2100,8 @@
                 "signature": "fun create(bundleDir: String, options: Essence2Options, model: String = …, threads: Int = …, pinBigCores: Boolean = …): ElevateFrames",
                 "suspend": false,
                 "jvm": "create(Ljava/lang/String;Lai/bithuman/elevate/Essence2Options;Ljava/lang/String;IZ)Lai/bithuman/elevate/ElevateFrames;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [],
@@ -2688,21 +2690,24 @@
                 "signature": "fun create(bundleDir: File, options: Essence2Options, w2v: File? = …, threads: Int = …, frames: ElevateFrames? = …): Essence2Avatar",
                 "suspend": false,
                 "jvm": "create(Ljava/io/File;Lai/bithuman/elevate/Essence2Options;Ljava/io/File;ILai/bithuman/elevate/ElevateFrames;)Lai/bithuman/elevate/Essence2Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               },
               {
                 "name": "create",
                 "signature": "fun create(bundleDir: File, w2v: File? = …, threads: Int = …, frames: ElevateFrames? = …): Essence2Avatar",
                 "suspend": false,
                 "jvm": "create(Ljava/io/File;Ljava/io/File;ILai/bithuman/elevate/ElevateFrames;)Lai/bithuman/elevate/Essence2Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               },
               {
                 "name": "frontendIn",
                 "signature": "fun frontendIn(bundleDir: File): File",
                 "suspend": false,
                 "jvm": "frontendIn(Ljava/io/File;)Ljava/io/File;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [
@@ -2837,7 +2842,8 @@
                 "signature": "fun set(apiSecret: String?)",
                 "suspend": false,
                 "jvm": "set(Ljava/lang/String;)V",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [],
@@ -7942,7 +7948,8 @@
                 "signature": "fun open(avatar: String): Avatar",
                 "suspend": false,
                 "jvm": "open(Ljava/lang/String;)Lai/bithuman/expression2/Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [],
@@ -8081,21 +8088,24 @@
                 "signature": "fun open(context: Context, code: String, credential: String = …, progress: Expression2ModelStore.ProgressListener? = …): Expression2Avatar",
                 "suspend": false,
                 "jvm": "open(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lai/bithuman/expression2/Expression2ModelStore$ProgressListener;)Lai/bithuman/expression2/Expression2Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               },
               {
                 "name": "render",
                 "signature": "fun render(context: Context, code: String, wav: File, credential: String, progress: Expression2ModelStore.ProgressListener?, onFrame: Expression2.FrameSink): Int",
                 "suspend": false,
                 "jvm": "render(Landroid/content/Context;Ljava/lang/String;Ljava/io/File;Ljava/lang/String;Lai/bithuman/expression2/Expression2ModelStore$ProgressListener;Lai/bithuman/expression2/Expression2$FrameSink;)I",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               },
               {
                 "name": "render",
                 "signature": "fun render(context: Context, code: String, wav: File, onFrame: Expression2.FrameSink): Int",
                 "suspend": false,
                 "jvm": "render(Landroid/content/Context;Ljava/lang/String;Ljava/io/File;Lai/bithuman/expression2/Expression2$FrameSink;)I",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [],
@@ -8642,14 +8652,16 @@
                 "signature": "fun create(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar",
                 "suspend": false,
                 "jvm": "create(Landroid/content/Context;Lai/bithuman/expression2/Expression2Model;Lai/bithuman/expression2/Expression2Options;)Lai/bithuman/expression2/Expression2Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               },
               {
                 "name": "warmUp",
                 "signature": "fun warmUp(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar",
                 "suspend": false,
                 "jvm": "warmUp(Landroid/content/Context;Lai/bithuman/expression2/Expression2Model;Lai/bithuman/expression2/Expression2Options;)Lai/bithuman/expression2/Expression2Avatar;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [
@@ -9031,7 +9043,8 @@
                 "signature": "fun set(apiSecret: String?)",
                 "suspend": false,
                 "jvm": "set(Ljava/lang/String;)V",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [],
@@ -9872,14 +9885,16 @@
                 "signature": "fun combined(modelPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …, idleClipPath: File? = …): Expression2Model",
                 "suspend": false,
                 "jvm": "combined(Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               },
               {
                 "name": "split",
                 "signature": "fun split(sharedEncPath: File, identityPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …): Expression2Model",
                 "suspend": false,
                 "jvm": "split(Ljava/io/File;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
-                "loadable": true
+                "loadable": true,
+                "jvm_static": true
               }
             ],
             "properties": [
