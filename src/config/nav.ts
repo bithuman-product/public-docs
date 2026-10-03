@@ -32,7 +32,7 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
  *  one until a later wave adds its pages are listed there with the reason. */
 export const GROUP_ORDER: Record<SectionId, string[]> = {
   overview: ["Get started", "Pricing", "Help", "Resources"],
-  platforms: ["Swift", "Android", "Flutter", "Web", "Python", "Windows", "CLI", "LiveKit", "Pipecat", "REST"],
+  platforms: ["Swift", "Android", "Flutter", "Web", "Python", "CLI", "LiveKit", "Pipecat", "REST"],
   models: ["Models", "Concepts"],
   build: ["Conversations", "Avatars", "Apps", "How-to", "Examples"],
   deploy: ["Where it renders", "Privacy & compliance", "Use cases"],
