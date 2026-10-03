@@ -27,7 +27,10 @@ export interface HomeCard {
  *  under it opens with the brand line (owner, 2026-09-30: "AI with character."). */
 export const LANDING = {
   title: "bitHuman docs",
-  line: "AI with character. Real-time talking avatars from one portrait.",
+  line: "AI with character. One portrait becomes an avatar that lip-syncs to speech, live.",
+  /** W10 (owner, 2026-10-03): which platform and which model, in one line each */
+  pickPlatform: "A website: Web. An app: iOS, Android or Flutter. A voice agent: LiveKit or Pipecat. Any backend: the REST API.",
+  pickModel: "A real person: Essence 2. Any other character: Expression 2, the default.",
 };
 
 /** The product promise (the site JSON-LD description). */

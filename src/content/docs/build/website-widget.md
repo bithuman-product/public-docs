@@ -7,7 +7,6 @@ group: "Apps"
 order: 10
 type: recipe
 llms: build
-time: "5 min"
 renders: ["cloud", "browser"]
 platforms: ["web"]
 models: ["essence-2", "expression-2"]

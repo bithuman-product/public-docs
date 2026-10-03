@@ -13,6 +13,8 @@ platforms: ["pipecat"]
 models: ["essence-2", "expression-2"]
 claims: ["S3", "S4"]
 next: ["/platforms/pipecat/app", "/platforms/pipecat/troubleshooting"]
+moved:
+  first-frame: /platforms/pipecat#run-your-first-avatar
 ---
 
 Put `BitHumanVideoService` after your TTS service: the bot's speech goes in, and lip-synced avatar video with the matching audio comes out.
@@ -32,6 +34,7 @@ Put `BitHumanVideoService` after your TTS service: the bot's speech goes in, and
 | Python 3.11–3.14 | `python3 --version` |
 | macOS 14+ on Apple silicon, or Linux x86_64 or arm64 (a PC with no GPU renders both models) | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
 | An API secret | [Your API secret](/start/api-secret) |
+| A paid plan (Creator or higher): usage bills per second while the avatar runs | [Pricing](/pricing) |
 | `ffmpeg` and `git`, for the demo below | `ffmpeg -version`, `git --version` |
 
 ## Install
@@ -48,9 +51,9 @@ The package brings Pipecat (`pipecat-ai` 1.12.0 or newer) and the bitHuman Pytho
 
 Set `BITHUMAN_API_SECRET` in the shell that runs the bot, or pass `api_secret=` to `BitHumanVideoService`. The service never logs the secret and removes it from error text. Name the avatar file with `model_path=`, or set `BITHUMAN_MODEL_PATH`.
 
-Cost: active session time, talking or idle, to the second ([pricing](/pricing)). The avatar opens on `StartFrame` and closes on `EndFrame`, `CancelFrame` or cleanup.
+The avatar opens on `StartFrame` and closes on `EndFrame`, `CancelFrame` or cleanup.
 
-## First frame
+## Run your first avatar
 
 The package's demo script sends a WAV file through a Pipecat pipeline as `TTSAudioRawFrame` chunks, as a TTS service would, and writes the avatar frames that come out to an MP4. In the virtual environment from Install:
 

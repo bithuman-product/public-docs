@@ -130,7 +130,7 @@ while i < pcm.count {
 await renderer.flushTail()
 ```
 
-To play the reply's audio in step with the lips, start it on the reply's first frame (`audioTime == 0`): the full loop is in [iOS & iPadOS: First frame](/platforms/ios#first-frame).
+To play the reply's audio in step with the lips, start it on the reply's first frame (`audioTime == 0`): the full loop is in [iOS & iPadOS: First frame](/platforms/ios#run-your-first-avatar).
 
 ```expected
 The character idles, then says the clip with its lips in sync, rendered in your app.

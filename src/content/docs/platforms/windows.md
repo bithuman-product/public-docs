@@ -14,6 +14,8 @@ platforms: ["python"]
 models: ["essence-2", "expression-2"]
 claims: ["S2", "S3", "S4", "S7", "S10"]
 next: ["/platforms/python", "/platforms/python/reference", "/deploy/cpu"]
+moved:
+  first-frame: /platforms/windows#run-your-first-avatar
 ---
 
 The `bithuman` Python package: a file in and frames or an MP4 out, or a live stream in and frames out.
@@ -33,6 +35,7 @@ Both models run on the CPU alone, with no GPU and no WSL. The [CLI](/platforms/c
 | Windows 11 on x86_64 (64-bit Intel or AMD) | `python -c "import platform; print(platform.system(), platform.machine())"` prints `Windows AMD64` |
 | 64-bit Python 3.10–3.14, from [python.org](https://www.python.org/downloads/windows/) or `winget install Python.Python.3.12` | `python --version` |
 | An API secret | [Your API secret](/start/api-secret) |
+| A paid plan (Creator or higher): usage bills per second while the avatar runs | [Pricing](/pricing) |
 | About 1 GB of disk (the package, 118–190 MB per avatar) | `Get-PSDrive C` |
 
 The package carries the Microsoft C++ runtime it needs, so there is nothing else to install. It is tested on Windows 11; Windows on Arm has no package yet.
@@ -51,9 +54,9 @@ The package installs no command-line tool.
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the PowerShell window that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. See [Your API secret](/start/api-secret). Cost: active session time, to the second ([pricing](/pricing)). Downloading a sample avatar needs no account.
+Set `BITHUMAN_API_SECRET` in the PowerShell window that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. See [Your API secret](/start/api-secret). Downloading a sample avatar needs no account.
 
-## First frame
+## Run your first avatar
 
 ```powershell
 $env:BITHUMAN_API_SECRET = "<your API secret>"
@@ -63,18 +66,19 @@ curl.exe -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 
 ```python
 import bithuman
+bithuman.open("wise-pup.imx").render("speech.wav", out_mp4="out.mp4")
+# → out.mp4: wise-pup speaking the sample, 416×720, 15 s
+```
+
+Open `out.mp4` to watch it talk. Windows' own H.264 encoder writes it, so no `ffmpeg` install is needed. To process the frames yourself, iterate over `render` without `out_mp4=`:
+
+```python
+import bithuman
 
 with bithuman.open("wise-pup.imx") as avatar:
     frames = [image for image in avatar.render("speech.wav")]
 print(len(frames), "frames of", frames[0].shape)
 # → 300 frames of (720, 416, 3)
-```
-
-To write an MP4 instead, pass `out_mp4=` to the same `render`; it returns the number of frames written. On Windows the video is encoded with Windows' own H.264 encoder, so no `ffmpeg` install is needed.
-
-```python
-import bithuman
-bithuman.open("wise-pup.imx").render("speech.wav", out_mp4="out.mp4")
 ```
 
 ## Integrate into your app

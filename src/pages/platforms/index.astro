@@ -12,8 +12,9 @@ import { balancedCols } from "../../lib/grid";
 
 // The Platforms hub (docs v2 SPEC §3, hub budget): the banner, a card per
 // platform page grouped the way the sidebar is, and one support matrix. Cards
-// carry a title and one line, no chips; where each renders, the time to a first
-// result and the reference come from src/data/platforms.ts in the matrix.
+// carry a title and one line, no chips; where each renders, who supplies the
+// conversation, what to install and the reference come from src/data/platforms.ts
+// in the matrix (W10: only columns a developer acts on).
 // Versions live on /downloads.
 const meta = hubMeta("platforms");
 const GROUPS = PLATFORM_GROUPS;
@@ -42,16 +43,17 @@ const gid = (name: string) => `g-${name.replace(/\W+/g, "-").toLowerCase()}`;
     ))}
 
     <section class="hub-group" aria-labelledby="support-matrix">
-      <div class="band-head"><h2 id="support-matrix">Support matrix</h2></div>
+      <div class="band-head"><h2 id="support-matrix">Support matrix</h2><p>Conversation: who listens to the user and writes the replies. "Your app sends speech audio" means you bring speech-to-text, the language model and the voice; bitHuman draws the face (<a href="/models/how-it-works#key-terms">key terms</a>).</p></div>
       <div class="prose matrix">
         <div class="table-wrap"><table>
-          <thead><tr><th>Platform</th><th>Where it renders</th><th>First result</th><th>Reference</th></tr></thead>
+          <thead><tr><th>Platform</th><th>Where it renders</th><th>Conversation</th><th>Install</th><th>Reference</th></tr></thead>
           <tbody>
             {PLATFORM_PAGES.map((p) => (
               <tr>
                 <td data-label="Platform"><a href={p.href}>{p.title}</a></td>
                 <td data-label="Where it renders">{p.renders.map((r) => RENDERS_LABEL[r]).join(" · ")}</td>
-                <td data-label="First result">{p.time ?? "—"}</td>
+                <td data-label="Conversation">{p.conversation}</td>
+                <td data-label="Install">{p.install.code ? <code>{p.install.code}</code> : p.install.text}</td>
                 <td data-label="Reference">{REFERENCE[p.id] ? <a href={REFERENCE[p.id].href}>{REFERENCE[p.id].title}</a> : "—"}</td>
               </tr>
             ))}

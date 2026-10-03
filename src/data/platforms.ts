@@ -23,8 +23,7 @@ export interface Platform {
   needs: string;
   /** One line a reader can copy */
   first: string;
-  time: string;
-  /** Platform page; its #first-frame anchor is where the card's Next goes */
+  /** Platform page; its #run-your-first-avatar anchor is where the card's Next goes */
   docs: string;
   models: string[];
   /** A line shown under the row (the offline row quotes the approved offline-license copy) */
@@ -43,14 +42,14 @@ export const PLATFORMS: Platform[] = [
   {
     id: "web", want: "Put an avatar on a website", use: "Web embed", needs: "nothing",
     renders: "in the bitHuman cloud, or in the visitor's tab with WebGPU (render=local)", conversation: "on bitHuman's servers", credential: "none for a public agent; an embed token for a private one",
-    first: EMBED_SNIPPET, time: "1 min", docs: "/platforms/web", models: both,
+    first: EMBED_SNIPPET, docs: "/platforms/web", models: both,
     card: { lang: "html", code: EMBED_SNIPPET, expect: "A live avatar in your page that listens and answers. Allow the microphone when the browser asks." },
   },
   {
     id: "rest", want: "Call it from any backend", use: "REST API", needs: "API secret",
     renders: "in the bitHuman cloud", conversation: "on bitHuman's servers, or with your own provider keys", credential: "API secret, header api-secret",
     first: `curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"`,
-    time: "2 min", docs: "/platforms/rest", models: both,
+    docs: "/platforms/rest", models: both,
     card: {
       lang: "bash",
       code: `export BITHUMAN_API_SECRET="<your API secret>"
@@ -62,7 +61,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
   {
     id: "python", want: "Render or stream from Python", use: "Python", needs: "API secret",
     renders: "on your machine: macOS (Apple silicon) or Linux x86_64 / arm64", conversation: "your code", credential: "API secret (BITHUMAN_API_SECRET)",
-    first: `pip install "bithuman[expression-2]"`, time: "5 min", docs: "/platforms/python", models: both,
+    first: `pip install "bithuman[expression-2]"`, docs: "/platforms/python", models: both,
     card: {
       lang: "bash",
       code: `python3 -m venv .venv && source .venv/bin/activate
@@ -79,7 +78,7 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
   {
     id: "cli", want: "Run it from a terminal", use: "CLI (macOS arm64, Linux x86_64 / arm64)", needs: "sign-in",
     renders: "on your machine: macOS (Apple silicon) or Linux x86_64 / arm64", conversation: "bitHuman's voice chat, your own OpenAI account, or the local conversation brain (BITHUMAN_LOCAL=1)", credential: "bithuman login, or BITHUMAN_API_SECRET",
-    first: "curl -fsSL https://install.bithuman.ai | sh", time: "3 min", docs: "/platforms/cli", models: both,
+    first: "curl -fsSL https://install.bithuman.ai | sh", docs: "/platforms/cli", models: both,
     card: {
       lang: "bash",
       code: `# macOS: brew install ffmpeg   ·   Debian/Ubuntu: sudo apt install -y ffmpeg
@@ -96,33 +95,33 @@ bithuman render wise-pup speech.wav -o out.mp4
     id: "apple", want: "Ship an iPhone, iPad or Mac app", use: "iOS & iPadOS (Swift package)", needs: "Xcode 26+, API secret",
     renders: "on the iPhone, iPad or Mac", conversation: "your app's own speech, language and voice services", credential: "API secret, fetched from your backend in a shipped app",
     first: `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "${V.swift}")`,
-    time: "15 min", docs: "/platforms/ios", models: both,
+    docs: "/platforms/ios", models: both,
   },
   {
     id: "android", want: "Ship an Android app", use: "Android", needs: "arm64 device, API secret",
     renders: "on the Android phone (arm64, a physical device)", conversation: "your app's own speech, language and voice services", credential: "API secret, fetched from your backend in a shipped app",
     first: `implementation("ai.bithuman:expression2-android:${V.expression2_android}")`,
-    time: "15 min", docs: "/platforms/android", models: both,
+    docs: "/platforms/android", models: both,
   },
   {
     id: "livekit", want: "Add a face to a LiveKit voice agent", use: "LiveKit", needs: "API secret",
     renders: "on your server (model_path) or in the bitHuman cloud", conversation: "your LiveKit agent", credential: "BITHUMAN_MASTER_SECRET on the worker; a minted token for a cloud avatar",
-    first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv', time: "10 min", docs: "/platforms/livekit", models: both,
+    first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv', docs: "/platforms/livekit", models: both,
   },
   {
     id: "pipecat", want: "Add a face to a Pipecat voice bot", use: "Pipecat", needs: "API secret",
     renders: "in your bot's process, on your own Mac or Linux machine", conversation: "your Pipecat pipeline", credential: "BITHUMAN_API_SECRET in the bot's environment",
-    first: 'pip install "pipecat-bithuman[expression-2]"', time: "10 min", docs: "/platforms/pipecat", models: both,
+    first: 'pip install "pipecat-bithuman[expression-2]"', docs: "/platforms/pipecat", models: both,
   },
   {
     id: "mcp", want: "Drive it from Claude or Cursor", use: "MCP server", needs: "sign-in",
-    first: "claude mcp add bithuman -- bithuman mcp", time: "2 min", docs: "/build/mcp", models: both,
+    first: "claude mcp add bithuman -- bithuman mcp", docs: "/build/mcp", models: both,
   },
   {
     id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Fully offline",
     renders: "on your Linux and macOS computers", conversation: "agreed with sales for your site", credential: "a pack, redeemed once on the machine while it is online",
     needs: "Business or Enterprise plan; Essence 1 on Linux or an Apple silicon Mac, Essence 2 and Expression 2 on Linux x86_64",
-    first: "Contact sales", time: "—", docs: "/deploy/offline", models: ["essence-2", "expression-2", "essence-1"],
+    first: "Contact sales", docs: "/deploy/offline", models: ["essence-2", "expression-2", "essence-1"],
     note: OFFLINE_LICENSE_COPY,
   },
 ];
@@ -139,33 +138,35 @@ export interface PlatformPage {
   line: string;
   renders: import("./labels").Renders[];
   artifacts: import("./labels").Artifact[];
-  /** Time to a first result, from the platform's first-frame steps */
-  time?: string;
+  /** Who supplies the conversation (listening, the replies, the voice), for the support matrix */
+  conversation: string;
+  /** The one thing to install (a command, shown as code, or a few words) */
+  install: { code?: string; text?: string };
 }
 
 export const PLATFORM_PAGES: PlatformPage[] = [
   { id: "ios", title: "iOS & iPadOS", href: "/platforms/ios", icon: "phone", group: "Apps",
-    line: "One Swift package. The avatar renders on the iPhone or iPad.", renders: ["device"], artifacts: ["swift"], time: "15 min" },
+    line: "One Swift package. The avatar renders on the iPhone or iPad.", renders: ["device"], artifacts: ["swift"], conversation: "Your app sends speech audio", install: { text: "Swift Package Manager" } },
   { id: "macos", title: "macOS", href: "/platforms/macos", icon: "laptop", group: "Apps",
-    line: "The same Swift package in a Mac app, or from a terminal with swift run.", renders: ["device"], artifacts: ["swift"], time: "5 min" },
+    line: "The same Swift package in a Mac app, or from a terminal with swift run.", renders: ["device"], artifacts: ["swift"], conversation: "Your app sends speech audio", install: { text: "Swift Package Manager" } },
   { id: "android", title: "Android", href: "/platforms/android", icon: "android", group: "Apps",
-    line: "One Gradle dependency. The avatar renders on the phone.", renders: ["device"], artifacts: ["expression2_android", "essence2_android"], time: "15 min" },
+    line: "One Gradle dependency. The avatar renders on the phone.", renders: ["device"], artifacts: ["expression2_android", "essence2_android"], conversation: "Your app sends speech audio", install: { text: "Gradle, from maven.bithuman.ai" } },
   { id: "flutter", title: "Flutter", href: "/platforms/flutter", icon: "flutter", group: "Apps",
-    line: "One plugin for a Flutter app. The avatar renders on the phone.", renders: ["device"], artifacts: ["flutter_plugin"] },
+    line: "One plugin for a Flutter app. The avatar renders on the phone.", renders: ["device"], artifacts: ["flutter_plugin"], conversation: "Your app sends speech audio", install: { text: "A git dependency in pubspec.yaml" } },
   { id: "web", title: "Web", href: "/platforms/web", icon: "globe", group: "Apps",
-    line: "One iframe on any page. The avatar renders in the cloud, or in the tab with WebGPU.", renders: ["cloud", "browser"], artifacts: [], time: "1 min" },
+    line: "One iframe on any page. The avatar renders in the cloud, or in the tab with WebGPU.", renders: ["cloud", "browser"], artifacts: [], conversation: "Included: bitHuman listens and answers", install: { text: "Nothing: one <iframe>" } },
   { id: "python", title: "Python", href: "/platforms/python", icon: "braces", group: "Code & terminal",
-    line: "Open an avatar, push audio, get frames, on macOS, or on a Linux or Windows PC with no GPU.", renders: ["server", "no-gpu"], artifacts: ["python"], time: "5 min" },
+    line: "Open an avatar, push audio, get frames, on macOS, or on a Linux or Windows PC with no GPU.", renders: ["server", "no-gpu"], artifacts: ["python"], conversation: "Your code sends speech audio", install: { code: 'pip install "bithuman[expression-2]"' } },
   { id: "windows", title: "Windows", href: "/platforms/windows", icon: "windows", group: "Code & terminal",
-    line: "Open an avatar, push audio, get frames on a Windows 11 PC, with no GPU.", renders: ["server", "no-gpu"], artifacts: ["python"], time: "5 min" },
+    line: "Open an avatar, push audio, get frames on a Windows 11 PC, with no GPU.", renders: ["server", "no-gpu"], artifacts: ["python"], conversation: "Your code sends speech audio", install: { code: 'pip install "bithuman[expression-2]"' } },
   { id: "cli", title: "CLI", href: "/platforms/cli", icon: "terminal", group: "Code & terminal",
-    line: "A live avatar or an MP4 from the terminal, on macOS or a Linux PC with no GPU.", renders: ["server", "no-gpu"], artifacts: ["cli"], time: "3 min" },
+    line: "A live avatar or an MP4 from the terminal, on macOS or a Linux PC with no GPU.", renders: ["server", "no-gpu"], artifacts: ["cli"], conversation: "Included with bithuman run, or your own audio file", install: { code: "curl -fsSL https://install.bithuman.ai | sh" } },
   { id: "livekit", title: "LiveKit", href: "/platforms/livekit", icon: "wave", group: "Agents & APIs",
-    line: "Give a LiveKit voice agent a face, rendered on your server or in the bitHuman cloud.", renders: ["server", "cloud"], artifacts: ["livekit_plugin"], time: "10 min" },
+    line: "Give a LiveKit voice agent a face, rendered on your server or in the bitHuman cloud.", renders: ["server", "cloud"], artifacts: ["livekit_plugin"], conversation: "Your LiveKit agent", install: { code: "pip install livekit-plugins-bithuman" } },
   { id: "pipecat", title: "Pipecat", href: "/platforms/pipecat", icon: "chat", group: "Agents & APIs",
-    line: "Give a Pipecat voice bot a face, rendered in the bot's own process.", renders: ["server", "no-gpu"], artifacts: [], time: "10 min" },
+    line: "Give a Pipecat voice bot a face, rendered in the bot's own process.", renders: ["server", "no-gpu"], artifacts: [], conversation: "Your Pipecat pipeline", install: { code: 'pip install "pipecat-bithuman[expression-2]"' } },
   { id: "rest", title: "REST API", href: "/platforms/rest", icon: "code", group: "Agents & APIs",
-    line: "Agents, live sessions and talking video over HTTPS.", renders: ["cloud"], artifacts: [], time: "2 min" },
+    line: "Agents, live sessions and talking video over HTTPS.", renders: ["cloud"], artifacts: [], conversation: "Included (a bitHuman agent), or your own audio", install: { text: "Nothing: HTTPS from any language" } },
 ];
 
 // ---------------------------------------------------------------- the quickstart picker
@@ -186,13 +187,12 @@ export interface Quickstart {
   /** The panel heading */
   title: string;
   icon: string;
-  time?: string;
   needs: string[];
   models: string[];
   renders: import("./labels").Renders[];
   steps: QuickstartStep[];
   expect: { text: string; media?: { src?: string; poster: string; width: number; height: number; caption: string; captions?: string } };
-  /** The page to continue on; a platform page opens at its #first-frame (firstFrame()) */
+  /** The page to continue on; a platform page opens at its #run-your-first-avatar (firstFrame()) */
   next: { href: string; label: string };
   /** The plan chip, when one is needed */
   plan?: "creator" | "business-enterprise";
@@ -207,11 +207,11 @@ const SPEECH = "curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.w
 
 export const QUICKSTART: Quickstart[] = [
   {
-    id: "web", label: "Website", title: "A live avatar on your website", icon: "globe", time: "1 min",
+    id: "web", label: "Website", title: "A live avatar on your website", icon: "globe",
     needs: ["No account for the sample avatar"], models: TWO, renders: ["cloud", "browser"],
     steps: [
       { title: "Paste the embed into any page", code: { lang: "html", label: "HTML", code: EMBED_SNIPPET } },
-      { title: "Open the page and allow the microphone", text: "The avatar appears, asks for the microphone and answers when you speak." },
+      { title: "Open the page and allow the microphone", text: "The avatar appears, asks for the microphone and answers when you speak. The `wise-pup` sample ends each session after 2 minutes; embed your own agent for your site." },
       { title: "Render in the visitor's tab (optional)", text: "Add `?render=local` to the embed URL: with WebGPU the avatar renders in the tab, and without a usable GPU it renders in the bitHuman cloud. The avatar's web bundle downloads once (50–200 MB), then comes from the cache." },
     ],
     // The still is the avatar the snippet above embeds (the Expression 2 sample), so what you paste and what you see match.
@@ -223,7 +223,7 @@ export const QUICKSTART: Quickstart[] = [
     note: "With the web embed the conversation runs on bitHuman's servers, including when the avatar renders in the tab.",
   },
   {
-    id: "ios", plan: "creator", label: "iPhone & iPad", title: "An avatar inside your iPhone or iPad app", icon: "phone", time: "15 min",
+    id: "ios", plan: "creator", label: "iPhone & iPad", title: "An avatar inside your iPhone or iPad app", icon: "phone",
     needs: ["Xcode 26+", "Physical device", "API secret"], models: TWO, renders: ["device"],
     steps: [
       { title: "Add the Swift package", code: { lang: "swift", label: "Package.swift", code: `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "${V.swift}")\n// then: .product(name: "Expression2", package: "homebrew-bithuman")` } },
@@ -234,7 +234,7 @@ export const QUICKSTART: Quickstart[] = [
     next: { href: "/platforms/ios", label: "iOS & iPadOS" },
   },
   {
-    id: "macos", plan: "creator", label: "Mac", title: "An avatar on your Mac", icon: "laptop", time: "5 min",
+    id: "macos", plan: "creator", label: "Mac", title: "An avatar on your Mac", icon: "laptop",
     needs: ["Apple silicon", "Xcode 26+", "API secret"], models: TWO, renders: ["device"],
     steps: [
       { title: "Clone the macOS example", code: { lang: "bash", label: "Shell", code: "git clone https://github.com/bithuman-product/bithuman-examples.git\ncd bithuman-examples/swift/macos-expression2\n./setup.sh" } },
@@ -244,11 +244,11 @@ export const QUICKSTART: Quickstart[] = [
     next: { href: "/platforms/macos", label: "macOS" },
   },
   {
-    id: "android", plan: "creator", label: "Android", title: "An avatar inside your Android app", icon: "android", time: "15 min",
+    id: "android", plan: "creator", label: "Android", title: "An avatar inside your Android app", icon: "android",
     needs: ["Physical device", "JDK 17", "API secret"], models: TWO, renders: ["device"],
     steps: [
       { title: "Add the repository and the dependency", code: { lang: "kotlin", label: "Gradle", code: `// excerpt: settings.gradle.kts and app/build.gradle.kts; the full setup is on the Android page\n// settings.gradle.kts\ndependencyResolutionManagement {\n    repositories {\n        google()\n        mavenCentral()\n        exclusiveContent {   // ai.bithuman resolves from bitHuman's repository only\n            forRepository { maven { url = uri("https://maven.bithuman.ai") } }\n            filter { includeGroup("ai.bithuman") }\n        }\n    }\n}\n// app/build.gradle.kts\nandroid {\n    defaultConfig { ndk { abiFilters += "arm64-v8a" } }\n    packaging { jniLibs { useLegacyPackaging = true } }   // required\n}\ndependencies {\n    implementation("ai.bithuman:expression2-android:${V.expression2_android}")\n}` } },
-      { title: "Keep the API secret out of your source", text: "Put `bithumanApiSecret=…` in `~/.gradle/gradle.properties`; the Android page reads it into `BuildConfig`." },
+      { title: "Keep the API secret out of your source", text: "Put `bithuman.apiSecret=…` in your project's `local.properties` (git-ignored), or export `BITHUMAN_API_SECRET` before you build; the Gradle block on the Android page reads it into `BuildConfig`." },
       { title: "Feed audio, pull frames", code: { lang: "kotlin", label: "Kotlin", code: `// excerpt: off the main thread; pcm16k is 16 kHz mono float\nExpression2Credential.set(BuildConfig.BITHUMAN_API_SECRET)\nval model = Expression2ModelStore(context).fetch("${pup.code}")   // first run only\nExpression2Avatar.create(context, model, Expression2Options()).use { avatar ->\n    val frame = avatar.newFrameBitmap()\n    avatar.feed(pcm16k)\n    avatar.flushTail()\n    while (avatar.hasPendingTail || avatar.queuedFrames > 0) {\n        if (avatar.pull(frame) != null) show(frame) else Thread.sleep(10)\n    }\n}` } },
     ],
     expect: { text: "20 frames for each second of audio, with the avatar's lips following the speech.", media: captureMedia("android-expression-2") },
@@ -266,7 +266,7 @@ export const QUICKSTART: Quickstart[] = [
     next: { href: "/platforms/flutter", label: "Flutter" },
   },
   {
-    id: "python", plan: "creator", label: "Python", title: "Render from Python", icon: "braces", time: "5 min",
+    id: "python", plan: "creator", label: "Python", title: "Render from Python", icon: "braces",
     needs: ["Python 3.10+", "API secret"], models: TWO, renders: ["server", "no-gpu"],
     steps: [
       { title: "Install", code: { lang: "bash", label: "Shell", code: `python3 -m venv .venv && source .venv/bin/activate\npip install "bithuman[expression-2]"` } },
@@ -277,7 +277,7 @@ export const QUICKSTART: Quickstart[] = [
     next: { href: "/platforms/python", label: "Python" },
   },
   {
-    id: "cli", plan: "creator", label: "Terminal", title: "An avatar from your terminal", icon: "terminal", time: "3 min",
+    id: "cli", plan: "creator", label: "Terminal", title: "An avatar from your terminal", icon: "terminal",
     needs: ["macOS or Linux", "ffmpeg"], models: TWO, renders: ["server", "no-gpu"],
     steps: [
       { title: "Install the CLI", code: { lang: "bash", label: "Shell", code: "# macOS: brew install bithuman-product/bithuman/bithuman-cli\ncurl -fsSL https://install.bithuman.ai | sh" } },
@@ -288,10 +288,10 @@ export const QUICKSTART: Quickstart[] = [
     next: { href: "/platforms/cli", label: "CLI" },
   },
   {
-    id: "livekit", plan: "creator", label: "LiveKit", title: "A face for your LiveKit voice agent", icon: "wave", time: "10 min",
+    id: "livekit", plan: "creator", label: "LiveKit", title: "A face for your LiveKit voice agent", icon: "wave",
     needs: ["A LiveKit project", "API secret"], models: TWO, renders: ["server", "cloud"],
     steps: [
-      { title: "Install", code: { lang: "bash", label: "Shell", code: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv' } },
+      { title: "Install", code: { lang: "bash", label: "Shell", code: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv' } },
       { title: "Set the credentials", code: { lang: "bash", label: "Shell", code: `export BITHUMAN_MASTER_SECRET="<your API secret>"\nexport BITHUMAN_AGENT_ID=${pup.code}\nexport LIVEKIT_URL=wss://your-project.livekit.cloud\nexport LIVEKIT_API_KEY=… LIVEKIT_API_SECRET=…\nexport OPENAI_API_KEY=…` } },
       { title: "Run the worker", code: { lang: "bash", label: "Shell", code: "python agent.py dev\n# → join the room from the LiveKit Agents Playground; the avatar appears and answers" }, text: "Copy `agent.py`, a complete worker, from the LiveKit page." },
     ],
@@ -299,7 +299,7 @@ export const QUICKSTART: Quickstart[] = [
     next: { href: "/platforms/livekit", label: "LiveKit" },
   },
   {
-    id: "rest", plan: "creator", label: "REST", title: "Call the REST API", icon: "code", time: "2 min",
+    id: "rest", plan: "creator", label: "REST", title: "Call the REST API", icon: "code",
     needs: ["API secret"], models: TWO, renders: ["cloud"],
     steps: [
       { title: "Check your API secret", code: { lang: "bash", label: "Shell", code: `${SECRET}\ncurl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"\n# → {"valid":true}` } },
@@ -320,4 +320,4 @@ export const QUICKSTART: Quickstart[] = [
 ];
 
 /** Where the picker's "Next" lands: a platform page at its first frame. */
-export const firstFrame = (href: string) => (href.startsWith("/platforms/") && !href.includes("#") ? `${href}#first-frame` : href);
+export const firstFrame = (href: string) => (href.startsWith("/platforms/") && !href.includes("#") ? `${href}#run-your-first-avatar` : href);

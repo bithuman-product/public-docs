@@ -15,6 +15,7 @@ models: ["essence-2", "expression-2"]
 claims: ["S2", "S3", "S4", "S7", "S10"]
 next: ["/platforms/python/app", "/platforms/python/troubleshooting", "/platforms/python/reference"]
 moved:
+  first-frame: /platforms/python#run-your-first-avatar
   integrate-into-your-app: /platforms/python/app#integrate-into-your-app
   a-voice-agent-on-your-own-livekit-server: /build/voice-agent/python#a-voice-agent-on-your-own-livekit-server
   complete-example: /platforms/python/app#complete-example
@@ -46,6 +47,7 @@ To run an avatar without code, use the [CLI](/platforms/cli).
 | Python 3.10–3.14 | `python3 --version` |
 | macOS 14+ on Apple silicon, Linux x86_64 or Linux arm64, or [Windows 11 x86_64](/platforms/windows) | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
 | An API secret | [Your API secret](/start/api-secret) |
+| A paid plan (Creator or higher): usage bills per second while the avatar runs | [Pricing](/pricing) |
 | About 1 GB of disk (570 MB package, 118–190 MB per avatar) | `df -h .` |
 
 ## Install
@@ -60,15 +62,25 @@ Install into a virtual environment: Debian and Ubuntu refuse a system-wide `pip 
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the shell that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. Cost: active session time, to the second ([pricing](/pricing)). Downloading a sample avatar needs no account.
+Set `BITHUMAN_API_SECRET` in the shell that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. Downloading a sample avatar needs no account.
 
-## First frame
+## Run your first avatar
 
 ```bash
 export BITHUMAN_API_SECRET="<your API secret>"
 curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 ```
+
+```python
+import bithuman
+bithuman.open("wise-pup.imx").render("speech.wav", out_mp4="out.mp4")
+# → out.mp4: wise-pup speaking the sample, 416×720, 15 s
+```
+
+Open `out.mp4` to watch it talk. `out_mp4=` needs no `ffmpeg`, and `render` returns the number of frames written. It takes a path to an audio file (WAV, MP3 and the other common formats), or already-decoded 16 kHz mono audio (`int16` or `float32` arrays, or raw 16-bit bytes). The same call opens Essence 2 and Essence 1 `.imx` files: for a photoreal person, download the `sofia-ramirez` Essence 2 sample with `curl -fL -o sofia-ramirez.imx "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2"` and render it the same way (1080×1920).
+
+To process the frames yourself, iterate over `render` without `out_mp4=`:
 
 ```python
 import bithuman
@@ -79,19 +91,7 @@ print(len(frames), "frames of", frames[0].shape)
 # → 300 frames of (720, 416, 3)
 ```
 
-`render` takes a path to an audio file (WAV, MP3 and the other common formats), or already-decoded 16 kHz mono audio (`int16` or `float32` arrays, or raw 16-bit bytes). Frames are RGB; OpenCV expects BGR, so write one with `cv2.imwrite("frame.png", image[:, :, ::-1])`. The same call opens Essence 2 and Essence 1 `.imx` files.
-
-To write an MP4 instead, pass `out_mp4=` to the same `render` (any model, no `ffmpeg` needed); it returns the number of frames written. Download the `sofia-ramirez` Essence 2 sample first:
-
-```bash
-curl -fL -o sofia-ramirez.imx "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2"
-```
-
-```python
-import bithuman
-bithuman.open("sofia-ramirez.imx").render("speech.wav", out_mp4="out.mp4")
-# → out.mp4: 1080×1920 with the speech, 15.2 s
-```
+Frames are RGB; OpenCV expects BGR, so write one with `cv2.imwrite("frame.png", image[:, :, ::-1])`.
 
 <div class="fig-end">
 

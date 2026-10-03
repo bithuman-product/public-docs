@@ -7,7 +7,6 @@ group: "Apps"
 order: 30
 type: recipe
 llms: build
-time: "20 min"
 availability: "creator"
 renders: ["no-gpu", "server"]
 needs: ["Linux x86_64 / arm64", "API secret"]

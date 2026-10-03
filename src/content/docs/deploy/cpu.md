@@ -76,5 +76,5 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
 # → 300 frames
 ```
 
-`bithuman run wise-pup` opens a live conversation instead of a file ([CLI](/platforms/cli#first-frame)).
+`bithuman run wise-pup` opens a live conversation instead of a file ([CLI](/platforms/cli#run-your-first-avatar)).
 

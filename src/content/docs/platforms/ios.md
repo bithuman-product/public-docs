@@ -15,6 +15,7 @@ models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S10", "S13", "S17", "S26", "S30", "S32"]
 next: ["/platforms/swift/app", "/platforms/swift/troubleshooting", "/platforms/swift/reference"]
 moved:
+  first-frame: /platforms/ios#run-your-first-avatar
   integrate-into-your-app: /platforms/swift/app#integrate-into-your-app
   download-an-avatar-in-the-app: /platforms/swift/app#download-an-avatar-in-the-app
   complete-example: /platforms/swift/app#complete-example
@@ -39,6 +40,7 @@ You feed 16 kHz mono speech in and take lip-synced frames out. The same package 
 | **Worked example** | [iOS Expression 2](/examples/ios-expression-2) | [iOS Essence 2](/examples/ios-essence-2) |
 
 - **Xcode 26 or newer** and an Apple Developer team.
+- **A paid plan** (Creator or higher): usage bills per second while the avatar runs ([pricing](/pricing)).
 - **A physical iPhone or iPad** for device builds. Essence 2 does not run in the Simulator: use a physical device. Expression 2 does run in the Simulator.
 - **Essence 1** is not available on phones or in the Swift package: use Essence 2 or Expression 2 on devices ([First generation](/models/first-generation)).
 
@@ -56,12 +58,14 @@ The package lives in the `homebrew-bithuman` repository, so its package identity
 swift-auth
 ```
 
-## First frame
+## Run your first avatar
 
-Download the `wise-pup` sample avatar, the shared Expression 2 engine and a 16 kHz speech clip. No account is needed for these downloads:
+The quickest way to see it work is the example app: clone [bithuman-examples](https://github.com/bithuman-product/bithuman-examples), open the [iOS Expression 2 example](/examples/ios-expression-2) in Xcode, set `BITHUMAN_API_SECRET` in the scheme and run it on your iPhone. The code below is the core of that app.
+
+Download the `wise-pup` sample avatar (agent code `A23WJF0199`), the shared Expression 2 engine and a 16 kHz speech clip. No account is needed for these downloads:
 
 ```bash
-curl -fL -o A23WJF0199.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
 curl -fLO "https://github.com/bithuman-product/homebrew-bithuman/releases/download/expression2-engine-mac-arm64-1.0.0/mac-arm64-1.0.0.engine"
 curl -fL -o speech16k.wav "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2&member=demo_speech_16k.wav"
 ```
@@ -76,7 +80,7 @@ import AVFoundation
 
 Expression2Credential.set(ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"] ?? "")
 let engine = try Expression2Engine.create(
-    avatarContainer: avatarURL,              // A23WJF0199.imx
+    avatarContainer: avatarURL,              // wise-pup.imx
     sharedEngineContainer: sharedEngineURL,  // mac-arm64-1.0.0.engine
     stagingDir: stagingURL)                  // any writable directory; keep it between launches
 

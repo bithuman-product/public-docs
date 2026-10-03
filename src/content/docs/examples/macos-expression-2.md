@@ -130,4 +130,4 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 
 ## Next
 
-- [iOS example](/examples/ios-expression-2) · [iOS & iPadOS](/platforms/ios) · [CLI example](/platforms/cli#complete-example) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)
+- [iOS example](/examples/ios-expression-2) · [iOS & iPadOS](/platforms/ios) · [CLI example](/platforms/cli#run-your-first-avatar) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)

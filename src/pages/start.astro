@@ -8,7 +8,6 @@ import QuickstartPicker from "../components/QuickstartPicker.astro";
 import Stuck from "../components/Stuck.astro";
 import { hubMeta } from "../config/hubs";
 import { API_SECRET_URL, SECTIONS } from "../config/nav";
-import { explorerClaim } from "../lib/doc-blocks";
 
 const meta = hubMeta("start");
 ---
@@ -31,7 +30,7 @@ const meta = hubMeta("start");
       </div>
       <div>
         <h2 id="api-secret"><span class="step">2</span> Get your API secret</h2>
-        <p>Everything except the web embed uses an API secret. Create one in the bitHuman app, then export it:</p>
+        <p>Sign up at bithuman.ai and choose the Creator plan or higher (<a href="/pricing#plans">plans</a>): from 2026-10-12 a Free account's API secret is refused. Then create an API secret and export it. The live demo and the web embed need neither, and the CLI can sign in with <code>bithuman login</code> instead.</p>
         <div class="chip-row"><Availability plan="creator" /></div>
         <CodeTabs tabs={[{ label: "Shell", lang: "bash", code: `export BITHUMAN_API_SECRET="<your API secret>"` }]} />
         <p class="s-small"><a href={API_SECRET_URL}>Create an API secret ↗</a> · <a href="/start/api-secret">How the API secret works</a></p>
@@ -42,7 +41,7 @@ const meta = hubMeta("start");
   <section class="s-block alt">
     <div class="container">
       <h2 id="choose-your-platform"><span class="step">3</span> Pick your platform</h2>
-      <p class="s-intro">What are you building? The steps below run as pasted after you export your API secret, and end at that platform's first frame.</p>
+      <p class="s-intro">What are you building? The Website, Terminal, Python and REST steps run as pasted after you export your API secret. The app platforms show the core calls; their page has the complete first run. New to the words? <a href="/models/how-it-works#key-terms">Key terms</a>.</p>
       <QuickstartPicker />
       <Stuck />
     </div>
@@ -50,7 +49,6 @@ const meta = hubMeta("start");
 
   <section class="s-block s-last">
     <div class="container s-more">
-      <p class="s-claim">{explorerClaim()} <a href="/performance">See every configuration →</a></p>
       <p class="s-small"><a href="/models#choosing-a-model">Which model?</a> · <a href="/pricing">Pricing: credits pay for active session time, talking or idle</a> · <a href="/platforms">All platforms</a> · <a href="/examples">Example gallery</a></p>
     </div>
   </section>

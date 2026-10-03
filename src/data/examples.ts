@@ -188,9 +188,8 @@ export interface Example {
   platform: GalleryPlatform;
   models: ("essence-2" | "expression-2")[];
   where: Where[];
-  /** The one command that gets the code, and roughly how long the first run takes */
+  /** The one command that gets the code */
   get: string;
-  time: string;
   /** One linked line under the card: [link text, href, the rest of the sentence] */
   note?: [string, string, string];
 }
@@ -202,48 +201,48 @@ export const EXAMPLES: Example[] = [
   {
     id: "web", title: "Web embed", line: "One iframe: a live avatar that listens and answers, on any page.",
     href: "/platforms/web/app#complete-example", capture: "web-embed", platform: "web", models: ["essence-2", "expression-2"], where: ["cloud"],
-    get: "one <iframe> tag", time: "1 min",
+    get: "one <iframe> tag",
   },
   {
     id: "kiosk", title: "Kiosk on a Linux PC", line: "A live avatar full screen on a standard Linux PC, with no GPU.",
     href: "/build/kiosk", capture: "kiosk-linux", platform: "linux", models: ["essence-2", "expression-2"], where: ["no-gpu", "servers"],
-    get: "curl -fsSL https://install.bithuman.ai | sh", time: "15 min",
+    get: "curl -fsSL https://install.bithuman.ai | sh",
     note: ["Fully offline", "/deploy/offline", " needs a Business or Enterprise license."],
   },
   {
     id: "cli", title: "CLI on Linux", line: "An MP4 or a live conversation from a terminal, on the CPU alone.",
-    href: "/platforms/cli#complete-example", capture: "cli-linux", platform: "linux", models: ["essence-2", "expression-2"], where: ["no-gpu", "servers"],
-    get: "curl -fsSL https://install.bithuman.ai | sh", time: "5 min",
+    href: "/platforms/cli#run-your-first-avatar", capture: "cli-linux", platform: "linux", models: ["essence-2", "expression-2"], where: ["no-gpu", "servers"],
+    get: "curl -fsSL https://install.bithuman.ai | sh",
   },
   {
     id: "ios-expression-2", title: "iOS: Expression 2", line: "A SwiftUI app with a talking character, rendered on the iPhone.",
     href: "/examples/ios-expression-2", capture: "ios-expression-2", platform: "ios", models: ["expression-2"], where: ["device"],
-    get: CLONE, time: "15 min",
+    get: CLONE,
   },
   {
     id: "android-essence-2", title: "Android: Essence 2", line: "A photoreal person at 1080×1920, rendered on the phone.",
     href: "/examples/android-essence-2", capture: "android-essence-2", platform: "android", models: ["essence-2"], where: ["device"],
-    get: CLONE, time: "15 min",
+    get: CLONE,
   },
   {
     id: "android-expression-2", title: "Android: Expression 2", line: "A Kotlin app rendering any character on the phone.",
     href: "/examples/android-expression-2", capture: "android-expression-2", platform: "android", models: ["expression-2"], where: ["device"],
-    get: CLONE, time: "15 min",
+    get: CLONE,
   },
   {
     id: "macos-expression-2", title: "macOS: Expression 2", line: "One Swift file: speech in, lip-synced frames out, on your Mac.",
     href: "/examples/macos-expression-2", capture: "macos-expression-2", platform: "macos", models: ["expression-2"], where: ["device"],
-    get: CLONE, time: "10 min",
+    get: CLONE,
   },
   {
     id: "python", title: "Python", line: "Open an avatar, play speech through it, watch it talk.",
     href: "/platforms/python/app#complete-example", capture: "python-macos", platform: "python", models: ["essence-2", "expression-2"], where: ["servers"],
-    get: "pip install bithuman", time: "5 min",
+    get: "pip install bithuman",
   },
   {
     id: "talking-video", title: "Talking video", line: "One MP4 from an audio file: the REST API, the CLI or Python.",
     href: "/build/talking-video", capture: "talking-video-linux", platform: "rest", models: ["essence-2", "expression-2"], where: ["cloud", "servers", "no-gpu"],
-    get: "bithuman render <avatar> speech.wav", time: "2 min",
+    get: "bithuman render <avatar> speech.wav",
   },
 ];
 

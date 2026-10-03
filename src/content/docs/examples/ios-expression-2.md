@@ -21,7 +21,7 @@ A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to i
 |---|---|
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
 | A physical iPhone or iPad with Apple silicon, or the iOS Simulator | Expression 2 also runs in the Simulator (arm64); judge speed on a device. No Apple entitlement is needed |
-| Nothing else to install | `setup.sh` is three `curl` downloads, the same ones [iOS: First frame](/platforms/ios#first-frame) uses |
+| Nothing else to install | `setup.sh` is three `curl` downloads, the same ones [iOS: Run your first avatar](/platforms/ios#run-your-first-avatar) uses |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
 ## Get the code

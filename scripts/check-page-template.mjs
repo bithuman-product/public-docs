@@ -26,9 +26,9 @@ export const TEMPLATES = {
   // into an app, its troubleshooting and its reference are pages of their own; the
   // CLI and REST quickstarts keep their Complete example (cli-sample-output).
   platform: {
-    order: ["What you get", "Before you start", "Install", "Authenticate", "First frame", "Complete example",
+    order: ["What you get", "Before you start", "Install", "Authenticate", "Run your first avatar", "Complete example",
       "Performance", "Next"],
-    required: ["Authenticate", "First frame"],
+    required: ["Authenticate", "Run your first avatar"],
   },
   // Building it into an app (SPEC §5): what moved off the quickstart, in this order.
   "platform-app": {
@@ -152,9 +152,9 @@ function selftest() {
   ok("a 40-word callout fires", grade(callouts(1, 40)).faults.some((f) => f.includes("words")));
   ok("a pages without a template type is only graded on callouts", grade(`---\ntype: reference\n---\n## Anything\n`).faults.length === 0);
   const pf = (h2s) => `---\ntype: platform\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}`;
-  ok("a platform page with nothing to install passes", grade(pf(["Authenticate", "First frame", "Performance"])).faults.length === 0);
-  ok("a platform page missing First frame fires", grade(pf(["Authenticate", "Performance"])).faults.some((f) => f.includes("First frame")));
-  ok("a platform page that still carries its troubleshooting fires", grade(pf(["Authenticate", "First frame", "Troubleshooting"])).faults.some((f) => f.includes("Troubleshooting")));
+  ok("a platform page with nothing to install passes", grade(pf(["Authenticate", "Run your first avatar", "Performance"])).faults.length === 0);
+  ok("a platform page missing its first run fires", grade(pf(["Authenticate", "Performance"])).faults.some((f) => f.includes("Run your first avatar")));
+  ok("a platform page that still carries its troubleshooting fires", grade(pf(["Authenticate", "Run your first avatar", "Troubleshooting"])).faults.some((f) => f.includes("Troubleshooting")));
   const pa = (h2s) => `---\ntype: platform-app\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}`;
   ok("an app page in order passes", grade(pa(["Integrate into your app", "Complete example", "Platform notes", "Reference"])).faults.length === 0);
   ok("an app page without Integrate fires", grade(pa(["Complete example", "Platform notes"])).faults.some((f) => f.includes("Integrate")));

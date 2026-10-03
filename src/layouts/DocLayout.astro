@@ -116,7 +116,6 @@ if (section === "platforms" && data.type === "platform") {
 // The meta line under the lead replaces the chips: plain text, "·" between items.
 // The plan and the versions keep their links (text colour).
 const metaItems: { label: string; href?: string }[] = [
-  ...(data.time ? [{ label: data.time }] : []),
   ...(data.availability ? [{ label: PLAN_LABEL[data.availability as keyof typeof PLAN_LABEL], href: "/pricing" }] : []),
   ...(data.renders ?? []).map((r: keyof typeof RENDERS_LABEL) => ({ label: RENDERS_LABEL[r] })),
   ...(data.needs ?? []).map((n: string) => ({ label: n })),

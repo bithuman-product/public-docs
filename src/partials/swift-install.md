@@ -17,4 +17,4 @@ The products:
 | `Essence2Kit` | `import Essence2Kit` | the Essence 2 engine with a Swift API; it includes `Essence2` | iOS 26 · macOS 26 |
 | `Essence2` | `import Essence2` | the Essence 2 engine as a C library, for C, C++ and plugins | iOS 26 · macOS 26 |
 
-Every product ships `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-arm64`. `bitHumanKit` 2.4.0 is legacy and frozen; new apps use `Expression2` or `Essence2Kit`.
+Every product ships `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-arm64`.

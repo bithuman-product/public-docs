@@ -9,6 +9,8 @@ llms: platforms
 renders: ["cloud"]
 next: ["/api/agents", "/api/video", "/api/reference"]
 availability: creator
+moved:
+  first-frame: /platforms/rest#run-your-first-avatar
 ---
 
 The REST API creates agents, drives live sessions and renders talking videos from your audio, from any language.
@@ -18,8 +20,9 @@ The REST API creates agents, drives live sessions and renders talking videos fro
 - An [API secret](/start/api-secret). API use needs the Creator plan or higher.
 - `curl`, or any HTTP client.
 - Credits for anything beyond a check: a talking video bills per minute of output ([pricing](/pricing#talking-video--per-minute-of-output)).
+- Time: creating an agent of your own takes about 2 hours (Essence 2 or Expression 2). Start with a sample agent meanwhile.
 
-Start with a sample agent: any API secret can read the public samples, such as `A23WJF0199` (`wise-pup`), and render them speaking your audio, so your first talking video takes minutes. [`GET /v1/models/showcase`](https://api.bithuman.ai/v1/models/showcase) lists them; each one's `supported_models` says which `model` to pass. Then create an agent of your own.
+Start with a sample agent: any API secret can read the public samples, such as `A23WJF0199` (`wise-pup`), and render them speaking your audio, [`GET /v1/models/showcase`](https://api.bithuman.ai/v1/models/showcase) lists them; each one's `supported_models` says which `model` to pass. Then create an agent of your own.
 
 To try an avatar with no account first, use the [web embed](/platforms/web).
 
@@ -27,7 +30,7 @@ To try an avatar with no account first, use the [web embed](/platforms/web).
 
 Send your API secret in the `api-secret` header on every call. `POST /v1/validate` checks it and spends nothing; it always returns `200`, so read `valid`. The full rules are on [Authentication](/api/authentication).
 
-## First frame
+## Run your first avatar
 
 Render the `wise-pup` sample speaking a 5-second hosted clip (16 kHz mono WAV):
 
@@ -111,7 +114,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 # → {"success": true, "agent_id": "A80HVD8577", "status": "processing"}
 ```
 
-Poll until `status` is `ready` or `failed` (about 2–2.5 hours for a second-generation model):
+Poll until `status` is `ready` or `failed`:
 
 ```bash
 curl -s https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"

@@ -45,6 +45,7 @@ The [`avatar_chat` app](https://github.com/bithuman-product/bithuman-examples/tr
 - **Two models in one app:** `essence2-android` needs `minSdk 29`; raise the app to 29.
 - **Your own voice pipeline:** any speech your stack produces works, as 16 kHz mono PCM through `pushAudio`.
 - **Captions:** with the plugin's realtime session, show `spokenTranscriptStream` rather than `botTranscriptStream`. It releases the agent's words as they are heard, so the caption keeps pace with the voice; each event holds the reply's caption so far, and a cut reply ends with only the words heard (plugin 2.6.27 or newer).
+- **iOS (16+) and macOS (13+, Apple silicon) builds:** run the plugin's `scripts/bootstrap.sh` once (it downloads the published engines and checks their sha256; for a git dependency the plugin's folder is `packages/flutter-plugin` under `~/.pub-cache/git/homebrew-bithuman-…`), raise the deployment targets (`platform :ios, '16.0'` in `ios/Podfile`, `platform :osx, '13.0'` in `macos/Podfile`, and the Runner targets to match), and on macOS run `brew install llama.cpp onnxruntime`, which the plugin links.
 - **Versions:** each plugin tag fixes the Android SDK versions it uses. The current tag and its line are on [Downloads & versions](/downloads).
 
 ## Reference
