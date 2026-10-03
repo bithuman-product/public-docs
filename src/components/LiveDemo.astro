@@ -68,7 +68,7 @@ const sizes = "(max-width: 560px) calc(100vw - 32px), 440px";
   const me = Math.random().toString(36).slice(2);
 
   document.querySelectorAll<HTMLElement>("[data-live-demo]").forEach((root) => {
-    const cap = Number(root.dataset.cap) || 180;
+    const cap = Number(root.dataset.cap) || 120;
     const $ = <T extends HTMLElement>(s: string) => root.querySelector(s) as T;
     const stage = $<HTMLElement>("[data-stage]");
     const launch = $<HTMLButtonElement>("[data-launch]");

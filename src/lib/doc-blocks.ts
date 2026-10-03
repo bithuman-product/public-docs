@@ -106,16 +106,13 @@ function perfBlock(ids: string[], mode: Mode): string {
     const tags = [r.sustained ? "held 10 min" : "", noGpu(id) ? "CPU only (no GPU)" : ""].filter(Boolean);
     if (mode === "twin") {
       const cells = PERF_MODELS.map((m) => { const c = perfCell(id, m.id); return c ? `${c.x} real time` : "—"; });
-      const measured = PERF_MODELS.map((m) => r.cells[m.id]).filter((c): c is NonNullable<typeof c> => !!c);
-      const releases = [...new Set(measured.map((c) => c.release))].join(" and ");
-      const dates = [...new Set(measured.map((c) => c.measured_on))].join(", ");
-      return [`${rowName(id)}${tags.length ? ` (${tags.join(", ")})` : ""}`, r.hardware, ...cells, `${releases}, ${dates}`];
+      return [[rowName(id), ...tags].join(" · "), r.hardware, ...cells];
     }
     const name = `**${r.hardware}** <span class="perf-sub">${esc(rowName(id))}</span>` +
       tags.map((t) => ` <span class="chip chip-tag">${esc(t)}</span>`).join("");
     return [name, ...PERF_MODELS.map((m) => xrtHtml(id, m.id))];
   });
-  const head = mode === "twin" ? ["Configuration", "Hardware", ...PERF_MODELS.map((m) => m.name), "Measured"] : ["Configuration", ...PERF_MODELS.map((m) => m.name)];
+  const head = mode === "twin" ? ["Configuration", "Hardware", ...PERF_MODELS.map((m) => m.name)] : ["Configuration", ...PERF_MODELS.map((m) => m.name)];
   const note = mode === "page"
     ? `Times real time: seconds of avatar video rendered per second. At 1.0× or more, an avatar holds a live conversation. Select a figure for its release and date. [All configurations and how we measure](${more}).`
     : `× real time: seconds of video rendered per second; 1.0× or more holds a live conversation ([method](${more})).`;

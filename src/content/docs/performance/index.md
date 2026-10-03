@@ -11,7 +11,7 @@ moved:
   pin-a-tier-for-a-benchmark: /performance/method#pin-a-tier-for-a-benchmark
 ---
 
-Every row is at or above 1.0× real time: each model runs live on every listed device. **× real time** is seconds of avatar video rendered per second; higher means more headroom.
+**× real time** is seconds of avatar video rendered per second. At 1.0× or more the avatar keeps up with a live conversation; higher means more headroom.
 
 ```perf-explorer
 ```

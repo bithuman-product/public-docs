@@ -67,7 +67,7 @@ export function render(rt) {
   const chat = rt.hosted?.chat_line, camera = rt.hosted?.camera_chat_line;
   if (chat || camera) {
     note(chat); note(camera);
-    out += `\nA managed conversational agent bills ONE all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.\n\n| Surface | Rate |\n|---|---|\n`;
+    out += `\nA managed conversational agent bills one all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.\n\n| Surface | Rate |\n|---|---|\n`;
     if (chat) out += `| Managed agent — voice chat (all-inclusive) | ${per(chat.rate)} |\n`;
     if (camera) out += `| Managed agent — camera on (vision chat; replaces the chat rate) | ${per(camera.rate)} |\n`;
   }
