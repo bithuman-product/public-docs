@@ -43,6 +43,13 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.35 — 2026-10-03
+
+Tag `flutter-plugin-v2.6.35`.
+
+- **iOS and macOS:** built on Expression 2 2.20.1 (Swift package 2.20.1). The plugin opens the files your app gives it and does not use the Swift package's download stores, so nothing changes in how an avatar opens through the plugin.
+- **Action:** pin `ref: flutter-plugin-v2.6.35`.
+
 ### Swift package 2.20.1 — 2026-10-03
 
 Tag `v2.20.1`.
