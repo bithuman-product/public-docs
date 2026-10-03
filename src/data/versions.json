@@ -4,9 +4,9 @@
   "versions": {
     "cli": "2.8.8",
     "python": "2.11.20",
-    "swift": "2.20.0",
+    "swift": "2.20.1",
     "essence2_engine": "1.15.3",
-    "expression2_swift": "2.19.2",
+    "expression2_swift": "2.20.1",
     "essence2_android": "0.9.3",
     "expression2_android": "0.5.2",
     "livekit_plugin": "1.8.5",
