@@ -703,12 +703,12 @@
     },
     {
       "source": "/examples/cli",
-      "destination": "/platforms/cli#complete-example",
+      "destination": "/platforms/cli#run-your-first-avatar",
       "permanent": true
     },
     {
       "source": "/examples/cli/",
-      "destination": "/platforms/cli#complete-example",
+      "destination": "/platforms/cli#run-your-first-avatar",
       "permanent": true
     },
     {

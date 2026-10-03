@@ -60,7 +60,7 @@ function card(e: Example, i: number): string {
   return `<li class="gal-item" data-where="${e.where.join(" ")}" data-models="${e.models.join(" ")}" data-platform="${e.platform}">` +
     `<article class="card gal-card"><div class="gal-stage" data-fig>${mediaHtml(e.capture, { eager: i === 0, sizes: "180px", sound: false })}</div>` +
     `<div class="card-body"><span class="gal-head"><span class="card-title"><span class="gal-title"><a class="gal-link" href="${e.href}">${esc(e.title)}</a></span></span>` +
-    `<span class="gal-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>${esc(e.time)}</span></span>` +
+    `</span>` +
     `<span class="card-line">${esc(e.line)}</span>` +
     `<span class="card-chips">${chips(e)}</span>` +
     (e.note ? `<span class="gal-note"><a href="${e.note[1]}">${esc(e.note[0])}</a>${esc(e.note[2])}</span>` : "") +
@@ -71,7 +71,7 @@ function card(e: Example, i: number): string {
 /** ```example-gallery — every example as a card, with filters. */
 export function galleryBlock(mode: "page" | "twin"): string {
   if (mode === "twin") {
-    const rows = EXAMPLES.map((e) => `- [${e.title}](${e.href}): ${e.line} ${e.where.map((w) => WHERE_LABEL[w]).join(", ")}; ${e.models.map((m) => MODEL_NAME[m]).join(", ")}. Get it: \`${e.get}\` (${e.time}).${e.note ? ` [${e.note[0]}](${e.note[1]})${e.note[2]}` : ""} ${provenanceLine(e.capture)}.`);
+    const rows = EXAMPLES.map((e) => `- [${e.title}](${e.href}): ${e.line} ${e.where.map((w) => WHERE_LABEL[w]).join(", ")}; ${e.models.map((m) => MODEL_NAME[m]).join(", ")}. Get it: \`${e.get}\`.${e.note ? ` [${e.note[0]}](${e.note[1]})${e.note[2]}` : ""} ${provenanceLine(e.capture)}.`);
     return `${rows.join("\n")}\n`;
   }
   const where = (["", "device", "no-gpu", "servers", "cloud"] as const).map((w, i) =>

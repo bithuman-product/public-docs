@@ -71,7 +71,7 @@ async def on_left(transport, participant, reason):
     await worker.cancel()  # close the avatar: session time stops
 ```
 
-Run it from the repository, with the avatar file from [Pipecat](/platforms/pipecat#first-frame). `examples/bot.py` sets the transport to the `wise-pup` frame size, 416×720; for another avatar, use the size the service logs on the first frame:
+Run it from the repository, with the avatar file from [Pipecat](/platforms/pipecat#run-your-first-avatar). `examples/bot.py` sets the transport to the `wise-pup` frame size, 416×720; for another avatar, use the size the service logs on the first frame:
 
 ```bash
 pip install "pipecat-bithuman[expression-2]" "pipecat-ai[daily,deepgram,openai,cartesia,silero]"

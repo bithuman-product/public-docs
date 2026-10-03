@@ -241,12 +241,12 @@ function selftest() {
   ok("a rounded-up multiple fires", gradePerformance(good.replace("2.1×", "2.2×"), rows).some((x) => x.includes("does not print")));
   ok("no explorer fires", gradePerformance("<p>tables</p>", rows).length === 1);
   ok("a calculator without worked examples fires", gradePricing('<span data-credits>3,600</span> active session time, talking or idle').some((x) => x.includes("worked examples")));
-  const start = '<div class="psw" data-switcher><button data-key="web"></button></div><article id="qp-web"><h3 id="qp-web-h">Web</h3><ol class="qp-steps"><li>Paste</li></ol><a class="qp-btn" href="/platforms/web#first-frame">Next</a></article>';
+  const start = '<div class="psw" data-switcher><button data-key="web"></button></div><article id="qp-web"><h3 id="qp-web-h">Web</h3><ol class="qp-steps"><li>Paste</li></ol><a class="qp-btn" href="/platforms/web#run-your-first-avatar">Next</a></article>';
   const eight = start.replace('<button data-key="web"></button>', '<button data-key="web"></button>'.repeat(8));
   ok("a complete picker passes", gradeStart(eight).length === 0);
   ok("a panel without steps fires", gradeStart(eight.replace("<li>Paste</li>", "")).some((x) => x.includes("no steps")));
   ok("a missing panel fires", gradeStart(eight.replace('id="qp-web"', 'id="qp-x"')).some((x) => x.includes("no quickstart panel")));
-  ok("a missing Next fires", gradeStart(eight.replace('href="/platforms/web#first-frame"', 'href="#"')).some((x) => x.includes("no Next")));
+  ok("a missing Next fires", gradeStart(eight.replace('href="/platforms/web#run-your-first-avatar"', 'href="#"')).some((x) => x.includes("no Next")));
   const pick = (m, on) => `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-pick="${m}">x</button>`;
   const poster = (m, hide, eager) => `<div class="ld-poster" data-poster="${m}" data-name="n"${hide ? " hidden" : ""}><picture><img src="${DEMOS[m].poster}-480.webp" loading="${eager ? "eager" : "lazy"}"${eager ? ' fetchpriority="high"' : ""}></picture></div>`;
   const demo = (a, b) => `<section class="ld" data-live-demo><div class="ld-switch">${pick(a, true)}${pick(b, false)}</div><div class="ld-stage">${poster(a, false, true)}${poster(b, true, false)}<button data-launch><span>Talk to ${DEMOS[a].name}</span></button></div></section>`;

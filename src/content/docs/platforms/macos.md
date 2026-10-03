@@ -15,6 +15,7 @@ models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S10", "S13", "S17", "S26", "S30"]
 next: ["/platforms/swift/app", "/platforms/swift/troubleshooting", "/platforms/swift/reference"]
 moved:
+  first-frame: /platforms/macos#run-your-first-avatar
   integrate-into-your-app: /platforms/swift/app#integrate-into-your-app
   complete-example: /platforms/swift/app#complete-example
   platform-notes: /platforms/swift/app#platform-notes
@@ -51,7 +52,7 @@ swift-auth
 
 A Mac app built from Xcode's App template turns on App Sandbox. Under *Signing & Capabilities → App Sandbox*, tick **Outgoing Connections (Client)**, or the engines cannot check your secret.
 
-## First frame
+## Run your first avatar
 
 The [macOS Expression 2 example](/examples/macos-expression-2) is one Swift file. Clone it, fetch the sample avatar, and run it:
 

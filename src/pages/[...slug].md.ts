@@ -77,7 +77,7 @@ function quickstartMd(): string {
   let out = "";
   for (const q of QUICKSTART) {
     out += `\n### ${q.label}: ${q.title}\n\n`;
-    out += [q.time ? `Time: ${q.time}` : "", `Needs: ${q.needs.join(", ")}`, `Models: ${q.models.join(", ")}`].filter(Boolean).join(" · ") + "\n";
+    out += [`Needs: ${q.needs.join(", ")}`, `Models: ${q.models.join(", ")}`].join(" · ") + "\n";
     q.steps.forEach((st, i) => {
       out += `\n${i + 1}. ${st.title}\n`;
       if (st.code) out += `\n\`\`\`${st.code.lang}\n${st.code.code}\n\`\`\`\n`;
@@ -130,14 +130,10 @@ export const GET: APIRoute = async ({ props }) => {
     const mdUrl = (href: string) => { const [path, hash] = href.split("#"); return `${SITE}${path}.md${hash ? `#${hash}` : ""}`; };
     const cards = (xs: { title: string; line: string; href: string; badge?: string; note?: string }[]) =>
       xs.map((c) => `- [${c.title}](${mdUrl(c.href)})${c.badge ? ` (${c.badge})` : ""}: ${c.line}${c.note ? ` ${c.note}` : ""}`).join("\n");
-    const speed = (title: string) => {
-      const row = (headlineData() ?? []).find((r) => r.model === title);
-      return row ? ` ${row.cells.map((c) => `${c.platform} ${c.multiple}`).join(" · ")} real time.` : "";
-    };
     return md(twin("bitHuman docs", "/", hubMeta("").description,
       `${LANDING.line}\n\nQuickstart: ${SITE}/start.md · Get your API secret: https://www.bithuman.ai/developer/api-keys\n\n` +
-      `## Platforms\n\n${cards(START_BUILDING)}\n\n` +
-      `## Models\n\n${[...MODELS, ...MODELS_V1].map((m) => modelCardMd(m, mdUrl(m.href), speed(m.title).trim())).join("\n")}\n\nAll models: ${SITE}/models.md\n\n` +
+      `## Platforms\n\n${LANDING.pickPlatform}\n\n${cards(START_BUILDING)}\n\n` +
+      `## Models\n\n${LANDING.pickModel} Key terms: ${SITE}/models/how-it-works.md#key-terms\n\n${[...MODELS, ...MODELS_V1].map((m) => modelCardMd(m, mdUrl(m.href))).join("\n")}\n\nAll models: ${SITE}/models.md\n\n` +
       `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n` +
       `## Start building\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
       `All sections:\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) ([estimate](${SITE}/pricing/estimate.md)) · [Resources](${SITE}/resources.md) · [Changelog](${SITE}/changelog.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
@@ -145,10 +141,8 @@ export const GET: APIRoute = async ({ props }) => {
   if (hub === "start") {
     // The page's three steps, as its headings (docs v2 W7: a hub twin's headings match its page).
     let body = `## Talk to an avatar\n\nPick a model and start a live conversation on [the quickstart page](${SITE}/start): no install and no account.\n\n` +
-      `## Get your API secret\n\nEverything except the web embed uses an API secret. Create one in the bitHuman app (https://www.bithuman.ai/developer/api-keys), then export it:\n\n\`\`\`bash\nexport BITHUMAN_API_SECRET="<your API secret>"\n\`\`\`\n\nHow the API secret works: ${SITE}/start/api-secret.md\n\n` +
-      `## Pick your platform\n\n${pathTable()}\nEach block runs as pasted after \`export BITHUMAN_API_SECRET=…\`.\n${quickstartMd()}`;
-    body += perfSection();
-    body += `\n${explorerClaim()} Every configuration: ${SITE}/performance.md\n`;
+      `## Get your API secret\n\nSign up at bithuman.ai and choose the Creator plan or higher (${SITE}/pricing.md#plans): from 2026-10-12 a Free account's API secret is refused. Then create an API secret in the bitHuman app (https://www.bithuman.ai/developer/api-keys) and export it. The live demo and the web embed need neither, and the CLI can sign in with \`bithuman login\` instead:\n\n\`\`\`bash\nexport BITHUMAN_API_SECRET="<your API secret>"\n\`\`\`\n\nHow the API secret works: ${SITE}/start/api-secret.md\n\n` +
+      `## Pick your platform\n\n${pathTable()}\nThe Website, Terminal, Python and REST blocks run as pasted after \`export BITHUMAN_API_SECRET=…\`; the app platforms show the core calls, and their page has the complete first run. Key terms: ${SITE}/models/how-it-works.md#key-terms\n${quickstartMd()}`;
     body += await hubBody("overview", ["Get started"], "###");
     return md(twin("Quickstart", "/start", hubMeta("start").description, body));
   }
@@ -161,8 +155,8 @@ export const GET: APIRoute = async ({ props }) => {
     // The page's groups and its support matrix, as its headings (docs v2 W7).
     const groups = PLATFORM_GROUPS.map((g) => `## ${g.name}\n\n${g.line}\n\n` +
       PLATFORM_PAGES.filter((p) => p.group === g.name).map((p) => `- [${p.title}](${link(p.href)}): ${p.line}`).join("\n") + "\n").join("\n");
-    const matrix = `## Support matrix\n\n| Platform | Where it renders | First result | Reference |\n|---|---|---|---|\n` +
-      PLATFORM_PAGES.map((p) => `| [${p.title}](${link(p.href)}) | ${p.renders.map((r) => RENDERS_LABEL[r]).join(" · ")} | ${p.time ?? "—"} | ${PLATFORM_REFERENCE[p.id] ? `[${PLATFORM_REFERENCE[p.id].title}](${link(PLATFORM_REFERENCE[p.id].href)})` : "—"} |`).join("\n") + "\n";
+    const matrix = `## Support matrix\n\nConversation: who listens to the user and writes the replies. "Your app sends speech audio" means you bring speech-to-text, the language model and the voice; bitHuman draws the face ([key terms](${SITE}/models/how-it-works.md#key-terms)).\n\n| Platform | Where it renders | Conversation | Install | Reference |\n|---|---|---|---|---|\n` +
+      PLATFORM_PAGES.map((p) => `| [${p.title}](${link(p.href)}) | ${p.renders.map((r) => RENDERS_LABEL[r]).join(" · ")} | ${p.conversation} | ${p.install.code ? "`" + p.install.code.replace(/\|/g, "\\|") + "`" : p.install.text} | ${PLATFORM_REFERENCE[p.id] ? `[${PLATFORM_REFERENCE[p.id].title}](${link(PLATFORM_REFERENCE[p.id].href)})` : "—"} |`).join("\n") + "\n";
     const body = `Current versions: CLI ${V.cli} · bithuman (Python) ${V.python} · Swift package ${V.swift} · essence2-android ${V.essence2_android} · expression2-android ${V.expression2_android} · livekit-plugins-bithuman ${V.livekit_plugin} · Flutter plugin ${V.flutter_plugin}. Machine-readable: ${SITE}/versions.json\n\n${groups}\n${matrix}\n**Every page**\n` + (await hubBody("platforms", undefined, "###"));
     return md(twin("Platforms", "/platforms", hubMeta("platforms").description, body));
   }

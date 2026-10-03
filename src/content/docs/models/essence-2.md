@@ -12,7 +12,7 @@ renders: ["device", "server", "cloud"]
 next: ["/platforms", "/build/create-avatar", "/models/expression-2"]
 moved:
   how-creation-works: /build/create-avatar#how-creation-works
-  serving-tiers: /models/how-it-works#serving-tiers
+  serving-tiers: /performance/method#pin-a-tier-for-a-benchmark
   idle-and-speaking-behavior: /models/how-it-works#idle-and-speaking-behavior
 ---
 

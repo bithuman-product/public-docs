@@ -6,7 +6,6 @@ group: "Apps"
 order: 40
 type: recipe
 llms: build
-time: "5 min"
 availability: "creator"
 renders: ["no-gpu", "server", "cloud"]
 needs: ["API secret"]

@@ -9,7 +9,6 @@ import MovedAnchors from "../components/MovedAnchors.astro";
 import HUB_MOVED from "../data/hub-moved.json";
 import { hubMeta } from "../config/hubs";
 import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_V1, GUIDES } from "../data/home";
-import { headlineData } from "../lib/perf-headline";
 import { modelCardHtml } from "../lib/model-card";
 import { balancedCols } from "../lib/grid";
 
@@ -17,17 +16,11 @@ import { balancedCols } from "../lib/grid";
 // then four bands of tiles: Platforms, Models, Where it runs, Start building.
 // Every tile is one link; the detail lives on the page it opens. No version
 // strip (versions live on /downloads). The model cards (src/lib/model-card.ts)
-// carry an image, a line, highlights and "Runs on" (owner, 2026-10-01); their
-// one quiet speed line is the generated headline
-// (src/partials/performance-headline.md), as times real time; nothing here
-// types a number.
+// carry an image, a line, highlights and "Runs on" (owner, 2026-10-01); no speed
+// line (W10: a multiple without its definition does not help a newcomer pick).
+// Each band opens with one line on which one to pick (LANDING).
 const meta = hubMeta("");
 const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
-const headline = headlineData() ?? [];
-const speed = (title: string) => {
-  const row = headline.find((r) => r.model === title);
-  return row ? `${row.cells.map((c) => `${c.platform} ${c.multiple}`).join(" · ")} real time` : undefined;
-};
 const tileCols = balancedCols(START_BUILDING.length);
 ---
 
@@ -53,6 +46,7 @@ const tileCols = balancedCols(START_BUILDING.length);
       <div class="band-head">
         <h2 id="platforms">Platforms</h2>
         <a class="band-more" href="/platforms">All platforms <Icon name="arrow" size={16} /></a>
+        <p>{LANDING.pickPlatform}</p>
       </div>
       <ul class={`card-grid tiles cols-${tileCols}`} role="list">
         {START_BUILDING.map((c) => <li><Card href={c.href} title={c.title} icon={c.icon} variant="platform" /></li>)}
@@ -65,9 +59,10 @@ const tileCols = balancedCols(START_BUILDING.length);
       <div class="band-head">
         <h2 id="models">Models</h2>
         <a class="band-more" href="/models">Compare models <Icon name="arrow" size={16} /></a>
+        <p>{LANDING.pickModel} <a href="/models/how-it-works#key-terms">Key terms</a></p>
       </div>
       <ul class="card-grid cols-2 models" role="list">
-        {[...MODELS, ...MODELS_V1].map((m) => <li set:html={modelCardHtml(m, { note: speed(m.title) })} />)}
+        {[...MODELS, ...MODELS_V1].map((m) => <li set:html={modelCardHtml(m)} />)}
       </ul>
     </div>
   </section>

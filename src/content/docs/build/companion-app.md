@@ -6,7 +6,6 @@ group: "Apps"
 order: 20
 type: recipe
 llms: build
-time: "45 min"
 availability: "creator"
 renders: ["device"]
 needs: ["Physical device", "API secret"]

@@ -11,10 +11,10 @@ export type Plan = keyof typeof PLAN_LABEL;
 
 /** Where the avatar renders. */
 export const RENDERS_LABEL = {
-  device: "Renders on the device",
-  "no-gpu": "No GPU",
+  device: "On the device",
+  "no-gpu": "No GPU needed",
   browser: "In the browser (WebGPU)",
-  server: "Your servers",
+  server: "Your computer or server",
   cloud: "bitHuman cloud",
   offline: "Fully offline",
 } as const;

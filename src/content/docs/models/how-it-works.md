@@ -7,7 +7,25 @@ order: 10
 type: concept
 llms: models
 next: ["/models/avatar-file", "/platforms", "/models"]
+moved:
+  serving-tiers: /performance/method#pin-a-tier-for-a-benchmark
 ---
+
+bitHuman draws the face. You give an avatar speech audio and it returns lip-synced video frames, live. The listening, the replies and the voice come from your own stack, or from a bitHuman agent that runs the conversation for you.
+
+## Key terms
+
+| Term | Meaning |
+|---|---|
+| **Avatar** | The face that talks: one character, made from one portrait. It turns speech audio into lip-synced video. |
+| **Agent** | An avatar plus its persona, voice and knowledge, so it can hold a conversation. Each agent has an **agent code** such as `A23WJF0199`; API fields call it `agent_id` or `agent_code`. A sample avatar also has a short name: `wise-pup` is `A23WJF0199`. |
+| **Model** | What renders the avatar: [Essence 2](/models/essence-2) for a real person, [Expression 2](/models/expression-2) for any character (the default), or the [first generation](/models/first-generation). |
+| **Avatar file** (`.imx`) | One avatar in one file, downloaded once to render on your own hardware. The Essence 2 SDKs call it an *identity*. [The avatar file](/models/avatar-file) |
+| **Conversation** | Speech-to-text, a language model and a voice. A bitHuman agent runs it in the web embed and `bithuman run`; with the SDKs you bring your own and send the avatar its speech. |
+| **Cloud** | bitHuman renders the avatar on its servers and streams the video. [bitHuman cloud](/deploy/cloud) |
+| **On-device** | The avatar renders inside your app on the phone, tablet or Mac, or in the visitor's browser tab. [On the device](/deploy/on-device) |
+| **Self-hosted** | The avatar renders on a computer or server you run: the CLI, Python, LiveKit or Pipecat, even on a PC with no GPU. [Your servers](/deploy/self-hosted) |
+| **Session** | One avatar running, from start to stop. It bills per second while it runs, talking or idle; self-hosted and on-device sessions bill the lower rate. [Pricing](/pricing) |
 
 ```diagram
 engine
@@ -25,27 +43,11 @@ bitHuman is one portable engine with thin language bindings on top, and your app
 
 You integrate at the SDK layer. The engine is built into each SDK, so your app needs the bitHuman dependency and nothing else. To pick a platform, start at [Platforms](/platforms); which model runs where is on [Models](/models#where-each-model-runs).
 
-## Serving tiers
-
-Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)). In the bitHuman cloud, the service picks the hardware for each session; to benchmark one tier, see [pin a tier for a benchmark](/performance/method#pin-a-tier-for-a-benchmark); in production, let the service choose.
+Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)).
 
 ## Idle and speaking behavior
 
-**Essence 2.** The identity video plays continuously and loops **forward-only**: at its last
-frame it wraps to the first, and it never plays in reverse. While idle it is
-pure playback of your footage; while talking, the animated face is rendered
-over the same frames.
-
-**Expression 2.** During silences the avatar plays its **10-second idle clip**, generated from the
-identity at creation, looping forward-only without a seam. When speech starts,
-the engine hands off to generated frames with a per-identity color match, so the
-two stay visually continuous; idle resumes only after sustained silence, not in
-pauses inside a sentence.
-
-**Speech onset.** The engine renders in fixed audio chunks; the moving idle
-clip covers the start of each reply.
-
-A running session bills talking and idle time alike ([pricing](/pricing)).
+Between replies the avatar keeps moving on an idle loop made when it was created, so it never freezes. When audio arrives, the lips follow it. A running session bills talking and idle time alike ([pricing](/pricing)).
 
 ## What stays true across every surface
 
@@ -104,7 +106,7 @@ Install, the model download and the credential are on the
 ### Frame format
 
 Frames arrive at the model's own rate, whatever the chunk size: 25 fps for
-Essence 2 (up to 1080p: the identity's own canvas, 1080×1920 portrait for a standard identity) and 20 fps for Expression 2
+Essence 2 (up to 1080×1920, portrait) and 20 fps for Expression 2
 (416x720). Python yields RGB `uint8` arrays; the Swift package and the Android SDK hand you
 their platform's image types.
 

@@ -14,11 +14,16 @@ models: ["essence-2", "expression-2"]
 claims: ["S2", "S3", "S4", "S6", "S10"]
 next: ["/platforms/cli/voice", "/platforms/cli/troubleshooting", "/platforms/cli/reference"]
 moved:
+  first-frame: /platforms/cli#run-your-first-avatar
   integrate-into-your-app: /platforms/cli/voice#integrate-into-your-app
   voice-settings: /platforms/cli/voice#voice-settings
   platform-notes: /platforms/cli/voice#platform-notes
   reference: /platforms/cli/reference
   troubleshooting: /platforms/cli/troubleshooting
+  complete-example: /platforms/cli#run-your-first-avatar
+  requirements: /platforms/cli#before-you-start
+  run-it: /platforms/cli#run-your-first-avatar
+  expected-output: /platforms/cli#run-your-first-avatar
 ---
 
 One binary, no code: `bithuman run` opens a live conversation with an avatar in your browser.
@@ -38,7 +43,7 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 | You need | For | Check |
 |---|---|---|
 | macOS 14+ on Apple silicon, or Linux on x86_64 or arm64 | the binary | `uname -sm` |
-| A bitHuman sign-in or API secret | `run` and `render` (browsing and downloading need none) | `bithuman account` exits 0 |
+| A bitHuman sign-in or API secret, on the Creator plan or higher (usage bills per second; [pricing](/pricing)) | `run` and `render` (browsing and downloading need none) | `bithuman account` exits 0 |
 | `ffmpeg` on `PATH` | `render`, and `run` with an Essence 2 avatar | `ffmpeg -version` |
 | `livekit-server` 1.13 or newer for `bithuman run` (the Linux download includes it) | `run` | `livekit-server --version`; update with `brew upgrade livekit` |
 | Python 3.11 or newer with `venv` (`python3-venv` on Debian/Ubuntu) | `run` (its voice agent) | `python3 --version` |
@@ -83,9 +88,9 @@ bithuman login --device   # over SSH: prints a code to enter in any browser
 bithuman account          # exit 0 when signed in
 ```
 
-Sign in first, because every render path needs a credential: without one, `run` and `render` stop before the first frame with exit 77 and write nothing. In scripts and CI, set `BITHUMAN_API_SECRET` instead of signing in ([Your API secret](/start/api-secret)). Cost: active session time, to the second ([pricing](/pricing)). Listing, downloading and opening avatars need no account.
+Sign in first, because every render path needs a credential: without one, `run` and `render` stop before the first frame with exit 77 and write nothing. In scripts and CI, set `BITHUMAN_API_SECRET` instead of signing in ([Your API secret](/start/api-secret)). Listing, downloading and opening avatars need no account.
 
-## First frame
+## Run your first avatar
 
 Render the sample speech through the `wise-pup` sample avatar:
 
@@ -105,7 +110,7 @@ bithuman run wise-pup
 
 `render` accepts any audio format `ffmpeg` reads. `bithuman run` needs two more things from [Before you start](#before-you-start): `livekit-server` and Python. It starts a local `livekit-server` and the voice agent; the first run installs the agent, about 380 MB on disk, in one to two minutes.
 
-Where the avatar renders depends on what you name. A sample name (`wise-pup`) or a file renders on this machine, at the self-hosted rate. An agent code (`A23WJF0199`) opens a session in the bitHuman cloud, at the cloud rate ([pricing](/pricing)).
+`wise-pup` and `A23WJF0199` are the same avatar, named two ways, and the name decides where it renders: a name (`wise-pup`) or a file renders on this machine, at the lower self-hosted rate; an agent code (`A23WJF0199`) renders in the bitHuman cloud, at the cloud rate ([pricing](/pricing)).
 
 <div class="fig-end">
 
@@ -114,31 +119,6 @@ cli-linux
 ```
 
 </div>
-
-## Complete example
-
-From a fresh machine to a talking-avatar MP4 in four commands.
-
-### Requirements
-
-| You need | Notes |
-|---|---|
-| macOS (Apple silicon) or Linux (x86_64, arm64) | |
-| An [API secret](/start/api-secret) | or `bithuman login` |
-| `ffmpeg` | `brew install ffmpeg` or `sudo apt install -y ffmpeg` |
-
-### Run it
-
-```bash
-curl -fsSL https://install.bithuman.ai | sh
-export BITHUMAN_API_SECRET="<your API secret>"
-curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
-bithuman render wise-pup speech.wav
-```
-
-### Expected output
-
-`wise-pup.mp4`: 416×720, as long as the audio (15 seconds for the sample).
 
 ### Make it your own
 

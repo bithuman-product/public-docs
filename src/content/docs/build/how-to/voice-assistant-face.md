@@ -29,7 +29,7 @@ You need:
 
 ## Steps
 
-The code in these steps is from [Companion app](/build/companion-app) and [Android: First frame](/platforms/android#first-frame).
+The code in these steps is from [Companion app](/build/companion-app) and [Android: Run your first avatar](/platforms/android#run-your-first-avatar).
 
 ### Choose where the face renders
 
@@ -183,7 +183,7 @@ fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
 }
 ```
 
-Pass `To16k().floats(chunk)` as `pcm16k`. In Swift, `feed(samples)` and `flushTail()` do the same, and the reply's audio starts on its first frame (`audioTime == 0`): the complete loop is in [iOS & iPadOS: First frame](/platforms/ios#first-frame), and an Essence 2 version is in [Companion app: Speak a reply](/build/companion-app#speak-a-reply).
+Pass `To16k().floats(chunk)` as `pcm16k`. In Swift, `feed(samples)` and `flushTail()` do the same, and the reply's audio starts on its first frame (`audioTime == 0`): the complete loop is in [iOS & iPadOS: First frame](/platforms/ios#run-your-first-avatar), and an Essence 2 version is in [Companion app: Speak a reply](/build/companion-app#speak-a-reply).
 
 ```expected
 The lips follow the reply's audio from its first word, and idle motion returns when the reply ends.

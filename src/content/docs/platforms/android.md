@@ -15,6 +15,7 @@ models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S8", "S10", "S13", "S26", "S30", "S32"]
 next: ["/platforms/android/app", "/platforms/android/troubleshooting", "/platforms/android/reference"]
 moved:
+  first-frame: /platforms/android#run-your-first-avatar
   integrate-into-your-app: /platforms/android/app#integrate-into-your-app
   complete-example: /platforms/android/app#complete-example
   platform-notes: /platforms/android/app#platform-notes
@@ -39,6 +40,7 @@ You feed 16 kHz mono speech in and pull picture frames out. Each model is one Gr
 | **Worked example** | [Android Expression 2](/examples/android-expression-2) | [Android Essence 2](/examples/android-essence-2) |
 
 - **JDK 17, Gradle 8.11 or newer and Android Gradle Plugin 8.7 or newer.**
+- **A paid plan** (Creator or higher): usage bills per second while the avatar runs ([pricing](/pricing)).
 - **A physical arm64 phone.** Emulators cannot load the engines.
 - **Frame rate depends on the phone.** Essence 2 plays at 25 frames a second, and the phone has to render at least that fast to keep up with live speech. Recent flagship chips render well above that; older ones, such as the Snapdragon 8 Gen 2 in a Galaxy Z Flip5, can fall below real time, more so as the phone warms. The [performance page](/performance) has the measured rates. Test on the phones your app targets.
 - **Essence 1** is not available on phones: use Essence 2 or Expression 2 on devices ([First generation](/models/first-generation)).
@@ -102,15 +104,12 @@ implementation("ai.bithuman:expression2-android:0.5.2") {
 
 ## Authenticate
 
-Pass your API secret ([create one](https://www.bithuman.ai/developer/api-keys)) in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
-
-Cost: active session time, to the second ([pricing](/pricing)).
-
+Pass your API secret ([create one](https://www.bithuman.ai/developer/api-keys)) in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. See [Your API secret](/start/api-secret).
 > **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only.
 
 A shipped app fetches its secret from your backend ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
 
-## First frame
+## Run your first avatar
 
 Expression 2, with the published `wise-pup` avatar (agent code `A23WJF0199`). Call `render` off the main thread.
 

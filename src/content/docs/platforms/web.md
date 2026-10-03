@@ -13,6 +13,7 @@ models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S29", "S17"]
 next: ["/platforms/web/app", "/platforms/web/troubleshooting"]
 moved:
+  first-frame: /platforms/web#run-your-first-avatar
   render-in-the-visitors-tab-webgpu: /platforms/web/webgpu
   integrate-into-your-app: /platforms/web/app#integrate-into-your-app
   react-and-other-frameworks: /platforms/web/app#react-and-other-frameworks
@@ -35,14 +36,14 @@ One URL in an `<iframe>`: no npm package, no install and no secret in the browse
 The embed URL is `https://www.bithuman.ai/embed/<CODE>`, and the avatar listens and answers. By default it renders in the bitHuman cloud and streams to the page; with `render=local` it renders in the visitor's tab with WebGPU.
 
 - A current browser. For lip-sync rendered in the tab, a usable GPU ([render in the tab](/platforms/web/webgpu)).
-- An agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
+- An [agent code](/models/how-it-works#key-terms): `A23WJF0199` (the `wise-pup` sample avatar) or your own ([create your own avatar](/build/create-avatar)).
 - For a private agent, an [embed token](/api/embedding) minted by your server.
 
 ## Authenticate
 
-A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions bill the agent's owner: credits pay for session time, talking or idle, and the conversation (speech recognition, language model and voice) bills in every mode ([pricing](/pricing)).
+A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions on your own agent bill your account per second, voice and AI included ([pricing](/pricing)).
 
-## First frame
+## Run your first avatar
 
 ```html
 <!doctype html>
@@ -56,6 +57,8 @@ A public agent needs no credential. For a private agent, your server mints an [e
 
 Expected: the avatar's picture with **Tap to talk**. Select it, allow the microphone, and the avatar greets you and answers when you speak. Keep the `*` in `allow`, or the microphone is blocked. To try it without a page, open [https://www.bithuman.ai/embed/A23WJF0199](https://www.bithuman.ai/embed/A23WJF0199).
 
+The `wise-pup` sample ends each session after 2 minutes. For your site, embed your own agent ([create your own avatar](/build/create-avatar)); its sessions have no such limit.
+
 <div class="fig-end">
 
 ```figure
@@ -66,7 +69,7 @@ web-embed
 
 ## Performance
 
-Measured in the tab with WebGPU. The figures are the engine's render speed in Chrome on an Apple M4, not the frame rate a visitor sees.
+Measured in the tab with WebGPU, in Chrome on an Apple M4.
 
 ```perf
 web web-sustained

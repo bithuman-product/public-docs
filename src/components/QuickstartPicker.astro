@@ -33,7 +33,6 @@ const md = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
             {q.plan && <Availability plan={q.plan} />}
           </div>
           <dl class="qp-meta">
-            {q.time && <div><dt>Time</dt><dd>{q.time}</dd></div>}
             <div><dt>Needs</dt><dd>{q.needs.join(" · ")}</dd></div>
             <div><dt>Models</dt><dd>{q.models.join(", ")}</dd></div>
           </dl>
