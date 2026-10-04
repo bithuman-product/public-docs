@@ -33,7 +33,7 @@ You feed 16 kHz mono speech in and pull picture frames out. Each model is one Gr
 |---|---|---|
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Devices** | a physical `arm64-v8a` phone, `minSdk 26` | a physical `arm64-v8a` phone, `minSdk 29` |
-| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.2")` | `implementation("ai.bithuman:essence2-android:0.9.3")` |
+| **Dependency** | `implementation("ai.bithuman:expression2-android:0.6.0")` | `implementation("ai.bithuman:essence2-android:0.9.4")` |
 | **Credential** | an [API secret](/start/api-secret), Creator plan or higher | an API secret, Creator plan or higher |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | about 3 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
@@ -81,8 +81,8 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.5.2")
-    // or: implementation("ai.bithuman:essence2-android:0.9.3")
+    implementation("ai.bithuman:expression2-android:0.6.0")
+    // or: implementation("ai.bithuman:essence2-android:0.9.4")
 }
 ```
 
@@ -95,7 +95,7 @@ The `dependencyResolutionManagement` block works unchanged in a Groovy `settings
 `expression2-android` brings the Qualcomm accelerator runtime with it (`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`). To keep the APK small and render on the CPU instead, exclude it:
 
 ```kotlin
-implementation("ai.bithuman:expression2-android:0.5.2") {
+implementation("ai.bithuman:expression2-android:0.6.0") {
     exclude(group = "com.qualcomm.qti")
 }
 ```
