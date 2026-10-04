@@ -43,7 +43,9 @@ Two ways to pay for a live avatar:
 - **Avatar only:** you bring the conversation (your own speech-to-text, language model and voice, through an SDK, the plugin or the API) and pay only the model's rate in the first table.
 - **Managed agent:** bitHuman runs the whole conversation (listening, the replies, the voice) and the avatar, as in the web embed, for one all-inclusive rate in the second table.
 
-A session bills while it is **running**, whether the avatar is talking or idle, to the exact second. A stopped or disconnected session accrues nothing. File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+A session bills while it is **running**, whether the avatar is talking or idle, to the exact second. A stopped or disconnected session accrues nothing.
+
+On a phone or a Mac, a session ends on its own once its app has been in the background, or has asked for no frame, for 60 seconds, and is billed up to that point. This applies from Swift package 2.20.4, `essence2-android` 0.9.5, `expression2-android` 0.6.1 and Flutter plugin 2.6.37. File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
 Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 

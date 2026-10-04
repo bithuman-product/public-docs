@@ -28,6 +28,7 @@ Recent releases worth a look first.
 | 2026-12-26 (announced 2026-09-27) | REST API | `POST /v1/agent/generate` requires `model`; the bare names `essence` / `expression` and the `version` field are refused with a `400` | send `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1` |
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
+| 2026-10-04 | Flutter plugin 2.6.37 | iOS apps need iOS 16.4 (was 16.0); macOS apps need macOS 14.0 (was 26.0 in 2.6.36); a session whose app is in the background, or takes no frame, for 60 seconds ends and is billed to that point; an API secret whose account may not use the avatar is refused (`AGENT_NOT_ENTITLED`) | set `platform :ios, '16.4'` and `IPHONEOS_DEPLOYMENT_TARGET = 16.4`; set `platform :osx, '14.0'` and `MACOSX_DEPLOYMENT_TARGET = 14.0`; an app that runs on macOS 14 bundles an ONNX Runtime built for macOS 14 (Homebrew's is built for macOS 15); use the API secret of the account that owns the avatar |
 | 2026-10-04 | Flutter plugin 2.6.36 | macOS apps need macOS 26.0 (iOS stays 16.0); `BithumanEntitlementException` is a new exception from `load` and the installers; on Android, an Expression 2 `load` without `apiSecret` fails; the installers need `apiSecret` for an avatar that is not public | set `platform :osx, '26.0'` and `MACOSX_DEPLOYMENT_TARGET = 26.0`; catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)); pass `apiSecret` |
 | 2026-10-04 | essence2-android 0.9.4 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`NOT_FOUND`) |
 | 2026-10-04 | expression2-android 0.6.0 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`404`) |
@@ -45,6 +46,17 @@ Recent releases worth a look first.
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## October 2026
+
+### Flutter plugin 2.6.37 — 2026-10-04
+
+Tag `flutter-plugin-v2.6.37`. Update before your app ships to customers: a session left in the background now stops billing on its own.
+
+- **A session nobody watches ends after 60 seconds.** On Android, iOS and macOS, an app in the background for 60 seconds, or one that takes no frame for 60 seconds, ends its session, billed up to that point. On iOS the session ends earlier if the background time iOS grants runs out first. When the app is visible again, the next frame starts a new session. Coming back within 60 seconds keeps the session.
+- **The secret check names the avatar.** If the API secret's account may not use the avatar, the session refuses to start (`AGENT_NOT_ENTITLED`), and nothing is billed.
+- **Android: the avatar uses no CPU in the background.** While the app is off screen and the avatar has nothing to say, the plugin's threads wait instead of polling. On a Galaxy Z Flip5, an app that leaves the avatar open in the background measured about 7 wake-ups a second and under 1% of a core, down from 1,400–2,500 wake-ups a second and 30–42% of a core. A reply that arrives in the background still plays. Frames return within about 0.2 s of the app coming back.
+- **iOS needs 16.4 and macOS 14.0.** The on-device brain moves to `converse-apple-v2.5.1`, which needs iOS 16.4 and brings macOS back to 14.0 (2.6.36 needed 26.0). llama.cpp is now inside the plugin, so macOS needs only `brew install onnxruntime`. Homebrew's ONNX Runtime is built for macOS 15, so an app that runs on macOS 14 must bundle an ONNX Runtime built for macOS 14.
+- Engines: Android `essence2-android` 0.9.5 and `expression2-android` 0.6.1; iOS and macOS Essence 2 `essence2-v1.15.5` and Expression 2 `v2.20.4`. Rendering is unchanged.
+- **Action:** pin `ref: flutter-plugin-v2.6.37`. Set `platform :ios, '16.4'` in `ios/Podfile` and `IPHONEOS_DEPLOYMENT_TARGET = 16.4` on the Runner target. Set `platform :osx, '14.0'` in `macos/Podfile` and `MACOSX_DEPLOYMENT_TARGET = 14.0` on the Runner target.
 
 ### Swift package 2.20.4 — 2026-10-04
 
