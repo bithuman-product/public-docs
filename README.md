@@ -1,3 +1,7 @@
+> **This repository moved to [gitlab.com/bithuman/docs/public-docs](https://gitlab.com/bithuman/docs/public-docs).**
+> This GitHub copy is archived and read-only. The site is still [docs.bithuman.ai](https://docs.bithuman.ai);
+> edits, issues and merge requests go to GitLab.
+
 # bitHuman developer docs
 
 [![Discord](https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white)](https://www.bithuman.ai/discord) Questions, demos and challenges: [join the bitHuman Discord](https://www.bithuman.ai/discord).
