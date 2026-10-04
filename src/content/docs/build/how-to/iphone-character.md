@@ -51,7 +51,7 @@ The avatar appears and idles. Tap **Speak**: it says the sample line with its li
 
 ### Add the Swift package to your app
 
-In Xcode choose *File → Add Package Dependencies…*, paste `https://github.com/bithuman-product/homebrew-bithuman.git` and attach the `Expression2` product to your target. The current version pin and the `Package.swift` line are on [iOS & iPadOS: Install](/platforms/ios#install).
+In Xcode choose *File → Add Package Dependencies…*, paste `https://gitlab.com/bithuman/sdk/bithuman-swift` and attach the `Bithuman` product to your target. The current version pin and the `Package.swift` line are on [iOS & iPadOS: Install](/platforms/ios#install).
 
 ```expected
 Your app builds with `import Expression2`.
@@ -77,7 +77,7 @@ Download the `wise-pup` sample avatar, the shared Expression 2 engine and a 16 k
 
 ```bash
 curl -fL -o A23WJF0199.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
-curl -fLO "https://github.com/bithuman-product/homebrew-bithuman/releases/download/expression2-engine-mac-arm64-1.0.0/mac-arm64-1.0.0.engine"
+curl -fLO "https://downloads.bithuman.ai/homebrew-bithuman/expression2-engine-mac-arm64-1.0.0/mac-arm64-1.0.0.engine"
 curl -fL -o speech16k.wav "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2&member=demo_speech_16k.wav"
 ```
 

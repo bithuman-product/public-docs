@@ -34,7 +34,7 @@ You feed 16 kHz mono speech in and take lip-synced frames out. The same package 
 |---|---|---|
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Devices** | iPhone or iPad, iOS 16 or newer; measured on iPhone 15 only | iPhone, or an M-series iPad, iOS 26 or newer; measured on iPhone 15 only |
-| **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2Kit", package: "homebrew-bithuman")` (Swift), or `.product(name: "Essence2", package: "homebrew-bithuman")` (C) |
+| **Product** | `.product(name: "Bithuman", package: "bithuman-swift")` | `.product(name: "Bithuman", package: "bithuman-swift")` (Swift), or `.product(name: "Essence2", package: "bithuman-swift")` (C) |
 | **Credential** | an [API secret](/start/api-secret), Creator plan or higher | an API secret, Creator plan or higher |
 | **First-run download** | about 370 MB (avatar and shared engine) | about 250 MB (avatar and engine resources) |
 | **Worked example** | [iOS Expression 2](/examples/ios-expression-2) | [iOS Essence 2](/examples/ios-essence-2) |
@@ -50,7 +50,7 @@ You feed 16 kHz mono speech in and take lip-synced frames out. The same package 
 swift-install
 ```
 
-The package lives in the `homebrew-bithuman` repository, so its package identity is `homebrew-bithuman`; the name is expected. The Simulator slices are arm64 only: for a `generic/platform=iOS Simulator` or other command-line build, set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in your target's build settings.
+The package identity is `bithuman-swift`, from its URL. The Simulator slices are arm64 only: for a `generic/platform=iOS Simulator` or other command-line build, set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in your target's build settings.
 
 ## Authenticate
 
@@ -66,7 +66,7 @@ Download the `wise-pup` sample avatar (agent code `A23WJF0199`), the shared Expr
 
 ```bash
 curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
-curl -fLO "https://github.com/bithuman-product/homebrew-bithuman/releases/download/expression2-engine-mac-arm64-1.0.0/mac-arm64-1.0.0.engine"
+curl -fLO "https://downloads.bithuman.ai/homebrew-bithuman/expression2-engine-mac-arm64-1.0.0/mac-arm64-1.0.0.engine"
 curl -fL -o speech16k.wav "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2&member=demo_speech_16k.wav"
 ```
 

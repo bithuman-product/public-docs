@@ -46,6 +46,11 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Repositories moved to GitLab — 2026-10-16
+
+- **Changed:** bitHuman's public repositories moved from GitHub to [gitlab.com/bithuman](https://gitlab.com/bithuman), and release files download from `downloads.bithuman.ai`. The GitHub copies are archived and read-only, so every version you already installed keeps working. [We moved to GitLab](/resources/moved-to-gitlab) lists each change.
+- **Action:** only when you adopt Swift 3.0, use `https://gitlab.com/bithuman/sdk/bithuman-swift`; Flutter 3.0 is `bithuman: ^3.0.0` on pub.dev. Homebrew users run `brew uninstall bithuman-cli` and `brew untap bithuman-product/bithuman`, then `brew tap bithuman/bithuman https://gitlab.com/bithuman/sdk/homebrew-bithuman` and `brew install bithuman/bithuman/bithuman-cli`. The installer, `pip`, Maven and the web embed need no change.
+
 ### Swift package 2.20.4 — 2026-10-04
 
 Tag `v2.20.4`.
@@ -370,7 +375,7 @@ Tag `cli-v2.8.4`.
 Tag `v2.19.0`.
 
 - **Changed:** the Expression 2 engine moves to 2.19.0 and the Essence 2 engine to 1.15.0. On a Mac, both engines now take their licensing and metering core from a new `EngineCore` binary target. The `Expression2`, `Essence2` and `Essence2Kit` products link it for you, with `Security` and `curl`. iPhone and iPad builds link nothing new.
-- **Action:** update to 2.19.0. A Mac app that links the engine archives outside SwiftPM must also link `EngineCore.xcframework` from the [essence2-v1.15.0 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.0), plus `Security` and `curl`.
+- **Action:** update to 2.19.0. A Mac app that links the engine archives outside SwiftPM must also link `EngineCore.xcframework` from the essence2-v1.15.0 release ([EngineCore.xcframework.zip](https://downloads.bithuman.ai/homebrew-bithuman/essence2-v1.15.0/EngineCore.xcframework.zip)), plus `Security` and `curl`.
 
 ### Flutter plugin 2.6.21 — 2026-09-28
 

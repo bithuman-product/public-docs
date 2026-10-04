@@ -206,7 +206,9 @@ const HERE = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const rootArg = process.argv.indexOf("--root");
 const ROOT = rootArg > -1 ? resolve(process.argv[rootArg + 1]) : HERE;
 const CORPUS_ROOTS = ["src/content", "src/pages"];
-const TAP = "bithuman-product/homebrew-bithuman";
+const TAP = "bithuman/sdk/homebrew-bithuman"; // the gitlab.com project path
+// The Swift package from 3.0 (and every mirrored 2.x tag): sdk/bithuman-swift on GitLab.
+const SWIFT_PKG = "bithuman/sdk/bithuman-swift";
 
 /** What a page can name, and where its truth lives. */
 export const ARTIFACTS = [
@@ -603,18 +605,28 @@ export function swiftPackagePins(text, url) {
   return out;
 }
 
-const TAP_URL = "https://github.com/bithuman-product/homebrew-bithuman";
+const TAP_URL = "https://gitlab.com/bithuman/sdk/bithuman-swift";
+// The 2.x URL of the same package (a page or an example not moved yet, on the archived GitHub tap):
+// its pins are graded under V6 like the 3.x URL, never dropped to V10 as an unregistered third party.
+// Built, not spelled, so the migration codemod's URL map leaves it alone.
+const LEGACY_TAP_URLS = ["github.com/" + "bithuman-product"].map((h) => `https://${h}/homebrew-bithuman`);
+// The interim SPM identity TARGET_ORG section 4 forbids: homebrew-bithuman on GitLab as a Swift package
+// (no 3.x ships there, and its identity is not bithuman-swift). V6 FAILS every pin on it, whatever the
+// version: it is never a legacy form.
+const INTERIM_SWIFT_URLS = ["gitlab.com/bithuman/sdk"].map((h) => `https://${h}/homebrew-bithuman`);
 
 /** V6 — `from:` pins on the Swift package, in a Swift manifest or an XcodeGen spec. */
 export function tapPins(text) {
-  const out = swiftPackagePins(text, TAP_URL);
-  const yamlRe = /^[ \t]*url:\s*https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?[ \t]*$/gm;
+  const out = [TAP_URL, ...LEGACY_TAP_URLS, ...INTERIM_SWIFT_URLS].flatMap((u) =>
+    swiftPackagePins(text, u).map((p) => (INTERIM_SWIFT_URLS.includes(u) ? { ...p, interim: u } : p)));
+  const yamlRe = /^[ \t]*url:\s*https:\/\/(?:github\.com\/bithuman-product\/homebrew-bithuman|gitlab\.com\/bithuman\/sdk\/(?:homebrew-bithuman|bithuman-swift))(?:\.git)?[ \t]*$/gm;
   let m;
   while ((m = yamlRe.exec(text)) !== null) {
     const v = /^[ \t]*(?:from|exactVersion|version)\s*:\s*["']?([0-9][0-9A-Za-z.\-]*?)["']?[ \t]*$/m.exec(
       text.slice(m.index, m.index + 300),
     );
-    if (v) out.push({ version: v[1], line: lineOf(text, m.index) });
+    const interim = INTERIM_SWIFT_URLS.find((u) => m[0].includes(u));
+    if (v) out.push({ version: v[1], line: lineOf(text, m.index), ...(interim ? { interim } : {}) });
   }
   return out;
 }
@@ -629,7 +641,7 @@ export function thirdPartySwiftPins(path, text) {
   let m;
   while ((m = re.exec(text)) !== null) {
     const url = m[1].replace(/\/$/, "");
-    if (url === TAP_URL) continue; // V6 owns the tap
+    if (url === TAP_URL || LEGACY_TAP_URLS.includes(url) || INTERIM_SWIFT_URLS.includes(url)) continue; // V6 owns the Swift package (every URL)
     const v = /\b(?:from|exact)\s*:\s*\\?["']([0-9][0-9A-Za-z.\-]*)\\?["']/.exec(text.slice(m.index, m.index + 400));
     if (!v) continue; // a bare git url with no pin claims no version
     out.push({
@@ -779,6 +791,15 @@ export async function grade(files, registry) {
     // V6 — the Swift package
     for (const p of tapPins(text)) {
       seen.V6++;
+      if (p.interim) {
+        failures.push({
+          path,
+          line: p.line,
+          msg: `V6: pins the Swift package at the interim URL ${p.interim} (identity homebrew-bithuman), which ` +
+            `no Swift release ships from; use ${TAP_URL} (TARGET_ORG section 4).`,
+        });
+        continue;
+      }
       const tags = latest.swift;
       if (tags === null) {
         unread("swift").ungraded.push(`${path}:${p.line}`);
@@ -1062,29 +1083,28 @@ const liveRegistry = {
       return v;
     }
     if (a.kind === "cli") {
-      const headers = { Accept: "application/vnd.github+json" };
-      const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
-      if (token) headers.Authorization = `Bearer ${token}`;
+      // downloads.bithuman.ai/<repo>/releases.json: the whole list in one public read
+      // (GitHub's /releases shape), so there is no paging and no token.
       const tags = [];
-      for (let page = 1; page <= 10; page++) {
-        const url = `https://api.github.com/repos/${TAP}/releases?per_page=100&page=${page}`;
-        const rows = await (await get(url, headers)).json();
+      {
+        const url = `https://downloads.bithuman.ai/homebrew-bithuman/releases.json`;
+        const rows = await (await get(url)).json();
         if (!Array.isArray(rows)) throw new CannotCheck(`${url}: not a release list`);
         for (const r of rows) {
           if (r.draft || r.prerelease) continue;
           const m = /^cli-v(\d+\.\d+\.\d+)$/.exec(r.tag_name || "");
           if (m) tags.push(m[1]);
         }
-        if (rows.length < 100) break;
       }
       if (tags.length === 0) throw new CannotCheck(`${TAP} releases: no published cli-v* release found`);
       return newest(tags);
     }
     if (a.kind === "tap-essence2") {
       const tag = `v${await this.latest({ id: "swift", kind: "tap" })}`;
-      const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+      const url = `https://gitlab.com/${SWIFT_PKG}/-/raw/${tag}/Package.swift`;
       const manifest = await (await get(url)).text();
       const m = /^\s*let\s+essence2Tag\s*=\s*"essence2-v(\d+\.\d+\.\d+)"/m.exec(manifest);
+      if (!m && /^v?(?:[3-9]|[1-9]\d+)\./.test(tag)) throw new CannotCheck(`${url}: a 3.x manifest pins no essence2Tag (its engines ship in the package release): retire swift-essence2-engine with the 3.0 docs`);
       if (!m) throw new CannotCheck(`${url}: no essence2Tag — the manifest shape changed`);
       return m[1];
     }
@@ -1145,12 +1165,12 @@ const liveRegistry = {
     if (a.kind === "tap") {
       let out;
       try {
-        out = execFileSync("git", ["ls-remote", "--tags", `https://github.com/${TAP}.git`], {
+        out = execFileSync("git", ["ls-remote", "--tags", `https://gitlab.com/${SWIFT_PKG}.git`], {
           encoding: "utf8",
           timeout: 120000,
         });
       } catch (e) {
-        throw new CannotCheck(`git ls-remote ${TAP}: ${e.message.split("\n")[0]}`);
+        throw new CannotCheck(`git ls-remote ${SWIFT_PKG}: ${e.message.split("\n")[0]}`);
       }
       const tags = out
         .split("\n")
@@ -1247,6 +1267,8 @@ const ARMS = [
   ["good: a quoted pip guard line is a sentence, not --version output", "p/platforms/python.md", "| `bithuman 2.11.5 has NO WHEEL for this platform.` | no wheel |\n```text\n        bithuman 2.11.5 has NO WHEEL for this platform.\n```\n", false],
   ["good: the current downloads table", "p/downloads.md", TABLE("3.1.5", "0.5.5"), false],
   ["good: from: 2.11.0 resolves to the newest 2.x tag", "p/platforms/ios.md", '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")\n```\n', false],
+  ["bad: the interim GitLab homebrew URL as the Swift package", "p/platforms/ios.md", '```swift\n.package(url: "' + INTERIM_SWIFT_URLS[0] + '.git", from: "2.11.0")\n```\n', true],
+  ["bad: the interim GitLab homebrew URL in an XcodeGen spec", "p/platforms/ios.md", "```yaml\npackages:\n  bithuman:\n    url: " + INTERIM_SWIFT_URLS[0] + ".git\n    from: 2.11.0\n```\n", true],
   ["good: a changelog with every newest entry", "p/changelog.md", CL("2.6.14", "0.5.5", "3.1.5"), false],
   // history and ranges — each must stay silent
   ["control: a version range is a requirement, not a claim", "p/guides/actions.md", '> **Requires `bithuman>=2.7.0`** (`pip install "bithuman>=2.7.0"`) and `pip install "bithuman<3"`', false],

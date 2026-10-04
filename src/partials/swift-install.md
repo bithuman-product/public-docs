@@ -1,20 +1,21 @@
 <!-- Shared by /platforms/ios and /platforms/macos (```partial swift-install). The pin is written by scripts/sync-versions.mjs. -->
-In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
+In Xcode choose *File → Add Package Dependencies…* and paste `https://gitlab.com/bithuman/sdk/bithuman-swift`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.20.4")
+.package(url: "https://gitlab.com/bithuman/sdk/bithuman-swift", from: "3.0.0")
 // then attach the product your target uses:
-//   .product(name: "Expression2", package: "homebrew-bithuman")
-//   .product(name: "Essence2Kit", package: "homebrew-bithuman")
-//   .product(name: "Essence2", package: "homebrew-bithuman")
+//   .product(name: "Bithuman", package: "bithuman-swift")      // the client, avatars and conversations
+//   .product(name: "BithumanUI", package: "bithuman-swift")    // SwiftUI, UIKit and AppKit views
+//   .product(name: "Essence2", package: "bithuman-swift")      // the Essence 2 C library, for C and C++ hosts
 ```
 
 The products:
 
-| Product | Import | What it is | Deployment target |
-|---|---|---|---|
-| `Expression2` | `import Expression2` | the Expression 2 engine with a Swift API | iOS 16 · macOS 13 |
-| `Essence2Kit` | `import Essence2Kit` | the Essence 2 engine with a Swift API; it includes `Essence2` | iOS 26 · macOS 26 |
-| `Essence2` | `import Essence2` | the Essence 2 engine as a C library, for C, C++ and plugins | iOS 26 · macOS 26 |
+| Product | Import | What it is |
+|---|---|---|
+| `Bithuman` | `import Bithuman` | the client, the avatar store, avatars, conversations and errors |
+| `BithumanUI` | `import BithumanUI` | SwiftUI, UIKit and AppKit views; it includes `Bithuman` |
+| `BithumanTesting` | `import BithumanTesting` | test doubles: a real client over a scripted backend |
+| `Essence2` | `import Essence2` | the Essence 2 engine as a C library, for C and C++ hosts |
 
-Every product ships `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-arm64`.
+iOS 17 and macOS 14 or newer; Essence 2 renders on iOS 26 and macOS 26 or newer. The same URL resolves every 2.x version too.

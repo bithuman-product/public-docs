@@ -35,7 +35,7 @@ import { join } from "node:path";
 import { tmpdir, homedir } from "node:os";
 import { execFileSync, spawnSync } from "node:child_process";
 
-const TAP = "bithuman-product/homebrew-bithuman";
+const TAP = "bithuman/sdk/homebrew-bithuman"; // the gitlab.com project path
 const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
 const DIST = "bithuman";
 const EXTRA = "expression-2";
@@ -89,10 +89,9 @@ async function newestWheel() {
 }
 
 async function newestCli() {
-  const headers = { Accept: "application/vnd.github+json" };
-  const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const rows = await (await get(`https://api.github.com/repos/${TAP}/releases?per_page=100`, headers)).json();
+  // downloads.bithuman.ai/<repo>/releases.json: every release in GitHub's /releases shape,
+  // public, so no token is sent anywhere.
+  const rows = await (await get(`https://downloads.bithuman.ai/homebrew-bithuman/releases.json`)).json();
   if (!Array.isArray(rows)) throw new CannotCheck("the tap's release list did not parse");
   const cmp = (a, b) => { const A = a.split(".").map(Number), B = b.split(".").map(Number);
     for (let i = 0; i < 3; i++) if ((A[i] || 0) !== (B[i] || 0)) return (A[i] || 0) - (B[i] || 0); return 0; };
@@ -210,7 +209,7 @@ async function main() {
 
     // A showcase pull is anonymous; the CLI is only the download tool here.
     const tarball = join(dir, ASSET);
-    writeFileSync(tarball, Buffer.from(await (await get(`https://github.com/${TAP}/releases/download/cli-v${cliVersion}/${ASSET}`)).arrayBuffer()));
+    writeFileSync(tarball, Buffer.from(await (await get(`https://downloads.bithuman.ai/homebrew-bithuman/cli-v${cliVersion}/${ASSET}`)).arrayBuffer()));
     execFileSync("tar", ["xzf", tarball, "-C", dir], { stdio: "pipe" });
     // ★A transient 500 from the download service must not read as a product
     // defect. Retried with backoff, and still CANNOT CHECK if it persists: a

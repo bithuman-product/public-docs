@@ -47,7 +47,7 @@ import { join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const MANIFEST = "scripts/credential-claims.json";
-const TAP = "bithuman-product/homebrew-bithuman";
+const TAP = "bithuman/sdk/homebrew-bithuman"; // the gitlab.com project path
 const UA = "bithuman-public-docs-credential-claims (+https://gitlab.com/bithuman/docs/public-docs)";
 
 // Pages that may state an unmetered escape hatch. Any page naming the variable
@@ -82,10 +82,9 @@ const cmp = (a, b) => {
 };
 
 async function newestCli() {
-  const headers = { Accept: "application/vnd.github+json" };
-  const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const rows = await (await get(`https://api.github.com/repos/${TAP}/releases?per_page=100`, headers)).json();
+  // downloads.bithuman.ai/<repo>/releases.json: every release in GitHub's /releases shape,
+  // public, so no token is sent anywhere.
+  const rows = await (await get(`https://downloads.bithuman.ai/homebrew-bithuman/releases.json`)).json();
   if (!Array.isArray(rows)) throw new CannotCheck("the tap's release list did not parse");
   // Tag prefix, not `gh release view`: that returns the Swift SDK on this tap.
   const tags = rows.filter((r) => !r.draft && !r.prerelease)

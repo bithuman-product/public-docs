@@ -39,15 +39,11 @@ The plugin runs on Android phones (arm64), and on iPhone, iPad and Mac (Apple si
 
 ## Install
 
-The plugin is published as a tag in the `homebrew-bithuman` repository. Pin it in `pubspec.yaml`:
+The plugin is published on pub.dev as [`bithuman`](https://pub.dev/packages/bithuman). Add it to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  bithuman:
-    git:
-      url: https://github.com/bithuman-product/homebrew-bithuman.git
-      path: packages/flutter-plugin
-      ref: flutter-plugin-v2.6.36
+  bithuman: ^3.0.0
 ```
 
 Then run `flutter pub get`. On Android, Gradle resolves `ai.bithuman:essence2-android` and `ai.bithuman:expression2-android` from the repository the plugin declares, so you add no repository yourself.

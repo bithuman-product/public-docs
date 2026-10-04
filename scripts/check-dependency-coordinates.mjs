@@ -136,7 +136,7 @@
 //                     now claim them. The CLI ships from install.bithuman.ai
 //                     and the Homebrew tap; MCP ships inside it as `bithuman mcp`.
 //     Maven Central   `ai.bithuman:essence2-android`, `:expression2-android`.
-//     Homebrew tap    `bithuman-product/homebrew-bithuman`, formula `bithuman-cli`.
+//     Homebrew tap    `bithuman/bithuman` (gitlab.com/bithuman/sdk/homebrew-bithuman), formula `bithuman-cli`.
 //     SwiftPM         the same tap repo; consumers land on the highest BARE
 //                     semver tag, so a `cli-v*` or `essence2-v*` tag is
 //                     invisible to them and a bare `v*` tag is an SDK release
@@ -191,8 +191,10 @@ import { mavenBases } from "./maven-repo.mjs";
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 // src/partials: passages a page includes with ```partial (the Swift install is one).
 const CORPUS_ROOTS = ["src/content", "src/pages", "src/partials"];
-const TAP = "bithuman-product/homebrew-bithuman";
-const TAP_URL = `https://github.com/${TAP}.git`;
+// The Swift package: sdk/bithuman-swift (3.x and every mirrored 2.x tag, so one source of truth
+// for tags and manifests). Pages may still name the 2.x tap URL; both forms are read.
+const TAP = "bithuman/sdk/bithuman-swift"; // the gitlab.com project path
+const TAP_URL = `https://gitlab.com/${TAP}.git`;
 
 /* ------------------------------------------------------------------ corpus */
 
@@ -401,7 +403,7 @@ export function tapVersions(text) {
   const out = [];
   // Swift manifest: .package(url: "…homebrew-bithuman[.git]" … from: "X")
   // `from:` may sit on a following line, so take a short window after the url.
-  const swiftRe = /\.package\s*\(\s*url:\s*["']https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?["']/g;
+  const swiftRe = /\.package\s*\(\s*url:\s*["']https:\/\/(?:github\.com\/bithuman-product\/homebrew-bithuman|gitlab\.com\/bithuman\/sdk\/(?:homebrew-bithuman|bithuman-swift))(?:\.git)?["']/g;
   let m;
   while ((m = swiftRe.exec(text)) !== null) {
     const window = text.slice(m.index, m.index + 400);
@@ -409,7 +411,7 @@ export function tapVersions(text) {
     if (v) out.push({ version: v[1], dialect: "swiftpm", line: lineOf(text, m.index) });
   }
   // XcodeGen: url: https://…homebrew-bithuman.git  /  from: X   (yaml, unquoted)
-  const yamlRe = /^[ \t]*url:\s*https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?[ \t]*$/gm;
+  const yamlRe = /^[ \t]*url:\s*https:\/\/(?:github\.com\/bithuman-product\/homebrew-bithuman|gitlab\.com\/bithuman\/sdk\/(?:homebrew-bithuman|bithuman-swift))(?:\.git)?[ \t]*$/gm;
   while ((m = yamlRe.exec(text)) !== null) {
     const window = text.slice(m.index, m.index + 300);
     const v = /^[ \t]*(?:from|exactVersion|version)\s*:\s*["']?([0-9][0-9A-Za-z.\-]*?)["']?[ \t]*$/m.exec(window);
@@ -418,10 +420,19 @@ export function tapVersions(text) {
   return out;
 }
 
+/** The interim SPM identity (TARGET_ORG section 4): homebrew-bithuman on GitLab as a Swift package
+ *  (manifest, XcodeGen or Xcode project) or a Flutter git dependency. No Swift 3.x or pub.dev release
+ *  ships from it, so every such line FAILS here; the `brew tap` line is the tap's own and never matches. */
+const INTERIM_TAP = "https://gitlab.com/" + "bithuman/sdk/homebrew-bithuman";
+export function interimPins(text) {
+  const re = new RegExp(String.raw`(?:\.package\s*\(\s*url:\s*\\?["']|^[ \t]*url:[ \t]*|repositoryURL\s*=\s*")` + INTERIM_TAP.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&") + String.raw`(?:\.git)?(?=["'\\\s;]|$)`, "gm");
+  return [...text.matchAll(re)].map((m) => ({ line: lineOf(text, m.index) }));
+}
+
 /** R3 — products a page tells the reader to ATTACH to a target. */
 export function tapProducts(text) {
   const out = [];
-  const swiftRe = /\.product\s*\(\s*name:\s*["']([A-Za-z0-9_]+)["']\s*,\s*package:\s*["']homebrew-bithuman["']\s*\)/g;
+  const swiftRe = /\.product\s*\(\s*name:\s*["']([A-Za-z0-9_]+)["']\s*,\s*package:\s*["'](?:homebrew-bithuman|bithuman-swift)["']\s*\)/g;
   let m;
   while ((m = swiftRe.exec(text)) !== null) {
     out.push({ product: m[1], dialect: "swiftpm", line: lineOf(text, m.index) });
@@ -436,7 +447,7 @@ export function tapProducts(text) {
   const keys = new Set();
   const lines = text.split("\n");
   for (let i = 0; i < lines.length; i++) {
-    const u = /^([ \t]*)url:[ \t]*https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?[ \t]*$/.exec(
+    const u = /^([ \t]*)url:[ \t]*https:\/\/(?:github\.com\/bithuman-product\/homebrew-bithuman|gitlab\.com\/bithuman\/sdk\/(?:homebrew-bithuman|bithuman-swift))(?:\.git)?[ \t]*$/.exec(
       lines[i],
     );
     if (!u) continue;
@@ -540,7 +551,7 @@ const liveRegistry = {
   },
 
   async tapProductsAt(tag) {
-    const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+    const url = `https://gitlab.com/${TAP}/-/raw/${tag}/Package.swift`;
     let res;
     try {
       res = await fetch(url, { redirect: "follow" });
@@ -562,7 +573,7 @@ const liveRegistry = {
   // declares it once, as `let essence2Tag = "essence2-vX.Y.Z"`, and every
   // essence-2 binaryTarget URL is built from it.
   async tapEssence2TagAt(tag) {
-    const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+    const url = `https://gitlab.com/${TAP}/-/raw/${tag}/Package.swift`;
     let res;
     try {
       res = await fetch(url, { redirect: "follow" });
@@ -571,6 +582,9 @@ const liveRegistry = {
     }
     if (!res.ok) throw new RegistryUnreachable(`${url}: HTTP ${res.status}`);
     const m = /^let\s+essence2Tag\s*=\s*["']([^"']+)["']/m.exec(await res.text());
+    // A 3.x manifest builds every engine binaryTarget from the package's own release (no
+    // essence2Tag): the engine ships inside that release, newer than any 2.x floor.
+    if (!m && /^v?(?:[3-9]|[1-9]\d+)\./.test(tag)) return BUNDLED_ENGINE;
     if (!m) {
       throw new RegistryUnreachable(
         `${url}: no \`let essence2Tag = "…"\` — the manifest shape changed, so R5 cannot grade`,
@@ -612,6 +626,9 @@ const ESSENCE2_PRODUCT = "Essence2";
 const ESSENCE2_FLOOR = "essence2-v1.9.0";
 
 /** Compare two `essence2-vX.Y.Z` tags. Returns true when a >= b. */
+/** What R5 reads for a 3.x tag: the engine ships inside the package release. */
+export const BUNDLED_ENGINE = "essence2-v999.0.0";
+
 export function engineAtLeast(a, b) {
   const n = (s) => (s ?? "").replace(/^essence2-v/, "").split(".").map((x) => parseInt(x, 10) || 0);
   const A = n(a), B = n(b);
@@ -674,6 +691,14 @@ export async function grade(files, registry) {
     for (const p of tapProducts(text)) {
       seen.tapProduct++;
       productWanted.push({ ...p, path });
+    }
+    for (const p of interimPins(text)) {
+      failures.push({
+        path,
+        line: p.line,
+        msg: `names ${INTERIM_TAP} as a package URL (the interim SPM identity): no Swift 3.x or pub.dev release ships from it. ` +
+          `Use https://gitlab.com/bithuman/sdk/bithuman-swift for Swift, \`bithuman: ^X\` from pub.dev for Flutter.`,
+      });
     }
     for (const r of pypiRequirements(path, text)) {
       seen.pypi++;
@@ -951,6 +976,9 @@ if (process.argv.includes("--selftest")) {
     ["bad: an XcodeGen product the tap does not vend", FIX_BAD_XCODEGEN_PRODUCT, true],
     ["good: the coordinate on the Android example", FIX_GOOD_GRADLE, false],
     ["good: the Swift manifest the SDK page prints", FIX_GOOD_SWIFT, false],
+    ["bad: the interim GitLab homebrew URL as the Swift package", '```swift\n.package(url: "' + INTERIM_TAP + '.git", from: "2.11.0"),\n```\n', true],
+    ["bad: the interim GitLab homebrew URL as a Flutter git dependency", "```yaml\ndependencies:\n  bithuman:\n    git:\n      url: " + INTERIM_TAP + ".git\n      path: packages/flutter-plugin\n```\n", true],
+    ["control: the brew tap line names the GitLab tap URL legitimately", "```bash\nbrew tap bithuman/bithuman " + INTERIM_TAP + "\n```\n", false],
     ["good: the XcodeGen spec the iOS example prints", FIX_GOOD_XCODEGEN, false],
     ["control: a quoted failure transcript is not a typed coordinate", FIX_CONTROL_PROSE, false],
     ["control: a page with no coordinate at all", FIX_IRRELEVANT, false],

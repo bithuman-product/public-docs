@@ -63,5 +63,5 @@ The [`avatar_chat` app](https://github.com/bithuman-product/bithuman-examples/tr
 
 - [Flutter errors](/platforms/flutter/errors): the codes `load` throws and the codes a voice session ends with.
 - [Android](/platforms/android): the engines under the plugin, their API and their settings.
-- [`avatar_chat` example](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) and the [plugin source](https://github.com/bithuman-product/homebrew-bithuman/tree/main/packages/flutter-plugin).
+- [`avatar_chat` example](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) and the [plugin source](https://gitlab.com/bithuman/sdk/bithuman-flutter).
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

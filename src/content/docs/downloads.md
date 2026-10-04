@@ -15,13 +15,13 @@ Every bitHuman artifact at its current release. The same data is published as JS
 <!-- VERSIONS:TABLE -->
 | Artifact | Version | Runs on | Install | Published at |
 |---|---|---|---|---|
-| [CLI](/platforms/cli) | **2.8.8** | macOS (Apple silicon), Linux x86_64 and arm64 | `curl -fsSL https://install.bithuman.ai \| sh` | [GitHub release cli-v2.8.8](https://github.com/bithuman-product/homebrew-bithuman/releases) |
+| [CLI](/platforms/cli) | **2.8.8** | macOS (Apple silicon), Linux x86_64 and arm64 | `curl -fsSL https://install.bithuman.ai \| sh` | [downloads.bithuman.ai cli-v2.8.8](https://docs.bithuman.ai/downloads#release-files) |
 | [`bithuman` (Python)](/platforms/python) | **2.11.20** | Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64, Windows 11 x86_64 | `pip install "bithuman[expression-2]"` | [PyPI](https://pypi.org/project/bithuman/) |
-| [Swift package](/platforms/ios) | **2.20.4** (Essence 2 engine **1.15.5** · Expression 2 engine 2.20.4) | iOS, iPadOS and macOS on Apple silicon | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.20.4")` | [GitHub tag v2.20.4](https://github.com/bithuman-product/homebrew-bithuman) |
+| [Swift package](/platforms/ios) | **3.0.0** (Essence 2 engine **1.15.5** · Expression 2 engine 2.20.4) | iOS, iPadOS and macOS on Apple silicon | `.package(url: "https://gitlab.com/bithuman/sdk/bithuman-swift", from: "3.0.0")` | [GitLab tag v3.0.0](https://gitlab.com/bithuman/sdk/bithuman-swift/-/tags) |
 | [`ai.bithuman:expression2-android`](/platforms/android) | **0.6.0** | Android, arm64-v8a | `implementation("ai.bithuman:expression2-android:0.6.0")` | [maven.bithuman.ai](https://maven.bithuman.ai/ai/bithuman/expression2-android/maven-metadata.xml) |
 | [`ai.bithuman:essence2-android`](/platforms/android) | **0.9.4** | Android, arm64-v8a | `implementation("ai.bithuman:essence2-android:0.9.4")` | [maven.bithuman.ai](https://maven.bithuman.ai/ai/bithuman/essence2-android/maven-metadata.xml) |
 | [`livekit-plugins-bithuman`](/platforms/livekit) | **1.8.5** | Python 3.10–3.14 | `pip install livekit-plugins-bithuman` | [PyPI](https://pypi.org/project/livekit-plugins-bithuman/) |
-| [Flutter plugin](/platforms/flutter) | **2.6.36** | Android (arm64-v8a); iOS and macOS build from the published tag | `bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v2.6.36}}` | [GitHub tag flutter-plugin-v2.6.36](https://github.com/bithuman-product/homebrew-bithuman) |
+| [Flutter plugin](/platforms/flutter) | **3.0.0** | Android (arm64-v8a); iOS and macOS build from the published tag | `bithuman: ^3.0.0` | [pub.dev](https://pub.dev/packages/bithuman) |
 <!-- /VERSIONS:TABLE -->
 
 The web embed needs no install: one URL or one `<iframe>` ([Web](/platforms/web)). The MCP server ships inside the CLI as `bithuman mcp` ([MCP server](/build/mcp)). What changed in each release is in the [changelog](/changelog).

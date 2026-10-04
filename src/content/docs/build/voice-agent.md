@@ -36,7 +36,8 @@ The CLI starts `livekit-server`, the voice agent and the avatar, then opens its 
 
 ```bash
 # macOS (Apple silicon): installs livekit-server too
-brew install bithuman-product/bithuman/bithuman-cli
+brew tap bithuman/bithuman https://gitlab.com/bithuman/sdk/homebrew-bithuman
+brew install bithuman/bithuman/bithuman-cli
 # Linux x86_64 or arm64: the download includes livekit-server
 sudo apt install -y ffmpeg python3-venv            # Ubuntu/Debian; macOS gets both from brew
 curl -fsSL https://install.bithuman.ai | sh

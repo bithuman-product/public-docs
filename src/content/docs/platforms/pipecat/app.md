@@ -34,7 +34,7 @@ next: ["/platforms/pipecat/troubleshooting", "/platforms/pipecat"]
 
 ## Complete example
 
-`examples/bot.py` in [pipecat-bithuman](https://github.com/bithuman-product/pipecat-bithuman) is a complete voice bot in a Daily room, with Deepgram speech-to-text, an OpenAI LLM and Cartesia TTS. The avatar sits between the TTS and the output transport:
+`examples/bot.py` in [pipecat-bithuman](https://gitlab.com/bithuman/sdk/pipecat-bithuman) is a complete voice bot in a Daily room, with Deepgram speech-to-text, an OpenAI LLM and Cartesia TTS. The avatar sits between the TTS and the output transport:
 
 ```python
 # excerpt: the transport and the pipeline, from pipecat-bithuman's examples/bot.py
@@ -87,7 +87,7 @@ python examples/bot.py
 - Your own avatar: [download an agent's model](/api/agents#download-an-agents-model) and pass the `.imx` file as `model_path=`.
 - The service has no settings to change at runtime. The avatar is chosen when the service is built.
 - For tests, or to wrap the SDK, pass `runtime_factory=`: an async callable that returns an object implementing `BitHumanRuntime`. The package's own tests run on fakes, with no network, secret or model file.
-- Report bugs in the [pipecat-bithuman issues](https://github.com/bithuman-product/pipecat-bithuman/issues). The Pipecat team does not maintain this package.
+- Report bugs in the [pipecat-bithuman issues](https://gitlab.com/bithuman/sdk/pipecat-bithuman/-/issues). The Pipecat team does not maintain this package.
 
 ## Reference
 

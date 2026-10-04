@@ -52,7 +52,8 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 
 ```bash
 # macOS (Apple silicon): also installs ffmpeg, livekit-server and Python
-brew install bithuman-product/bithuman/bithuman-cli
+brew tap bithuman/bithuman https://gitlab.com/bithuman/sdk/homebrew-bithuman
+brew install bithuman/bithuman/bithuman-cli
 ```
 
 ```bash

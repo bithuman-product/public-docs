@@ -59,7 +59,7 @@ The package's demo script sends a WAV file through a Pipecat pipeline as `TTSAud
 
 ```bash
 export BITHUMAN_API_SECRET="<your API secret>"
-git clone https://github.com/bithuman-product/pipecat-bithuman
+git clone https://gitlab.com/bithuman/sdk/pipecat-bithuman
 cd pipecat-bithuman
 curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
@@ -67,7 +67,7 @@ BITHUMAN_MODEL_PATH=wise-pup.imx python examples/render_demo.py speech.wav demo.
 # → prints the frame count and size, and demo.mp4 shows wise-pup speaking the sample
 ```
 
-To see barge-in, add `--interrupt-at 10 --repeat 2`: the reply is interrupted after 10 s, and a new one follows. The [37-second demo](https://github.com/bithuman-product/pipecat-bithuman/blob/main/docs/demo.mp4) in the repository is that run with `wise-pup`.
+To see barge-in, add `--interrupt-at 10 --repeat 2`: the reply is interrupted after 10 s, and a new one follows. The [37-second demo](https://gitlab.com/bithuman/sdk/pipecat-bithuman/-/blob/main/docs/demo.mp4) in the repository is that run with `wise-pup`.
 
 ## Performance
 

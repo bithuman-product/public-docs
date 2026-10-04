@@ -44,9 +44,9 @@ import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const TAP = "bithuman-product/homebrew-bithuman";
+const TAP = "bithuman/sdk/homebrew-bithuman"; // the gitlab.com project path
 const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
-const INSTALLER = `https://raw.githubusercontent.com/${TAP}/main/install.sh`;
+const INSTALLER = `https://gitlab.com/${TAP}/-/raw/main/install.sh`;
 const UA = "bithuman-public-docs-env-name-check (+https://gitlab.com/bithuman/docs/public-docs)";
 
 // Only pages about the CLI. A variable named on a Python or Android page is
@@ -128,10 +128,9 @@ function namesOnPages(root = ROOT, pages = cliPages(root)) {
 }
 
 async function newestCliRelease() {
-  const headers = { Accept: "application/vnd.github+json" };
-  const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const rows = await (await get(`https://api.github.com/repos/${TAP}/releases?per_page=100`, headers)).json();
+  // downloads.bithuman.ai/<repo>/releases.json: every release in GitHub's /releases shape,
+  // public, so no token is sent anywhere.
+  const rows = await (await get(`https://downloads.bithuman.ai/homebrew-bithuman/releases.json`)).json();
   if (!Array.isArray(rows)) throw new CannotCheck("the tap's release list did not parse");
   const semver = (s) => s.split(".").map(Number);
   const cmp = (a, b) => {
@@ -152,7 +151,7 @@ async function newestCliRelease() {
 
 /** The binary's bytes, as text we can search for literal names. */
 async function publishedBinaryText(version) {
-  const url = `https://github.com/${TAP}/releases/download/cli-v${version}/${ASSET}`;
+  const url = `https://downloads.bithuman.ai/homebrew-bithuman/cli-v${version}/${ASSET}`;
   const dir = mkdtempSync(join(tmpdir(), "bh-env-"));
   try {
     const res = await get(url);

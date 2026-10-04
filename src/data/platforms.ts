@@ -94,7 +94,7 @@ bithuman render wise-pup speech.wav -o out.mp4
   {
     id: "apple", want: "Ship an iPhone, iPad or Mac app", use: "iOS & iPadOS (Swift package)", needs: "Xcode 26+, API secret",
     renders: "on the iPhone, iPad or Mac", conversation: "your app's own speech, language and voice services", credential: "API secret, fetched from your backend in a shipped app",
-    first: `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "${V.swift}")`,
+    first: `.package(url: "https://gitlab.com/bithuman/sdk/bithuman-swift", from: "${V.swift}")`,
     docs: "/platforms/ios", models: both,
   },
   {
@@ -226,7 +226,7 @@ export const QUICKSTART: Quickstart[] = [
     id: "ios", plan: "creator", label: "iPhone & iPad", title: "An avatar inside your iPhone or iPad app", icon: "phone",
     needs: ["Xcode 26+", "Physical device", "API secret"], models: TWO, renders: ["device"],
     steps: [
-      { title: "Add the Swift package", code: { lang: "swift", label: "Package.swift", code: `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "${V.swift}")\n// then: .product(name: "Expression2", package: "homebrew-bithuman")` } },
+      { title: "Add the Swift package", code: { lang: "swift", label: "Package.swift", code: `.package(url: "https://gitlab.com/bithuman/sdk/bithuman-swift", from: "${V.swift}")\n// then: .product(name: "Bithuman", package: "bithuman-swift")` } },
       { title: "Download the sample avatar", code: { lang: "bash", label: "Shell", code: `curl -fL -o ${pup.code}.imx "https://api.bithuman.ai/v1/agent/${pup.code}/model/download?model=expression-2"` }, text: "The iOS page also fetches the shared engine and a 16 kHz speech clip." },
       { title: "Feed audio, draw frames", code: { lang: "swift", label: "Swift", code: `// excerpt: the core loop; the complete first frame is on the iOS page\nimport Expression2\n\nExpression2Credential.set(apiSecret)\nlet engine = try Expression2Engine.create(\n    avatarContainer: avatarURL, sharedEngineContainer: sharedEngineURL, stagingDir: stagingURL)\nengine.feed(samples)      // [Float], 16 kHz mono\nengine.flushTail()        // end of the reply\nfor await frame in engine.frames(audioClock: { played() }) {\n    show(frame.bgr, frame.width, frame.height)\n    if frame.endsReply { break }\n}` } },
     ],
@@ -260,7 +260,7 @@ export const QUICKSTART: Quickstart[] = [
     steps: [
       { title: "Clone the example app", code: { lang: "bash", label: "Shell", code: "git clone https://github.com/bithuman-product/bithuman-examples.git\ncd bithuman-examples/app/avatar_chat\nflutter pub get" } },
       { title: "Run it on your phone", code: { lang: "bash", label: "Shell", code: `flutter run --release --dart-define=AGENT_CODE=${pup.code}` } },
-      { title: "Add the plugin to your own app", code: { lang: "yaml", label: "pubspec.yaml", code: `dependencies:\n  bithuman:\n    git:\n      url: https://github.com/bithuman-product/homebrew-bithuman.git\n      path: packages/flutter-plugin\n      ref: flutter-plugin-v${V.flutter_plugin}` }, text: "Then, in `android/app/build.gradle.kts`, set `minSdk = 29`, `ndk { abiFilters += \"arm64-v8a\" }` and `packaging { jniLibs { useLegacyPackaging = true } }`; the Flutter page's Install section shows the block." },
+      { title: "Add the plugin to your own app", code: { lang: "yaml", label: "pubspec.yaml", code: `dependencies:\n  bithuman: ^${V.flutter_plugin}` }, text: "Then, in `android/app/build.gradle.kts`, set `minSdk = 29`, `ndk { abiFilters += \"arm64-v8a\" }` and `packaging { jniLibs { useLegacyPackaging = true } }`; the Flutter page's Install section shows the block." },
     ],
     expect: { text: "The app asks for your API secret once, downloads the avatar on first run and shows it idling full screen. Speak, or type a line, and it answers with its lips in sync." },
     next: { href: "/platforms/flutter", label: "Flutter" },
@@ -280,7 +280,7 @@ export const QUICKSTART: Quickstart[] = [
     id: "cli", plan: "creator", label: "Terminal", title: "An avatar from your terminal", icon: "terminal",
     needs: ["macOS or Linux", "ffmpeg"], models: TWO, renders: ["server", "no-gpu"],
     steps: [
-      { title: "Install the CLI", code: { lang: "bash", label: "Shell", code: "# macOS: brew install bithuman-product/bithuman/bithuman-cli\ncurl -fsSL https://install.bithuman.ai | sh" } },
+      { title: "Install the CLI", code: { lang: "bash", label: "Shell", code: "# macOS: brew tap bithuman/bithuman https://gitlab.com/bithuman/sdk/homebrew-bithuman && brew install bithuman/bithuman/bithuman-cli\ncurl -fsSL https://install.bithuman.ai | sh" } },
       { title: "Sign in", code: { lang: "bash", label: "Shell", code: "bithuman login" } },
       { title: "Render a talking video", code: { lang: "bash", label: "Shell", code: `${SPEECH}\nbithuman render wise-pup speech.wav -o out.mp4\n# → out.mp4: 416×720, 300 frames, 15.0 s` }, text: "`bithuman run wise-pup` opens a live conversation instead." },
     ],

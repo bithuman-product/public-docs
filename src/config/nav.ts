@@ -56,7 +56,13 @@ export const SIDEBAR_LINKS: Partial<Record<SectionId, { group: string; label: st
     { group: "Help", label: "Status", href: "https://status.bithuman.ai", order: 90, external: true },
   ],
   platforms: [
-    { group: "Flutter", label: "Plugin source", href: "https://github.com/bithuman-product/homebrew-bithuman/tree/main/packages/flutter-plugin", order: 50, external: true },
+    { group: "Swift", label: "Package source", href: "https://gitlab.com/bithuman/sdk/bithuman-swift", order: 50, external: true },
+    { group: "Android", label: "SDK source", href: "https://gitlab.com/bithuman/sdk/bithuman-android", order: 50, external: true },
+    { group: "Flutter", label: "Plugin source", href: "https://gitlab.com/bithuman/sdk/bithuman-flutter", order: 50, external: true },
+    { group: "Python", label: "Source", href: "https://gitlab.com/bithuman/sdk/bithuman-python", order: 50, external: true },
+    { group: "CLI", label: "Issues", href: "https://gitlab.com/bithuman/sdk/bithuman-cli/-/issues", order: 50, external: true },
+    { group: "LiveKit", label: "Plugin home", href: "https://gitlab.com/bithuman/sdk/livekit-bithuman", order: 50, external: true },
+    { group: "Pipecat", label: "Source", href: "https://gitlab.com/bithuman/sdk/pipecat-bithuman", order: 50, external: true },
   ],
   api: [
     { group: "Index", label: "API reference", href: "/api/reference", order: 10 },

@@ -67,7 +67,7 @@ Two SwiftUI apps you can clone and run on an iPhone or iPad, each with a microph
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be the one on Downloads & versions
+  grep -A3 bithuman-swift Package.resolved   # "version" must be the one on Downloads & versions
   ```
 - **Also on a Mac:** the [CLI](/platforms/cli) renders an avatar or runs a live conversation with no code, and [Python](/platforms/python) renders frames from your own scripts. Both run on Apple silicon.
 - **Intel Macs** are not supported.
