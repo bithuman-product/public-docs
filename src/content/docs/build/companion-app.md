@@ -243,6 +243,7 @@ The mouth stops with the voice, and the next reply starts cleanly.
 A session bills active session time, talking or idle, for as long as the avatar is open, so a companion left on screen keeps billing.
 
 - When the app moves to the background, shut the avatar down: `shutdown()` in Swift, `close()` in Kotlin. Create it again when the app returns; the avatar file stays on the device, so nothing downloads again.
+- If the app does not, the session ends on its own after 60 seconds in the background, billed up to that point (Swift package 2.20.4, `essence2-android` 0.9.5, `expression2-android` 0.6.1 and Flutter plugin 2.6.37 or newer). The next frame the app asks for while it is on screen starts a new session.
 - When nobody has spoken for a while, show a still frame and close the avatar.
 - When the app quits, call `Essence2Engine.quiesceAll()` in Swift, from `applicationWillTerminate`.
 
