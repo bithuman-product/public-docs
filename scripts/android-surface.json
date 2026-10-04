@@ -4,9 +4,9 @@
       "artifact": {
         "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.9.4",
-        "digest": "sha256:6958d9b4e3aa269fd16be299bb44fecec856537b710b9083e4a7917661668bae",
-        "filename": "essence2-android-0.9.4.aar",
+        "version": "0.9.5",
+        "digest": "sha256:8573f2fb55298baad3bf607e80922b4a32657c31b89e0c9c17d1581aa6c6bfe9",
+        "filename": "essence2-android-0.9.5.aar",
         "resolved_on": "2026-10-04"
       },
       "surface": {
@@ -2029,6 +2029,15 @@
                 "kind": "internal"
               },
               {
+                "name": "noteObserved$essence2_android_release",
+                "jvm": "noteObserved$essence2_android_release()V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "purgeBorrow$essence2_android_release",
                 "jvm": "purgeBorrow$essence2_android_release()I",
                 "access": [
@@ -2067,6 +2076,15 @@
               {
                 "name": "renderReason$essence2_android_release",
                 "jvm": "renderReason$essence2_android_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "withholds$essence2_android_release",
+                "jvm": "withholds$essence2_android_release()Z",
                 "access": [
                   "public",
                   "final"
@@ -6504,9 +6522,9 @@
       "artifact": {
         "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.6.0",
-        "digest": "sha256:ee9c098e6c358428c97dc59305359acf75efdf549963a022d17a8d1206b4593f",
-        "filename": "expression2-android-0.6.0.aar",
+        "version": "0.6.1",
+        "digest": "sha256:828dcb2c012c7e9a066d886b28b3f5ea47e2389a854b30cc93f988b2a1c7d9b5",
+        "filename": "expression2-android-0.6.1.aar",
         "resolved_on": "2026-10-04"
       },
       "surface": {

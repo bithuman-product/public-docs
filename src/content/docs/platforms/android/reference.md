@@ -16,7 +16,7 @@ Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expres
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.9.4` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.9.5` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import it by name: `import ai.bithuman.elevate.Essence2Options`. `Essence2StoreException.Code` is a nested class, which a type alias does not reach, so import it by name: `import ai.bithuman.elevate.Essence2StoreException.Code`.
 
@@ -226,7 +226,7 @@ class Essence2BorrowRefused : IllegalStateException
 
 ## Expression 2
 
-Generated from `ai.bithuman:expression2-android:0.6.0` as published on maven.bithuman.ai. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:expression2-android:0.6.1` as published on maven.bithuman.ai. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.expression2.*`.
 
