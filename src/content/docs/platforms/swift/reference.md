@@ -143,7 +143,7 @@ Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(in
 
 Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
-The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.3 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.4) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.5 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.5) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
 
 ### A minimal loop
 
@@ -220,15 +220,19 @@ Recommended: gate each frame's audio on its display (lowest latency). If your pr
 
 ## Storage and privacy
 
-Downloaded avatars stay in `Caches/bitHuman/…` unless you pass a directory, and Essence 2's runtime files in `Application Support/bitHuman/essence2/<release>`. Everything the SDK downloads is excluded from iCloud and computer backups (`isExcludedFromBackup`), because it is downloaded again when needed: `Essence2Download` and Essence 2's runtime files from Swift package 2.20.2, `Expression2Download` from 2.20.3. A directory you pass in is not flagged as a whole; only the files the SDK writes into it are.
+Downloaded avatars stay in `Caches/bitHuman/…` unless you pass a directory, and Essence 2's runtime files in `Application Support/bitHuman/essence2/<release>`. Everything the SDK downloads (`Essence2Download`, `Expression2Download` and Essence 2's runtime files) is excluded from iCloud and computer backups (`isExcludedFromBackup`), because it is downloaded again when needed. A directory you pass in is not flagged as a whole; only the files the SDK writes into it are.
 
 The package ships an App Store privacy manifest (`PrivacyInfo.xcprivacy`) in the resource bundles of `Essence2Kit` and of every Expression 2 and Essence 2 product, so Xcode's privacy report includes it. It declares:
 
 - **Required-reason APIs:** file timestamps (`C617.1`, the SDK's own files in your app's container) and system boot time (`35F9.1`, timing inside your app).
 - **Data the SDK sends:** an install identifier the SDK creates and the session's duration, sent to bitHuman to bill your account. Used for app functionality only, not linked to the user, and not used for tracking.
 
-A cached avatar is handed only to an API secret the download service has allowed to open it (2.20.3). A different secret on the same device is checked with the service first, so its first open needs the network.
+A cached avatar is handed only to an API secret the download service has allowed to open it. A different secret on the same device is checked with the service first, so its first open needs the network.
 
 ## Sessions and billing
 
 A session checks the API secret when it starts and reports its session time, talking or idle. If the network drops after the secret is accepted, frames continue for 5 minutes of rendered video, then `pull_frame` and `idle_frame` return `-3` (Essence 2) or `pull()` returns `nil` (Expression 2) until the connection returns. A secret rejected mid-session is final: destroy the engine. Prices are on [pricing](/pricing).
+
+The secret check names the avatar. If the secret's account may not use that avatar, the session refuses to start with an error naming `AGENT_NOT_ENTITLED`, and nothing is billed. Use the API secret of the account that owns the avatar, or of a workspace it is shared with.
+
+A session nobody watches ends. If your app takes no frames for 60 seconds (for example, while it is in the background), the session closes and is billed up to that point. The next frame you ask for starts a new session. Coming back within 60 seconds keeps the session.

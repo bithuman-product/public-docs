@@ -46,6 +46,15 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Swift package 2.20.4 — 2026-10-04
+
+Tag `v2.20.4`.
+
+- **A session nobody watches ends after 60 seconds:** if your app takes no frames from Essence 2 or Expression 2 for 60 seconds (for example, while it is in the background), the session closes and is billed up to that point. The next frame you ask for starts a new session. Coming back within 60 seconds keeps the session.
+- **The secret check names the avatar:** if the API secret's account may not use the avatar, the session refuses to start with an error naming `AGENT_NOT_ENTITLED`, and nothing is billed. Use the API secret of the account that owns the avatar, or of a workspace it is shared with.
+- Essence 2 is now 1.15.5 (the same frames as 1.15.4) and Expression 2 2.20.4. The macOS engine core (1.0.2) is unchanged.
+- **Action:** `.package(url: …, from: "2.20.4")`.
+
 ### Flutter plugin 2.6.36 — 2026-10-04
 
 Tag `flutter-plugin-v2.6.36`. A security release: update every app that caches avatars on the device.
