@@ -212,7 +212,7 @@ export const QUICKSTART: Quickstart[] = [
     steps: [
       { title: "Paste the embed into any page", code: { lang: "html", label: "HTML", code: EMBED_SNIPPET } },
       { title: "Open the page and allow the microphone", text: "The avatar appears, asks for the microphone and answers when you speak. The `wise-pup` sample ends each session after 2 minutes; embed your own agent for your site." },
-      { title: "Render in the visitor's tab (optional)", text: "Add `?render=local` to the embed URL: with WebGPU the avatar renders in the tab, and without a usable GPU it renders in the bitHuman cloud. The avatar's web bundle downloads once (50–200 MB), then comes from the cache." },
+      { title: "Render in the visitor's tab (optional)", text: "Add `?render=local` to the embed URL: with WebGPU the avatar renders in the tab, and a device that can't render it in real time shows a message instead of falling back to the cloud. The avatar's web bundle downloads once (50–200 MB), then comes from the cache." },
     ],
     // The still is the avatar the snippet above embeds (the Expression 2 sample), so what you paste and what you see match.
     expect: {

@@ -10,13 +10,13 @@ llms: apps
 claims: ["S1", "S2", "S29", "S17"]
 ---
 
-To render an avatar in a browser tab with WebGPU, add `render=local` to the web embed's URL. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync. With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
+To render an avatar in a browser tab with WebGPU, add `render=local` to the web embed's URL. With `render=local` the avatar never renders in the cloud: a device that can't render it in real time shows a message, and no session starts. With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
 
-`render=local` renders the avatar in the visitor's browser tab with WebGPU, for Expression 2, Essence 1, and Essence 2 avatars that have a browser build. Expression 1 always renders in the bitHuman cloud. It is off by default: without it, every session renders in the bitHuman cloud and streams to the page.
+`render=local` renders the avatar in the visitor's browser tab with WebGPU, for Expression 2, Essence 1, and Essence 2 avatars that have a browser build. Expression 1 always renders in the bitHuman cloud; with `render=local` it shows "This avatar can only be rendered in the cloud" instead. It is off by default: without it, every session renders in the bitHuman cloud and streams to the page.
 
 - **One download:** the avatar's web bundle (50–200 MB) downloads to the browser once, then comes from the cache. Tell visitors before it starts on a metered connection.
-- **Fallback:** a browser without a usable WebGPU adapter is switched to cloud rendering, so every visitor gets lip-sync.
-- **First visit:** the first `render=local` visit on a device streams from the cloud while the tab checks the GPU and downloads the web bundle; later visits render in the tab.
+- **No cloud fallback:** a browser without a usable WebGPU adapter, or a device that measures too slow, shows "This device can't render this avatar in real time". No session starts.
+- **First visit:** for Essence 2 and Expression 2, after the visitor starts, the tab downloads the web bundle and checks the device ("Checking this device…") before any session starts. Later visits on that device reuse the result.
 - **Where the conversation runs:** with the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
 - **Private agents:** the embed token the iframe already uses covers it ([Embedding](/api/embedding)).
 
@@ -24,7 +24,7 @@ To render an avatar in a browser tab with WebGPU, add `render=local` to the web 
 topology web-local
 ```
 
-Check for a usable GPU before you choose `render=local`:
+Check for a usable GPU before you choose `render=local`, so a visitor without one gets the cloud render:
 
 ```html
 <iframe id="avatar" allow="microphone *" style="width:100%;height:600px;border:0" title="Talking avatar"></iframe>

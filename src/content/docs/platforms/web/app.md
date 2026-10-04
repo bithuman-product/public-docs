@@ -17,7 +17,7 @@ Add parameters to the URL:
 | Parameter | Values | Effect |
 |---|---|---|
 | `render` | `cloud` (default), `local` | Where the avatar renders: our servers, or the visitor's tab |
-| `rendering_mode` | `browser`, `avatar` | Long form of `render=local`; `avatar` renders in the tab and lip-syncs the visitor's own microphone, with no conversation |
+| `rendering_mode` | `browser`, `avatar` | Long form of `render=local`; `avatar` renders in the tab with no conversation: an Essence 1 avatar lip-syncs the visitor's own microphone, and an Essence 2 or Expression 2 avatar plays its idle loop |
 | `greetingLang` | a language code, for example `es` | Language of the first greeting |
 | `greetingMsg` | text | The first thing the avatar says |
 | `model` | `essence-2`, `expression-2`, `essence-1`, `expression-1` | Pins the model for this session; it must be in the agent's `supported_models`. Without it, the agent's own model |
@@ -100,7 +100,7 @@ The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a re
 
 - Expression 1 avatars render in the cloud only. For an agent whose own model is Expression 1, add `model=` with another model it supports to render in the tab.
 - The in-tab render works for Essence 1, Expression 2, and Essence 2 avatars that have a browser build.
-- The first `render=local` visit on a device streams from the cloud while the tab checks the GPU and downloads the web bundle; later visits render in the tab.
+- `render=local` never falls back to the cloud: a device that can't render the avatar in real time shows a message and starts no session ([Render with WebGPU](/platforms/web/webgpu)).
 
 ## Reference
 

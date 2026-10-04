@@ -102,7 +102,7 @@ The character idles, listens and answers out loud with its lips in sync.
 
 The input is one portrait image, treated as a reference and regenerated to a standard framing ([How creation works](/build/create-avatar#how-creation-works)). Expression 2 trains a small model of your specific identity straight from the photo, which is why creation takes a couple of hours.
 
-Creation happens in the bitHuman cloud; the finished avatar then runs wherever its model runs: in the bitHuman cloud, on iPhone, iPad, Android, Mac or Linux, or in a browser tab with WebGPU, where a browser without a usable GPU is switched to cloud rendering ([Expression 2: Where it runs](/models/expression-2#where-it-runs)).
+Creation happens in the bitHuman cloud; the finished avatar then runs wherever its model runs: in the bitHuman cloud, on iPhone, iPad, Android, Mac or Linux, or in a browser tab with WebGPU on a device that renders it in real time ([Expression 2: Where it runs](/models/expression-2#where-it-runs)).
 
 ## Make it your own
 
