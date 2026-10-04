@@ -29,6 +29,7 @@ Recent releases worth a look first.
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
 | 2026-10-04 | Flutter plugin 2.6.36 | macOS apps need macOS 26.0 (iOS stays 16.0); `BithumanEntitlementException` is a new exception from `load` and the installers; on Android, an Expression 2 `load` without `apiSecret` fails; the installers need `apiSecret` for an avatar that is not public | set `platform :osx, '26.0'` and `MACOSX_DEPLOYMENT_TARGET = 26.0`; catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)); pass `apiSecret` |
+| 2026-10-04 | essence2-android 0.9.4 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`NOT_FOUND`) |
 | 2026-10-04 | expression2-android 0.6.0 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`404`) |
 | 2026-10-01 | REST API | bitHuman's text-to-speech service is retired: `POST /v1/tts`, `POST /v1/audio/speech`, `GET /v1/voices` and `/v1/studio/*` answer `410 ENDPOINT_RETIRED` | send your own audio (from any TTS provider or a recording) to the [talking video API](/build/talking-video); agent conversation voices and `/v1/agent/{code}/speak` are unchanged |
 | 2026-10-01 | essence2-android 0.9.0 | `Essence2Metering.basis` is ignored and always reads `"session"`: a file render bills its session time like any other session; `SelfHostMeter.BASIS_OUTPUT` no longer exists | delete any `basis = …` line; call `close()` right after the last frame of a file render |
@@ -55,6 +56,14 @@ Tag `flutter-plugin-v2.6.36`. A security release: update every app that caches a
 - **New:** `BithumanAvatar.clearCredentials()`. Call it when an account signs out: the engines forget the secret, and on Android the loads still running end with `load_cancelled`.
 - **Changed:** `engine:` defaults to `'expression2'`, and an unknown engine name fails with `unsupported` on iOS and macOS too. `BithumanRealtimeSession`'s model defaults to `gpt-realtime-mini`. On Android, `pushAudio` plays your speech, and `load` accepts the public model ids (`'essence-2'`, `'expression-2'`).
 - **Action:** pin `ref: flutter-plugin-v2.6.36`. Catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)), pass `apiSecret` to the installers, and raise macOS apps to 26.0.
+
+### essence2-android 0.9.4 — 2026-10-04
+
+A security patch for 0.9.3; every app on 0.9.3 or earlier should upgrade. The model store is the only change: the engine, rendering and billing are 0.9.3's.
+
+- **Security: a cached private avatar opens only for the account it was downloaded for.** Through 0.9.3 a private avatar cached on a phone opened for any API secret used there. Now a cached copy opens only for a secret that bitHuman has accepted for that avatar; another account gets the same refusal as a download (`Essence2StoreException`, code `NOT_FOUND`), and the files are left in place.
+- **After the update, the first open of each cached avatar asks bitHuman once** (nothing is downloaded again), so that one open needs the network. Later opens are instant and check for updates in the background, as in 0.9.3.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.9.4")`.
 
 ### expression2-android 0.6.0 — 2026-10-04
 

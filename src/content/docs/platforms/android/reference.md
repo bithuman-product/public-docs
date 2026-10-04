@@ -16,7 +16,7 @@ Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expres
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.9.3` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.9.4` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import it by name: `import ai.bithuman.elevate.Essence2Options`. `Essence2StoreException.Code` is a nested class, which a type alias does not reach, so import it by name: `import ai.bithuman.elevate.Essence2StoreException.Code`.
 
