@@ -32,7 +32,7 @@ Yes. The [Swift package](/platforms/ios) renders Essence 2 and Expression 2 on i
 
 ### Does the avatar render on the phone or in the cloud?
 
-With the Swift and Android SDKs, on the phone. With the [web embed](/platforms/web), in the bitHuman cloud by default, or in the browser tab with WebGPU (`render=local`); there, a device that can't render the avatar in real time shows a message instead of falling back to the cloud. With the web embed the conversation runs on bitHuman's servers, even when the avatar renders in the tab. With the [LiveKit](/platforms/livekit) cloud avatar, the avatar renders in the bitHuman cloud. Every mode side by side: [Deploy](/deploy).
+With the Swift and Android SDKs, on the phone. With the [web embed](/platforms/web), in the bitHuman cloud by default, or in the browser tab with WebGPU (`render=local`), with no fallback to the cloud. With the web embed the conversation runs on bitHuman's servers, even when the avatar renders in the tab. With the [LiveKit](/platforms/livekit) cloud avatar, the avatar renders in the bitHuman cloud. Every mode side by side: [Deploy](/deploy).
 
 ### Does the SDK include the voice and the AI conversation?
 
