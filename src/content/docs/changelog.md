@@ -28,6 +28,7 @@ Recent releases worth a look first.
 | 2026-12-26 (announced 2026-09-27) | REST API | `POST /v1/agent/generate` requires `model`; the bare names `essence` / `expression` and the `version` field are refused with a `400` | send `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1` |
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
+| 2026-10-04 | Flutter plugin 2.6.36 | macOS apps need macOS 26.0 (iOS stays 16.0); `BithumanEntitlementException` is a new exception from `load` and the installers; on Android, an Expression 2 `load` without `apiSecret` fails; the installers need `apiSecret` for an avatar that is not public | set `platform :osx, '26.0'` and `MACOSX_DEPLOYMENT_TARGET = 26.0`; catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)); pass `apiSecret` |
 | 2026-10-01 | REST API | bitHuman's text-to-speech service is retired: `POST /v1/tts`, `POST /v1/audio/speech`, `GET /v1/voices` and `/v1/studio/*` answer `410 ENDPOINT_RETIRED` | send your own audio (from any TTS provider or a recording) to the [talking video API](/build/talking-video); agent conversation voices and `/v1/agent/{code}/speak` are unchanged |
 | 2026-10-01 | essence2-android 0.9.0 | `Essence2Metering.basis` is ignored and always reads `"session"`: a file render bills its session time like any other session; `SelfHostMeter.BASIS_OUTPUT` no longer exists | delete any `basis = …` line; call `close()` right after the last frame of a file render |
 | 2026-09-27 | API | `POST /v1/realtime/ephemeral-token` is retired (`410 ENDPOINT_RETIRED`) | connect through the [Realtime relay](/api/realtime) (`wss://api.bithuman.ai/v1/realtime`) or `POST /v1/realtime/connect`; CLI 2.8.1+ already does |
@@ -42,6 +43,17 @@ Recent releases worth a look first.
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## October 2026
+
+### Flutter plugin 2.6.36 — 2026-10-04
+
+Tag `flutter-plugin-v2.6.36`. A security release: update every app that caches avatars on the device.
+
+- **Security:** a kept avatar opens only for the API secret bitHuman's door said yes to. Before this release, an avatar the installers kept for account A opened for account B on the same device. Now each kept avatar needs a fresh yes for the credential passed: within 24 hours for an account's own avatar, 7 days for a public one; otherwise the door is asked first and `load` or the installer throws `BithumanEntitlementException`. On Android the engines move to `essence2-android` 0.9.4 and `expression2-android` 0.6.0, whose stores apply the same rule. On iOS and macOS they move to Essence 2 `essence2-v1.15.4` and Expression 2 `v2.20.3`.
+- **iOS:** an app that links Essence 2 starts on iOS 16 and later again. Essence 2 renders on iOS 26 and later; below that, `load(engine: 'essence2')` fails with `unsupported`, naming the version it needs.
+- **macOS:** the pod's floor is macOS 26.0 for this release, while the on-device brain's macOS library is rebuilt for older macOS. Set `platform :osx, '26.0'` in `macos/Podfile` and `MACOSX_DEPLOYMENT_TARGET = 26.0` in the Runner target.
+- **New:** `BithumanAvatar.clearCredentials()`. Call it when an account signs out: the engines forget the secret, and on Android the loads still running end with `load_cancelled`.
+- **Changed:** `engine:` defaults to `'expression2'`, and an unknown engine name fails with `unsupported` on iOS and macOS too. `BithumanRealtimeSession`'s model defaults to `gpt-realtime-mini`. On Android, `pushAudio` plays your speech, and `load` accepts the public model ids (`'essence-2'`, `'expression-2'`).
+- **Action:** pin `ref: flutter-plugin-v2.6.36`. Catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)), pass `apiSecret` to the installers, and raise macOS apps to 26.0.
 
 ### Swift package 2.20.2 — 2026-10-03
 
