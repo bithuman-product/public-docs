@@ -7,7 +7,7 @@
         "version": "0.9.3",
         "digest": "sha256:b1f5534669793012468f32fdeb0ad7115a25f27d15e9994d046608334cc806d7",
         "filename": "essence2-android-0.9.3.aar",
-        "resolved_on": "2026-10-03"
+        "resolved_on": "2026-10-04"
       },
       "surface": {
         "artifact_facts": {
@@ -6401,10 +6401,10 @@
       "artifact": {
         "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.5.2",
-        "digest": "sha256:7415aad6c9b73cd8fb91a4f1aa34fbcc79010657c33120a77274bbf619161bcd",
-        "filename": "expression2-android-0.5.2.aar",
-        "resolved_on": "2026-10-03"
+        "version": "0.6.0",
+        "digest": "sha256:ee9c098e6c358428c97dc59305359acf75efdf549963a022d17a8d1206b4593f",
+        "filename": "expression2-android-0.6.0.aar",
+        "resolved_on": "2026-10-04"
       },
       "surface": {
         "artifact_facts": {
@@ -7967,6 +7967,172 @@
             ]
           },
           {
+            "name": "ai.bithuman.expression2.DecoderCompileJob",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [
+              "JobService"
+            ],
+            "companion": "Companion",
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [
+              {
+                "signature": "constructor()",
+                "jvm": "<init>()V",
+                "loadable": true
+              }
+            ],
+            "functions": [
+              {
+                "name": "onStartJob",
+                "signature": "fun onStartJob(params: JobParameters): Boolean",
+                "suspend": false,
+                "jvm": "onStartJob(Landroid/app/job/JobParameters;)Z",
+                "loadable": true
+              },
+              {
+                "name": "onStopJob",
+                "signature": "fun onStopJob(params: JobParameters): Boolean",
+                "suspend": false,
+                "jvm": "onStopJob(Landroid/app/job/JobParameters;)Z",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "Companion",
+                "jvm": "field CompanionLai/bithuman/expression2/DecoderCompileJob$Companion;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "object-instance"
+              },
+              {
+                "name": "access$getSettled$cp",
+                "jvm": "access$getSettled$cp()Ljava/util/HashSet;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.expression2.DecoderContextCache$State",
+            "kind": "enum-class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final",
+              "enum"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [
+              "Enum<DecoderContextCache.State>"
+            ],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [
+              "COLD",
+              "VERIFIED",
+              "LEGACY",
+              "BROKEN"
+            ],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "BROKEN",
+                "jvm": "field BROKENLai/bithuman/expression2/DecoderContextCache$State;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "COLD",
+                "jvm": "field COLDLai/bithuman/expression2/DecoderContextCache$State;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "LEGACY",
+                "jvm": "field LEGACYLai/bithuman/expression2/DecoderContextCache$State;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "VERIFIED",
+                "jvm": "field VERIFIEDLai/bithuman/expression2/DecoderContextCache$State;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "enum-entry"
+              },
+              {
+                "name": "getEntries",
+                "jvm": "getEntries()Lkotlin/enums/EnumEntries;",
+                "access": [
+                  "public",
+                  "static"
+                ],
+                "kind": "enum-static"
+              },
+              {
+                "name": "valueOf",
+                "jvm": "valueOf(Ljava/lang/String;)Lai/bithuman/expression2/DecoderContextCache$State;",
+                "access": [
+                  "public",
+                  "static"
+                ],
+                "kind": "enum-static"
+              },
+              {
+                "name": "values",
+                "jvm": "values()[Lai/bithuman/expression2/DecoderContextCache$State;",
+                "access": [
+                  "public",
+                  "static"
+                ],
+                "kind": "enum-static"
+              }
+            ]
+          },
+          {
             "name": "ai.bithuman.expression2.Device",
             "kind": "enum-class",
             "modality": "final",
@@ -9354,20 +9520,10 @@
                 "kind": "internal"
               },
               {
-                "name": "getMeter$expression2_release",
-                "jvm": "getMeter$expression2_release()Lai/bithuman/expression2/SelfHostMeter;",
+                "name": "<init>",
+                "jvm": "<init>(Ljava/io/File;IILai/bithuman/expression2/SelfHostMeter;)V",
                 "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setMeter$expression2_release",
-                "jvm": "setMeter$expression2_release(Lai/bithuman/expression2/SelfHostMeter;)V",
-                "access": [
-                  "public",
-                  "final"
+                  "public"
                 ],
                 "kind": "internal"
               }
@@ -9464,24 +9620,6 @@
                 "kind": "synthetic"
               },
               {
-                "name": "getBeatIntervalMsForTest$expression2_release",
-                "jvm": "getBeatIntervalMsForTest$expression2_release()Ljava/lang/Long;",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getClock$expression2_release",
-                "jvm": "getClock$expression2_release()Lkotlin/jvm/functions/Function0;",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
                 "name": "getFlushBudgetMs$expression2_release",
                 "jvm": "getFlushBudgetMs$expression2_release()J",
                 "access": [
@@ -9537,24 +9675,6 @@
                 "kind": "internal"
               },
               {
-                "name": "getLogSink$expression2_release",
-                "jvm": "getLogSink$expression2_release()Lkotlin/jvm/functions/Function1;",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getSinkFactory$expression2_release",
-                "jvm": "getSinkFactory$expression2_release()Lkotlin/jvm/functions/Function2;",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
                 "name": "getStateDir$annotations",
                 "jvm": "getStateDir$annotations()V",
                 "access": [
@@ -9563,33 +9683,6 @@
                   "synthetic"
                 ],
                 "kind": "synthetic"
-              },
-              {
-                "name": "resetForTest$expression2_release",
-                "jvm": "resetForTest$expression2_release()V",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setBeatIntervalMsForTest$expression2_release",
-                "jvm": "setBeatIntervalMsForTest$expression2_release(Ljava/lang/Long;)V",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setClock$expression2_release",
-                "jvm": "setClock$expression2_release(Lkotlin/jvm/functions/Function0;)V",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
               },
               {
                 "name": "setFlushBudgetMs$expression2_release",
@@ -9630,24 +9723,6 @@
               {
                 "name": "setLastSessionId$expression2_release",
                 "jvm": "setLastSessionId$expression2_release(Ljava/lang/String;)V",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setLogSink$expression2_release",
-                "jvm": "setLogSink$expression2_release(Lkotlin/jvm/functions/Function1;)V",
-                "access": [
-                  "public",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setSinkFactory$expression2_release",
-                "jvm": "setSinkFactory$expression2_release(Lkotlin/jvm/functions/Function2;)V",
                 "access": [
                   "public",
                   "final"
@@ -10098,6 +10173,24 @@
                 "jvm_setter": null,
                 "jvm_field": "field urlResolverLai/bithuman/expression2/Expression2ModelStore$UrlResolver;",
                 "loadable": true
+              },
+              {
+                "name": "revalidateInBackground",
+                "signature": "var revalidateInBackground: Boolean",
+                "mutable": true,
+                "jvm_getter": "getRevalidateInBackground()Z",
+                "jvm_setter": "setRevalidateInBackground(Z)V",
+                "jvm_field": "field revalidateInBackgroundZ",
+                "loadable": true
+              },
+              {
+                "name": "revalidateMinIntervalMs",
+                "signature": "var revalidateMinIntervalMs: Long",
+                "mutable": true,
+                "jvm_getter": "getRevalidateMinIntervalMs()J",
+                "jvm_setter": "setRevalidateMinIntervalMs(J)V",
+                "jvm_field": "field revalidateMinIntervalMsJ",
+                "loadable": true
               }
             ],
             "loadable_undeclared": [
@@ -10143,6 +10236,17 @@
                 "kind": "default-argument-bridge"
               },
               {
+                "name": "AUTH_DIR",
+                "jvm": "field AUTH_DIRLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": ".door-auth",
+                "kind": "internal"
+              },
+              {
                 "name": "BASE_DELAY_MS",
                 "jvm": "field BASE_DELAY_MSJ",
                 "access": [
@@ -10173,6 +10277,17 @@
                   "final"
                 ],
                 "kind": "object-instance"
+              },
+              {
+                "name": "LOG_TAG",
+                "jvm": "field LOG_TAGLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": "Expression2ModelStore",
+                "kind": "internal"
               },
               {
                 "name": "MAX_ATTEMPTS",
@@ -10230,6 +10345,72 @@
                 "kind": "internal"
               },
               {
+                "name": "REVALIDATED_MARKER",
+                "jvm": "field REVALIDATED_MARKERLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": ".revalidated",
+                "kind": "internal"
+              },
+              {
+                "name": "REVALIDATE_BUDGET_MS",
+                "jvm": "field REVALIDATE_BUDGET_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 8000,
+                "kind": "internal"
+              },
+              {
+                "name": "REVALIDATE_CONNECT_MS",
+                "jvm": "field REVALIDATE_CONNECT_MSI",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 4000,
+                "kind": "internal"
+              },
+              {
+                "name": "REVALIDATE_MIN_INTERVAL_MS",
+                "jvm": "field REVALIDATE_MIN_INTERVAL_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 3600000,
+                "kind": "internal"
+              },
+              {
+                "name": "REVALIDATE_READ_MS",
+                "jvm": "field REVALIDATE_READ_MSI",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 6000,
+                "kind": "internal"
+              },
+              {
+                "name": "STAGING_DIR",
+                "jvm": "field STAGING_DIRLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": ".next",
+                "kind": "internal"
+              },
+              {
                 "name": "STALL_BUDGET_MS",
                 "jvm": "field STALL_BUDGET_MSJ",
                 "access": [
@@ -10239,6 +10420,28 @@
                 ],
                 "constant": 60000,
                 "kind": "internal"
+              },
+              {
+                "name": "SWAP_JOURNAL",
+                "jvm": "field SWAP_JOURNALLjava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": ".swap.json",
+                "kind": "internal"
+              },
+              {
+                "name": "access$getERROR_CODE$cp",
+                "jvm": "access$getERROR_CODE$cp()Lkotlin/text/Regex;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
               },
               {
                 "name": "access$getSAFE_MEMBER$cp",
@@ -10298,6 +10501,15 @@
                   "synthetic"
                 ],
                 "kind": "default-argument-bridge"
+              },
+              {
+                "name": "getLastRevalidation$expression2_release",
+                "jvm": "getLastRevalidation$expression2_release()Lai/bithuman/expression2/Expression2ModelStore$Revalidation;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
               }
             ]
           },
@@ -10534,6 +10746,42 @@
                 "kind": "default-argument-bridge"
               },
               {
+                "name": "authorizedFor$expression2_release",
+                "jvm": "authorizedFor$expression2_release(Ljava/io/File;Ljava/lang/String;)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "canonicalHeaders$expression2_release",
+                "jvm": "canonicalHeaders$expression2_release(Ljava/util/Map;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "credentialTag$expression2_release",
+                "jvm": "credentialTag$expression2_release(Ljava/lang/String;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "doorErrorCode$expression2_release",
+                "jvm": "doorErrorCode$expression2_release(Ljava/lang/String;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "fetchMember$expression2_release",
                 "jvm": "fetchMember$expression2_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Lai/bithuman/expression2/Expression2ModelStore$Member;Lai/bithuman/expression2/Expression2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function1;Z)V",
                 "access": [
@@ -10554,7 +10802,26 @@
               },
               {
                 "name": "fetchText$expression2_release",
-                "jvm": "fetchText$expression2_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/expression2/Expression2ModelStore$Retry;Ljava/lang/String;)Ljava/lang/String;",
+                "jvm": "fetchText$expression2_release(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/expression2/Expression2ModelStore$Retry;Ljava/lang/String;II)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "fetchText$expression2_release$default",
+                "jvm": "fetchText$expression2_release$default(Lai/bithuman/expression2/Expression2ModelStore$Companion;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lai/bithuman/expression2/Expression2ModelStore$Retry;Ljava/lang/String;IIILjava/lang/Object;)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "isDenial$expression2_release",
+                "jvm": "isDenial$expression2_release(Ljava/lang/Throwable;)Z",
                 "access": [
                   "public",
                   "final"
@@ -10564,6 +10831,33 @@
               {
                 "name": "isTransient$expression2_release",
                 "jvm": "isTransient$expression2_release(I)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "noteAuthorized$expression2_release",
+                "jvm": "noteAuthorized$expression2_release(Ljava/io/File;Ljava/lang/String;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "noteConclusiveCheck$expression2_release",
+                "jvm": "noteConclusiveCheck$expression2_release(Ljava/io/File;Lai/bithuman/expression2/Expression2ModelStore$Revalidation;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "noteDenied$expression2_release",
+                "jvm": "noteDenied$expression2_release(Ljava/io/File;Ljava/lang/String;)V",
                 "access": [
                   "public",
                   "final"
@@ -10590,11 +10884,48 @@
                 "kind": "internal"
               },
               {
+                "name": "pruneSuperseded$expression2_release",
+                "jvm": "pruneSuperseded$expression2_release(Ljava/io/File;Ljava/util/Set;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "readRecordedSha$expression2_release",
                 "jvm": "readRecordedSha$expression2_release(Ljava/io/File;Ljava/lang/String;)Ljava/lang/String;",
                 "access": [
                   "public",
                   "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "recentlyChecked$expression2_release",
+                "jvm": "recentlyChecked$expression2_release(Ljava/io/File;JJ)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "recoverPendingSwap$expression2_release",
+                "jvm": "recoverPendingSwap$expression2_release(Ljava/io/File;Z)Z",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "recoverPendingSwap$expression2_release$default",
+                "jvm": "recoverPendingSwap$expression2_release$default(Lai/bithuman/expression2/Expression2ModelStore$Companion;Ljava/io/File;ZILjava/lang/Object;)Z",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
                 ],
                 "kind": "internal"
               },
@@ -10610,6 +10941,25 @@
               {
                 "name": "retryAfterMs$expression2_release$default",
                 "jvm": "retryAfterMs$expression2_release$default(Lai/bithuman/expression2/Expression2ModelStore$Companion;Ljava/net/HttpURLConnection;JILjava/lang/Object;)Ljava/lang/Long;",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "revalidateInstalled$expression2_release",
+                "jvm": "revalidateInstalled$expression2_release(Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lai/bithuman/expression2/Expression2ModelStore$Retry;Lai/bithuman/expression2/Expression2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;ZZII)Lai/bithuman/expression2/Expression2ModelStore$Revalidation;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "revalidateInstalled$expression2_release$default",
+                "jvm": "revalidateInstalled$expression2_release$default(Lai/bithuman/expression2/Expression2ModelStore$Companion;Ljava/io/File;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lai/bithuman/expression2/Expression2ModelStore$Retry;Lai/bithuman/expression2/Expression2ModelStore$Retry;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;ZZIIILjava/lang/Object;)Lai/bithuman/expression2/Expression2ModelStore$Revalidation;",
                 "access": [
                   "public",
                   "static",
@@ -11760,6 +12110,301 @@
                 "kind": "default-argument-bridge"
               }
             ]
+          },
+          {
+            "name": "ai.bithuman.expression2.TailJournal$Claim",
+            "kind": "interface",
+            "modality": "abstract",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "abstract",
+              "interface"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "done",
+                "signature": "fun done(delivered: Boolean)",
+                "suspend": false,
+                "jvm": "done(Z)V",
+                "loadable": true
+              }
+            ],
+            "properties": [
+              {
+                "name": "record",
+                "signature": "val record: TailJournal.Record",
+                "mutable": false,
+                "jvm_getter": "getRecord()Lai/bithuman/expression2/TailJournal$Record;",
+                "jvm_setter": null,
+                "jvm_field": null,
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": []
+          },
+          {
+            "name": "ai.bithuman.expression2.TailJournal$Companion",
+            "kind": "companion-object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [],
+            "properties": [
+              {
+                "name": "CLAIMED",
+                "signature": "const val CLAIMED: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field CLAIMEDI",
+                "loadable": true,
+                "value": 0
+              },
+              {
+                "name": "CORRUPT",
+                "signature": "const val CORRUPT: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field CORRUPTI",
+                "loadable": true,
+                "value": 4
+              },
+              {
+                "name": "EXPIRED",
+                "signature": "const val EXPIRED: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field EXPIREDI",
+                "loadable": true,
+                "value": 5
+              },
+              {
+                "name": "FOREIGN",
+                "signature": "const val FOREIGN: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field FOREIGNI",
+                "loadable": true,
+                "value": 3
+              },
+              {
+                "name": "GONE",
+                "signature": "const val GONE: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field GONEI",
+                "loadable": true,
+                "value": 2
+              },
+              {
+                "name": "LIVE",
+                "signature": "const val LIVE: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field LIVEI",
+                "loadable": true,
+                "value": 1
+              }
+            ],
+            "loadable_undeclared": []
+          },
+          {
+            "name": "ai.bithuman.expression2.TailJournal$Record",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [
+              {
+                "signature": "constructor(sessionId: String, installId: String, product: String, billingType: String, seq: Long, servedS: Double, talkingS: Double, accrued: Boolean, version: Int, claimId: String = …)",
+                "jvm": "<init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JDDZILjava/lang/String;)V",
+                "loadable": true
+              }
+            ],
+            "functions": [],
+            "properties": [
+              {
+                "name": "accrued",
+                "signature": "val accrued: Boolean",
+                "mutable": false,
+                "jvm_getter": "getAccrued()Z",
+                "jvm_setter": null,
+                "jvm_field": "field accruedZ",
+                "loadable": true
+              },
+              {
+                "name": "billingType",
+                "signature": "val billingType: String",
+                "mutable": false,
+                "jvm_getter": "getBillingType()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field billingTypeLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "claimId",
+                "signature": "val claimId: String",
+                "mutable": false,
+                "jvm_getter": "getClaimId()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field claimIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "installId",
+                "signature": "val installId: String",
+                "mutable": false,
+                "jvm_getter": "getInstallId()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field installIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "product",
+                "signature": "val product: String",
+                "mutable": false,
+                "jvm_getter": "getProduct()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field productLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "seq",
+                "signature": "val seq: Long",
+                "mutable": false,
+                "jvm_getter": "getSeq()J",
+                "jvm_setter": null,
+                "jvm_field": "field seqJ",
+                "loadable": true
+              },
+              {
+                "name": "servedS",
+                "signature": "val servedS: Double",
+                "mutable": false,
+                "jvm_getter": "getServedS()D",
+                "jvm_setter": null,
+                "jvm_field": "field servedSD",
+                "loadable": true
+              },
+              {
+                "name": "sessionId",
+                "signature": "val sessionId: String",
+                "mutable": false,
+                "jvm_getter": "getSessionId()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field sessionIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "talkingS",
+                "signature": "val talkingS: Double",
+                "mutable": false,
+                "jvm_getter": "getTalkingS()D",
+                "jvm_setter": null,
+                "jvm_field": "field talkingSD",
+                "loadable": true
+              },
+              {
+                "name": "version",
+                "signature": "val version: Int",
+                "mutable": false,
+                "jvm_getter": "getVersion()I",
+                "jvm_setter": null,
+                "jvm_field": "field versionI",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JDDZILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "access": [
+                  "public",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.expression2.TailJournal$Session",
+            "kind": "interface",
+            "modality": "abstract",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "static",
+              "abstract",
+              "interface"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "close",
+                "signature": "fun close(deleteRecord: Boolean)",
+                "suspend": false,
+                "jvm": "close(Z)V",
+                "loadable": true
+              },
+              {
+                "name": "write",
+                "signature": "fun write(seq: Long, servedS: Double, talkingS: Double, accrued: Boolean): Boolean",
+                "suspend": false,
+                "jvm": "write(JDDZ)Z",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": []
           }
         ],
         "disagreements": {
@@ -11774,10 +12419,28 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.DecoderCompileJob$Companion",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.DecoderContextCache",
               "declared_visibility": "internal",
               "runtime_access": [
                 "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.DecoderContextCache$LibDigestMemo",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
                 "final"
               ]
             },
@@ -11816,6 +12479,24 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.Expression2ModelStore$Companion$DoorStatus",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.Expression2ModelStore$DoorAuth",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Expression2ModelStore$Member",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -11826,6 +12507,25 @@
             },
             {
               "name": "ai.bithuman.expression2.Expression2ModelStore$Retry",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.Expression2ModelStore$Revalidated",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final",
+                "enum"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.Expression2ModelStore$Revalidation",
               "declared_visibility": "internal",
               "runtime_access": [
                 "public",
@@ -11936,6 +12636,15 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.TailJournal",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "abstract",
+                "interface"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Wiring",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -11945,13 +12654,13 @@
             }
           ],
           "public_classes_without_metadata": [],
-          "synthetic_classes": 6,
+          "synthetic_classes": 11,
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 73,
-          "declared_classes": 66,
-          "public_classes": 43
+          "class_files": 91,
+          "declared_classes": 79,
+          "public_classes": 49
         }
       }
     }

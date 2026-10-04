@@ -79,7 +79,7 @@ exclusiveContent {   // ai.bithuman resolves from bitHuman's repository only
     filter { includeGroup("ai.bithuman") }
 }
 // app/build.gradle.kts
-implementation("ai.bithuman:expression2-android:0.5.2")
+implementation("ai.bithuman:expression2-android:0.6.0")
 ```
 
 ```bash tab="Mac"
