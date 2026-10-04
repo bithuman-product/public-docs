@@ -127,7 +127,7 @@ const WHY: Record<string, () => { title: string; text: string }[]> = {
     { title: "When the network drops", text: "A session checks your credential when it starts and keeps rendering through a network drop of up to 5 minutes." },
   ],
   web: () => [
-    { title: "Where it renders", text: "With `render=local` the avatar renders in the visitor's tab with WebGPU. Without a usable GPU it renders in the bitHuman cloud, so every visitor gets lip-sync." },
+    { title: "Where it renders", text: "With `render=local` the avatar renders in the visitor's tab with WebGPU, never in the cloud. A device that can't render it in real time shows a message, and no session starts." },
     { title: "What reaches bitHuman", text: "With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`)." },
     { title: "One download", text: "The avatar's web bundle downloads to the browser once (50–200 MB), then comes from the cache." },
   ],
