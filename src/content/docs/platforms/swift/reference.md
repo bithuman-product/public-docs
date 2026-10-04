@@ -218,6 +218,15 @@ Recommended: gate each frame's audio on its display (lowest latency). If your pr
 | `be_essence2_set_playout_anchor(h, int32_t on)` | Start each reply at the live audio position. Leave off if your app holds audio until the first frame | `0`; `-1` bad handle |
 | `be_essence2_reanchor_slots(h)`, `be_essence2_anchor_slots(h)` | Counters for frames skipped to keep sync under load | count |
 
+## Storage and privacy
+
+Downloaded avatars stay in `Caches/bitHuman/…` unless you pass a directory, and Essence 2's runtime files in `Application Support/bitHuman/essence2/<release>`. From Swift package 2.20.2, everything `Essence2Download` and Essence 2's runtime files write is excluded from iCloud and computer backups (`isExcludedFromBackup`), because it is downloaded again when needed. A directory you pass in is not flagged as a whole; only the files the SDK writes into it are.
+
+The package ships an App Store privacy manifest (`PrivacyInfo.xcprivacy`) in the resource bundles of `Essence2Kit` and of every Expression 2 and Essence 2 product, so Xcode's privacy report includes it. It declares:
+
+- **Required-reason APIs:** file timestamps (`C617.1`, the SDK's own files in your app's container) and system boot time (`35F9.1`, timing inside your app).
+- **Data the SDK sends:** an install identifier the SDK creates and the session's duration, sent to bitHuman to bill your account. Used for app functionality only, not linked to the user, and not used for tracking.
+
 ## Sessions and billing
 
 A session checks the API secret when it starts and reports its session time, talking or idle. If the network drops after the secret is accepted, frames continue for 5 minutes of rendered video, then `pull_frame` and `idle_frame` return `-3` (Essence 2) or `pull()` returns `nil` (Expression 2) until the connection returns. A secret rejected mid-session is final: destroy the engine. Prices are on [pricing](/pricing).
