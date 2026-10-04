@@ -106,4 +106,4 @@ The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a re
 
 - [Embedding](/api/embedding): embed tokens, sizing and private agents.
 - [LiveKit](/platforms/livekit): your own UI over a cloud-rendered avatar.
-- Examples that need your own LiveKit server and a Python agent (not web embeds): [Next.js front end for a LiveKit agent](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) · [Gradio, a Python app that also needs an OpenAI key](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web).
+- Examples that need your own LiveKit server and a Python agent (not web embeds): [Next.js front end for a LiveKit agent](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/web/nextjs-ui) · [Gradio, a Python app that also needs an OpenAI key](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/integrations/gradio-web).

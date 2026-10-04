@@ -27,7 +27,7 @@ The app downloads the `wise-pup` sample avatar once, renders every frame of a sp
 ## Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/android/expression2-hello
 ```
 
@@ -104,7 +104,7 @@ avatar.use {
         Thread.sleep(10)
 ```
 
-The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/android/expression2-hello/app/src/main/java/com/example/x2hello/MainActivity.kt).
+The complete file is [on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/blob/main/android/expression2-hello/app/src/main/java/com/example/x2hello/MainActivity.kt).
 
 ## Make it your own
 
@@ -124,4 +124,4 @@ More on [Android: Troubleshooting](/platforms/android/troubleshooting).
 
 ## Next
 
-- [Android example: Essence 2](/examples/android-essence-2) · [Android SDK](/platforms/android) · [Android API reference](/platforms/android/reference) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/android/expression2-hello)
+- [Android example: Essence 2](/examples/android-essence-2) · [Android SDK](/platforms/android) · [Android API reference](/platforms/android/reference) · [source on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/android/expression2-hello)

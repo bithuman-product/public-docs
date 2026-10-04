@@ -47,7 +47,7 @@ await avatar.dispose();                      // release the engine
 
 ## Complete example
 
-The [`avatar_chat` app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle motion and interruption, in one layout for every platform. From plugin 2.6.20 its voice session connects through bitHuman's [realtime relay](/api/realtime) with your API secret; no token is minted.
+The [`avatar_chat` app](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/flutter/avatar-chat) is a complete voice conversation with idle motion and interruption, in one layout for every platform. From plugin 2.6.20 its voice session connects through bitHuman's [realtime relay](/api/realtime) with your API secret; no token is minted.
 
 ## Platform notes
 
@@ -63,5 +63,5 @@ The [`avatar_chat` app](https://github.com/bithuman-product/bithuman-examples/tr
 
 - [Flutter errors](/platforms/flutter/errors): the codes `load` throws and the codes a voice session ends with.
 - [Android](/platforms/android): the engines under the plugin, their API and their settings.
-- [`avatar_chat` example](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) and the [plugin source](https://gitlab.com/bithuman/sdk/bithuman-flutter).
+- [`avatar_chat` example](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/flutter/avatar-chat) and the [plugin source](https://gitlab.com/bithuman/sdk/bithuman-flutter).
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

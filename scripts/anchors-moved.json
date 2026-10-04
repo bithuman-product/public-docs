@@ -41,6 +41,7 @@
   "/deploy/privacy#your-content": "/deploy/privacy/retention#your-content",
   "/deploy/self-hosted#choosing-between-modes": "/deploy#compare",
   "/deploy/self-hosted#models-available-here": "/deploy#compare",
+  "/examples#more-on-github": "/examples#more-on-gitlab",
   "/examples#ready-made-avatars": "/examples/avatars",
   "/models#how-creation-works": "/build/create-avatar#how-creation-works",
   "/models#naming--migration": "/resources/renamed#retired-model-and-file-names",

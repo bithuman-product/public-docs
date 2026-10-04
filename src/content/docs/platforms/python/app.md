@@ -69,7 +69,7 @@ The quickstart from the examples repository: open an avatar and watch it speak i
 ### Run it
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/python/quickstart
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 export BITHUMAN_API_SECRET="<your API secret>"
@@ -98,5 +98,5 @@ A window titled **bitHuman avatar** opens and the avatar speaks the bundled `spe
 ## Reference
 
 - [Python API reference](/platforms/python/reference): every public class and function.
-- [Python examples](https://github.com/bithuman-product/bithuman-examples/tree/main/python): quickstart, local conversation, cloud with LiveKit.
+- [Python examples](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/python): quickstart, local conversation, cloud with LiveKit.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

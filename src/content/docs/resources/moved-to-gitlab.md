@@ -23,6 +23,7 @@ You change each address once, when you adopt the release that ships it.
 | [CLI](/platforms/cli) | Nothing if you use the installer: `curl -fsSL https://install.bithuman.ai \| sh`. With Homebrew, move to the new tap once, in this order (Homebrew refuses to untap a tap while its formula is installed): `brew uninstall bithuman-cli`, `brew untap bithuman-product/bithuman`, `brew tap bithuman/bithuman https://gitlab.com/bithuman/sdk/homebrew-bithuman`, then `brew install bithuman/bithuman/bithuman-cli`. Always give the tap its URL: without it, Homebrew looks for `bithuman` on GitHub, which is not bitHuman's account. Issues: [bithuman-cli](https://gitlab.com/bithuman/sdk/bithuman-cli/-/issues). |
 | [LiveKit](/platforms/livekit) | Nothing: `pip install livekit-plugins-bithuman` is unchanged, and the plugin is still released in livekit/agents. Docs and issues: [livekit-bithuman](https://gitlab.com/bithuman/sdk/livekit-bithuman). |
 | [Pipecat](/platforms/pipecat) | Nothing for `pip`. The source moved to [pipecat-bithuman](https://gitlab.com/bithuman/sdk/pipecat-bithuman). |
+| [Examples](/examples) | `git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git`. Each platform has one top-level folder (`cli`, `rest-api`, `flutter/avatar-chat`, `web/nextjs-ui`); the archived GitHub copy keeps the old paths. |
 | Release files | Every file, old and new, is on `downloads.bithuman.ai` with the same name and checksum. The current ones are under [Release files](/downloads#release-files). |
 | The web embed, the REST API, `maven.bithuman.ai` | Nothing. |
 

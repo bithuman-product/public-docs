@@ -26,7 +26,7 @@ The shortest native Apple path: a command-line tool that opens an avatar, feeds 
 ## Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/swift/macos-expression2
 ./setup.sh
 ```
@@ -112,7 +112,7 @@ while idleTicks < 100 {
 }
 ```
 
-The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/swift/macos-expression2/Sources/main.swift).
+The complete file is [on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/blob/main/swift/macos-expression2/Sources/main.swift).
 
 ## Make it your own
 
@@ -130,4 +130,4 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 
 ## Next
 
-- [iOS example](/examples/ios-expression-2) · [iOS & iPadOS](/platforms/ios) · [CLI example](/platforms/cli#run-your-first-avatar) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)
+- [iOS example](/examples/ios-expression-2) · [iOS & iPadOS](/platforms/ios) · [CLI example](/platforms/cli#run-your-first-avatar) · [source on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/swift/macos-expression2)

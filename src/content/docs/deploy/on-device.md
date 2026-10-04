@@ -83,7 +83,7 @@ implementation("ai.bithuman:expression2-android:0.6.0")
 ```
 
 ```bash tab="Mac"
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/swift/macos-expression2 && ./setup.sh
 BITHUMAN_API_SECRET="<your API secret>" swift run -c release MacOSExpression2
 ```

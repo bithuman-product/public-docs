@@ -60,7 +60,7 @@ swift-auth
 
 ## Run your first avatar
 
-The quickest way to see it work is the example app: clone [bithuman-examples](https://github.com/bithuman-product/bithuman-examples), open the [iOS Expression 2 example](/examples/ios-expression-2) in Xcode, set `BITHUMAN_API_SECRET` in the scheme and run it on your iPhone. The code below is the core of that app.
+The quickest way to see it work is the example app: clone [bithuman-examples](https://gitlab.com/bithuman/sdk/bithuman-examples), open the [iOS Expression 2 example](/examples/ios-expression-2) in Xcode, set `BITHUMAN_API_SECRET` in the scheme and run it on your iPhone. The code below is the core of that app.
 
 Download the `wise-pup` sample avatar (agent code `A23WJF0199`), the shared Expression 2 engine and a 16 kHz speech clip. No account is needed for these downloads:
 

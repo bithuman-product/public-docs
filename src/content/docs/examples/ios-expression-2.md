@@ -27,7 +27,7 @@ A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to i
 ## Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/swift/ios-expression2
 ./setup.sh
 ```
@@ -102,7 +102,7 @@ while i < pcm.count {
 await renderer.flushTail()
 ```
 
-The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/swift/ios-expression2/Sources/App.swift).
+The complete file is [on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/blob/main/swift/ios-expression2/Sources/App.swift).
 
 ## Make it your own
 
@@ -124,4 +124,4 @@ More on [Apple: Troubleshooting](/platforms/swift/troubleshooting#ios).
 
 ## Next
 
-- [macOS example](/examples/macos-expression-2) · [iOS & iPadOS](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
+- [macOS example](/examples/macos-expression-2) · [iOS & iPadOS](/platforms/ios) · [source on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/swift/ios-expression2)

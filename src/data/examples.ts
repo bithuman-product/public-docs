@@ -194,7 +194,7 @@ export interface Example {
   note?: [string, string, string];
 }
 
-const REPO = "https://github.com/bithuman-product/bithuman-examples";
+const REPO = "https://gitlab.com/bithuman/sdk/bithuman-examples";
 const CLONE = `git clone ${REPO}.git`;
 
 export const EXAMPLES: Example[] = [
@@ -246,16 +246,16 @@ export const EXAMPLES: Example[] = [
   },
 ];
 
-/** Complete projects on GitHub with no recording on this site yet. */
+/** Complete projects on GitLab with no recording on this site yet. */
 export const MORE_ON_GITHUB: { title: string; path: string; line: string; href?: string }[] = [
-  { title: "Flutter voice app", path: "app/avatar_chat", line: "A voice conversation with idle and interruption, on Android (the Flutter plugin).", href: "/platforms/flutter" },
+  { title: "Flutter voice app", path: "flutter/avatar-chat", line: "A voice conversation with idle and interruption, on Android (the Flutter plugin).", href: "/platforms/flutter" },
   { title: "iOS: Essence 2", path: "swift/ios-essence2", line: "A full-resolution photoreal avatar on iPhone.", href: "/examples/ios-essence-2" },
   { title: "Python self-host with LiveKit", path: "python/self-host", line: "Your own LiveKit server and OpenAI Realtime, with the avatar rendered on your machine.", href: "/build/voice-agent#with-python" },
   { title: "Cloud avatar in a LiveKit room", path: "python/cloud-essence", line: "A bitHuman cloud avatar joining your LiveKit room, with a web UI.", href: "/platforms/livekit" },
-  { title: "Next.js video-chat UI", path: "integrations/nextjs-ui", line: "A browser front end for an avatar in a LiveKit room." },
-  { title: "REST API scripts", path: "api/rest-api", line: "curl and Python for every REST endpoint.", href: "/platforms/rest" },
+  { title: "Next.js video-chat UI", path: "web/nextjs-ui", line: "A browser front end for an avatar in a LiveKit room." },
+  { title: "REST API scripts", path: "rest-api", line: "curl and Python for every REST endpoint.", href: "/platforms/rest" },
 ];
-export const repoUrl = (path: string) => `${REPO}/tree/main/${path}`;
+export const repoUrl = (path: string) => `${REPO}/-/tree/main/${path}`;
 
 /** The distinct showcase avatars the gallery shows (the acceptance asks for four or more). */
 export const galleryAvatars = () => [...new Set(EXAMPLES.map((e) => CAPTURES[e.capture].provenance.avatar))];

@@ -57,7 +57,7 @@ A Mac app built from Xcode's App template turns on App Sandbox. Under *Signing &
 The [macOS Expression 2 example](/examples/macos-expression-2) is one Swift file. Clone it, fetch the sample avatar, and run it:
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/swift/macos-expression2
 ./setup.sh                                 # the wise-pup avatar, the shared engine and a speech clip
 export BITHUMAN_API_SECRET="<your API secret>"

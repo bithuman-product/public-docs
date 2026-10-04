@@ -44,5 +44,5 @@ next: ["/platforms/cli/troubleshooting", "/platforms/cli/reference", "/platforms
 
 - [CLI reference](/platforms/cli/reference): every command, flag, exit code and environment variable.
 - [Local conversation brain](/platforms/cli/local-brain): run the conversation fully on your hardware.
-- [CLI example scripts](https://github.com/bithuman-product/bithuman-examples/tree/main/api/cli): live stream, offline render, REST.
+- [CLI example scripts](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/cli): live stream, offline render, REST.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

@@ -55,8 +55,8 @@ Then make an agent of your own. Four shell scripts from the examples repository:
 ### Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
-cd bithuman-examples/api/rest-api/curl
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
+cd bithuman-examples/rest-api/curl
 ```
 
 ### Run it
@@ -99,7 +99,7 @@ Open `https://www.bithuman.ai/embed/<agent_id>` and talk to your agent. While th
 - **A face of your own:** add `"image": "https://…/portrait.jpg"` to the JSON in `generate-agent.sh`.
 - **A photoreal person:** `BITHUMAN_MODEL=essence-2`, or `auto` to let the platform choose. Every model except Expression 2 needs a real human face ([Choosing a model](/models#choosing-a-model)).
 - **A video instead of a live session:** [`POST /v1/video/generate`](/api/video) renders your agent speaking your audio to an MP4.
-- **Other languages:** [`api/rest-api/python`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api/python) has the same calls in Python.
+- **Other languages:** [`rest-api/python`](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/rest-api/python) has the same calls in Python.
 
 ## Integrate into your app
 

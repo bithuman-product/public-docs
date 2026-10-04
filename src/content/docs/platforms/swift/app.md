@@ -78,4 +78,4 @@ Two SwiftUI apps you can clone and run on an iPhone or iPad, each with a microph
 - Examples: [iOS Expression 2](/examples/ios-expression-2) · [iOS Essence 2](/examples/ios-essence-2) · [macOS Expression 2](/examples/macos-expression-2).
 - Sample avatars: [Ready-made avatars](/examples/avatars). Your own agent's model: [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) with your API secret.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
-- [macOS Expression 2 example](/examples/macos-expression-2) and its [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2).
+- [macOS Expression 2 example](/examples/macos-expression-2) and its [source on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/swift/macos-expression2).

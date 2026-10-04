@@ -17,7 +17,7 @@
 //                                             unreachable or incomplete); --write rewrites it
 //   node scripts/sync-versions.mjs --examples [DIR] [--write]
 //                                             check the pins in bithuman-examples (a checkout at DIR,
-//                                             or $BITHUMAN_EXAMPLES_DIR; else main on GitHub, exit 2
+//                                             or $BITHUMAN_EXAMPLES_DIR; else main on GitLab, exit 2
 //                                             if unreachable): exit 1 when a pin LAGS versions.json.
 //                                             --write (checkout only) moves those pins, so a release
 //                                             run moves the examples with the docs.
@@ -80,7 +80,7 @@ export const EXAMPLE_FORMS = [
   { key: "swift", legacy: SWIFT_HOME, sample: (v) => `repositoryURL = "${LEGACY_SWIFT_URL}.git";\n requirement = {\n minimumVersion = ${v};`,
     re: new RegExp(String.raw`github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?";[^}]*?minimumVersion = (${SEMVER});`, "g") },
 ];
-const EXAMPLES_REPO = "bithuman-product/bithuman-examples";
+const EXAMPLES_REPO = "bithuman/sdk/bithuman-examples"; // the gitlab.com project path
 // The interim SPM identity (TARGET_ORG section 4): homebrew-bithuman on GitLab as a Swift package or a
 // Flutter git dependency. No 3.x (or pub.dev) release ships from it, so it is never a pin form: every
 // spelling is reported and fails the run, --write included (move it to its final home by hand). The
@@ -316,7 +316,7 @@ async function registries() {
 
 const args = process.argv.slice(2);
 
-/** The examples repository's pin files: [{rel, text, path?}] from a checkout, or from main on GitHub. */
+/** The examples repository's pin files: [{rel, text, path?}] from a checkout, or from main on GitLab. */
 async function exampleFiles(dir) {
   if (dir) {
     const out = [];
@@ -331,14 +331,22 @@ async function exampleFiles(dir) {
     walkAll(dir);
     return out;
   }
-  const h = { "User-Agent": "bithuman-docs-versions", Accept: "application/vnd.github+json" };
-  if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-  const r = await fetch(`https://api.github.com/repos/${EXAMPLES_REPO}/git/trees/main?recursive=1`, { headers: h });
-  if (!r.ok) throw new Error(`github tree → ${r.status}`);
-  const tree = (await r.json()).tree.filter((t) => t.type === "blob" && !EXAMPLE_SKIP.test(t.path) && EXAMPLE_FILE.test(t.path));
+  // main on GitLab (a public project, no token): the recursive tree API, 100 a page, then each
+  // pin file's raw bytes.
+  const h = { "User-Agent": "bithuman-docs-versions" };
+  const api = `https://gitlab.com/api/v4/projects/${encodeURIComponent(EXAMPLES_REPO)}/repository/tree?ref=main&recursive=true&per_page=100`;
+  const all = [];
+  for (let page = 1; page < 50; page++) {
+    const r = await fetch(`${api}&page=${page}`, { headers: h });
+    if (!r.ok) throw new Error(`gitlab tree → ${r.status}`);
+    const j = await r.json();
+    all.push(...j);
+    if (j.length < 100) break;
+  }
+  const tree = all.filter((t) => t.type === "blob" && !EXAMPLE_SKIP.test(t.path) && EXAMPLE_FILE.test(t.path));
   const out = [];
   for (const t of tree) {
-    const f = await fetch(`https://raw.githubusercontent.com/${EXAMPLES_REPO}/main/${t.path}`, { headers: { "User-Agent": h["User-Agent"] } });
+    const f = await fetch(`https://gitlab.com/${EXAMPLES_REPO}/-/raw/main/${t.path.split("/").map(encodeURIComponent).join("/")}`, { headers: h });
     if (!f.ok) throw new Error(`${t.path} → ${f.status}`);
     out.push({ rel: t.path, text: await f.text() });
   }

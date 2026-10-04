@@ -237,7 +237,7 @@ export const QUICKSTART: Quickstart[] = [
     id: "macos", plan: "creator", label: "Mac", title: "An avatar on your Mac", icon: "laptop",
     needs: ["Apple silicon", "Xcode 26+", "API secret"], models: TWO, renders: ["device"],
     steps: [
-      { title: "Clone the macOS example", code: { lang: "bash", label: "Shell", code: "git clone https://github.com/bithuman-product/bithuman-examples.git\ncd bithuman-examples/swift/macos-expression2\n./setup.sh" } },
+      { title: "Clone the macOS example", code: { lang: "bash", label: "Shell", code: "git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git\ncd bithuman-examples/swift/macos-expression2\n./setup.sh" } },
       { title: "Run it", code: { lang: "bash", label: "Shell", code: `${SECRET}\nswift run -c release MacOSExpression2` } },
     ],
     expect: { text: "Frames rendered from the sample speech, and out/first-frame.png on disk.", media: captureMedia("macos-expression-2") },
@@ -258,7 +258,7 @@ export const QUICKSTART: Quickstart[] = [
     id: "flutter", plan: "creator", label: "Flutter", title: "An avatar inside your Flutter app", icon: "flutter",
     needs: ["Physical device", "Dart 3.11.5+", "API secret"], models: TWO, renders: ["device"],
     steps: [
-      { title: "Clone the example app", code: { lang: "bash", label: "Shell", code: "git clone https://github.com/bithuman-product/bithuman-examples.git\ncd bithuman-examples/app/avatar_chat\nflutter pub get" } },
+      { title: "Clone the example app", code: { lang: "bash", label: "Shell", code: "git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git\ncd bithuman-examples/flutter/avatar-chat\nflutter pub get" } },
       { title: "Run it on your phone", code: { lang: "bash", label: "Shell", code: `flutter run --release --dart-define=AGENT_CODE=${pup.code}` } },
       { title: "Add the plugin to your own app", code: { lang: "yaml", label: "pubspec.yaml", code: `dependencies:\n  bithuman: ^${V.flutter_plugin}` }, text: "Then, in `android/app/build.gradle.kts`, set `minSdk = 29`, `ndk { abiFilters += \"arm64-v8a\" }` and `packaging { jniLibs { useLegacyPackaging = true } }`; the Flutter page's Install section shows the block." },
     ],

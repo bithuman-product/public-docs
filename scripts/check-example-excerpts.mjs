@@ -19,7 +19,7 @@
 // at bithuman-examples main: the runs must appear in the file, in order. A run
 // that no longer matches means the project moved on and the page did not.
 //
-//   node scripts/check-example-excerpts.mjs                  # against GitHub main
+//   node scripts/check-example-excerpts.mjs                  # against GitLab main
 //   node scripts/check-example-excerpts.mjs --repo ../bithuman-examples
 //   node scripts/check-example-excerpts.mjs --make <path> 12-18,40-52 [--repo DIR]
 //                                                             # print a block to paste
@@ -29,7 +29,7 @@ import { join, relative } from "node:path";
 
 const ROOT = join(import.meta.dirname, "..");
 const DOCS = join(ROOT, "src/content/docs");
-const RAW = "https://raw.githubusercontent.com/bithuman-product/bithuman-examples/main/";
+const RAW = "https://gitlab.com/bithuman/sdk/bithuman-examples/-/raw/main/";
 const args = process.argv.slice(2);
 const flag = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
 const REPO = flag("--repo");

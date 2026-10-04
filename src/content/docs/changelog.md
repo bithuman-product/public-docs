@@ -46,6 +46,11 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### Examples moved to GitLab — 2026-10-24
+
+- **Changed:** the example apps moved to [bithuman-examples on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples), with one top-level folder per platform: `api/cli` is now `cli`, `api/rest-api` is now `rest-api`, `app/avatar_chat` is now `flutter/avatar-chat`, `integrations/nextjs-ui` is now `web/nextjs-ui`. The archived GitHub copy keeps the old paths.
+- **Action:** `git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git` for a fresh copy; in an existing clone, `git remote set-url origin https://gitlab.com/bithuman/sdk/bithuman-examples.git`.
+
 ### Repositories moved to GitLab — 2026-10-16
 
 - **Changed:** bitHuman's public repositories moved from GitHub to [gitlab.com/bithuman](https://gitlab.com/bithuman), and release files download from `downloads.bithuman.ai`. The GitHub copies are archived and read-only, so every version you already installed keeps working. [We moved to GitLab](/resources/moved-to-gitlab) lists each change.

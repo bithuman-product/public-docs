@@ -68,8 +68,8 @@ The engines check your API secret when an avatar loads: pass it to `BithumanAvat
 Build the example app for your phone, with the `wise-pup` sample avatar:
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
-cd bithuman-examples/app/avatar_chat
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
+cd bithuman-examples/flutter/avatar-chat
 flutter pub get
 flutter run --release --dart-define=AGENT_CODE=A23WJF0199
 ```

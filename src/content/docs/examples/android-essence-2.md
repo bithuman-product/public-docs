@@ -27,7 +27,7 @@ The app downloads the `sofia-ramirez` sample avatar once, renders every frame of
 ## Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/android/essence2-hello
 ```
 
@@ -120,7 +120,7 @@ Essence2Avatar.create(identity.dir).use { avatar ->
     avatar.checkRender()
 ```
 
-The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/android/essence2-hello/app/src/main/java/com/example/e2hello/MainActivity.kt).
+The complete file is [on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/blob/main/android/essence2-hello/app/src/main/java/com/example/e2hello/MainActivity.kt).
 
 ## Make it your own
 
@@ -151,4 +151,4 @@ More on [Android: Troubleshooting](/platforms/android/troubleshooting).
 
 ## Next
 
-- [Android example: Expression 2](/examples/android-expression-2) · [Android SDK](/platforms/android) · [Android API reference](/platforms/android/reference) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/android/essence2-hello)
+- [Android example: Expression 2](/examples/android-expression-2) · [Android SDK](/platforms/android) · [Android API reference](/platforms/android/reference) · [source on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/android/essence2-hello)

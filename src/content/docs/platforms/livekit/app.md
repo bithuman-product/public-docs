@@ -20,7 +20,7 @@ next: ["/platforms/livekit/troubleshooting", "/platforms/livekit"]
 - **Several agents in one room.** The avatar lip-syncs the agent that calls `AvatarSession.start()` and ignores other agents' audio.
 - **Gestures.** Trigger avatar actions from your agent: [Gestures](/build/gestures).
 
-The [cloud example](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) packages this worker with a web UI and Docker Compose.
+The [cloud example](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/python/cloud-essence) packages this worker with a web UI and Docker Compose.
 
 ## Platform notes
 

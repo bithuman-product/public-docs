@@ -31,7 +31,7 @@ When you ask for help, include the command you ran, the version (`bithuman --ver
 | [bithuman-python](https://gitlab.com/bithuman/sdk/bithuman-python) | The Python library (PyPI `bithuman`) | Python library bugs and feature requests |
 | [livekit-bithuman](https://gitlab.com/bithuman/sdk/livekit-bithuman) | The LiveKit Agents plugin (`livekit-plugins-bithuman`, released in livekit/agents) | LiveKit plugin bugs and feature requests |
 | [pipecat-bithuman](https://gitlab.com/bithuman/sdk/pipecat-bithuman) | The Pipecat service (PyPI `pipecat-bithuman`) | Pipecat service bugs and feature requests |
-| [bithuman-examples](https://github.com/bithuman-product/bithuman-examples) | Runnable example apps for every platform | An example that does not build or run |
+| [bithuman-examples](https://gitlab.com/bithuman/sdk/bithuman-examples) | Runnable example apps for every platform | An example that does not build or run |
 | [public-docs](https://gitlab.com/bithuman/docs/public-docs) | The source of this site | A wrong or unclear page |
 
 ## Contribute

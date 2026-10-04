@@ -26,7 +26,7 @@ A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks 
 ## Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/swift/ios-essence2
 ./setup.sh
 ```
@@ -105,7 +105,7 @@ private func startAudio(_ reply: AVAudioPCMBuffer) {
     e.flushTail()
 ```
 
-The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/swift/ios-essence2/Sources/App.swift).
+The complete file is [on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/blob/main/swift/ios-essence2/Sources/App.swift).
 
 ## Make it your own
 
@@ -139,4 +139,4 @@ More on [Apple: Troubleshooting](/platforms/swift/troubleshooting#ios).
 
 ## Next
 
-- [iOS example: Expression 2](/examples/ios-expression-2) · [Android example: Essence 2](/examples/android-essence-2) · [iOS & iPadOS](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-essence2)
+- [iOS example: Expression 2](/examples/ios-expression-2) · [Android example: Essence 2](/examples/android-essence-2) · [iOS & iPadOS](/platforms/ios) · [source on GitLab](https://gitlab.com/bithuman/sdk/bithuman-examples/-/tree/main/swift/ios-essence2)

@@ -40,7 +40,7 @@ brew install livekit python@3.13                  # macOS
 curl -sSL https://get.livekit.io | bash           # Linux (Ubuntu 24.04 also: sudo apt install python3.12-venv)
 
 # 2. The example
-git clone https://github.com/bithuman-product/bithuman-examples
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples
 cd bithuman-examples/python/self-host
 python3 --version                                 # needs 3.10–3.14
 python3 -m venv .venv && . .venv/bin/activate
@@ -99,7 +99,7 @@ The same conversation in a desktop window, with no LiveKit server and no browser
 ### Get the code
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/python/quickstart
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt

@@ -34,7 +34,7 @@ This page follows the [iOS Expression 2 example](/examples/ios-expression-2), wh
 Clone the example and download the `wise-pup` avatar, the shared engine and a 16 kHz speech clip. The download is anonymous:
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-examples.git
+git clone https://gitlab.com/bithuman/sdk/bithuman-examples.git
 cd bithuman-examples/swift/ios-expression2
 ./setup.sh
 ```
