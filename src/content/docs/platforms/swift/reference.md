@@ -50,9 +50,9 @@ func resetState(clearFrames: Bool = true)       // interrupt: drop queued audio 
 func shutdown()                                 // waits for the last usage report
 
 // Since Swift package 2.18.0: one stream of frames to show, idle between replies, 20 fps.
-func frames(audioClock: (@Sendable () -> Double?)? = nil) -> AsyncStream<Expression2Frame>  // your clock: seconds of the reply played
+func frames(audioClock: (@Sendable () -> Double?)? = nil) -> AsyncStream<Expression2Frame>  // your clock: seconds of the reply played; ends at shutdown or cancellation
 func nextFrame(audioClock: (@Sendable () -> Double?)? = nil) async -> Expression2Frame?     // the next frame when it is due; nil after shutdown
-func events() -> AsyncStream<Expression2Event>  // .replyStarted, .replyEnded (once per reply)
+func events() -> AsyncStream<Expression2Event>  // .replyStarted, .replyEnded (once per reply); ends at shutdown
 func interrupt()                                // drop queued audio and frames (resetState)
 var droppedFrames: Int                          // frames skipped to keep a reply on its audio's timeline
 static let framesPerSecond: Double              // 20
@@ -143,7 +143,7 @@ Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(in
 
 Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
-The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.3 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.3) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.3 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.4) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
 
 ### A minimal loop
 
@@ -220,12 +220,14 @@ Recommended: gate each frame's audio on its display (lowest latency). If your pr
 
 ## Storage and privacy
 
-Downloaded avatars stay in `Caches/bitHuman/…` unless you pass a directory, and Essence 2's runtime files in `Application Support/bitHuman/essence2/<release>`. From Swift package 2.20.2, everything `Essence2Download` and Essence 2's runtime files write is excluded from iCloud and computer backups (`isExcludedFromBackup`), because it is downloaded again when needed. A directory you pass in is not flagged as a whole; only the files the SDK writes into it are.
+Downloaded avatars stay in `Caches/bitHuman/…` unless you pass a directory, and Essence 2's runtime files in `Application Support/bitHuman/essence2/<release>`. Everything the SDK downloads is excluded from iCloud and computer backups (`isExcludedFromBackup`), because it is downloaded again when needed: `Essence2Download` and Essence 2's runtime files from Swift package 2.20.2, `Expression2Download` from 2.20.3. A directory you pass in is not flagged as a whole; only the files the SDK writes into it are.
 
 The package ships an App Store privacy manifest (`PrivacyInfo.xcprivacy`) in the resource bundles of `Essence2Kit` and of every Expression 2 and Essence 2 product, so Xcode's privacy report includes it. It declares:
 
 - **Required-reason APIs:** file timestamps (`C617.1`, the SDK's own files in your app's container) and system boot time (`35F9.1`, timing inside your app).
 - **Data the SDK sends:** an install identifier the SDK creates and the session's duration, sent to bitHuman to bill your account. Used for app functionality only, not linked to the user, and not used for tracking.
+
+A cached avatar is handed only to an API secret the download service has allowed to open it (2.20.3). A different secret on the same device is checked with the service first, so its first open needs the network.
 
 ## Sessions and billing
 

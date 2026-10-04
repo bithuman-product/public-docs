@@ -74,6 +74,17 @@ A security patch for 0.9.3; every app on 0.9.3 or earlier should upgrade. The mo
 - **Billing:** a session bills its active time from its first frame, idle frames included, the same rule as every other platform. An app that shows the idle loop from first paint now bills from first paint; close the avatar when it leaves the screen.
 - **Action:** `implementation("ai.bithuman:expression2-android:0.6.0")`.
 
+### Swift package 2.20.3 — 2026-10-03
+
+Tag `v2.20.3`. A security release; update.
+
+- **A private avatar cached on a device opens only for an account allowed to open it:** `Essence2Download` and `Expression2Download` check with the download service before handing a cached copy to a different API secret, and refuse when the service does. The first open of an avatar per secret after this update needs the network once.
+- **Apps at the package's minimum (iOS 16, macOS 13) launch again on systems below iOS 18.4 and macOS 15.4:** the Essence 2 library is now built for the package's minimum. Essence 2 still renders on iOS 26 and macOS 26 and later; below that, `Essence2Engine.create` throws with a clear message instead of the app failing to start.
+- **Expression 2's frame and event streams end at shutdown:** after `shutdown()`, a `for await` loop over `frames()` or `events()` finishes and `nextFrame()` returns `nil`.
+- **Expression 2 downloads stay out of backups** (`isExcludedFromBackup`), as Essence 2's do since 2.20.2.
+- Essence 2 is now 1.15.4 (the same frames as 1.15.3) and Expression 2 2.20.3. The macOS engine core (1.0.2) is unchanged.
+- **Action:** `.package(url: …, from: "2.20.3")`.
+
 ### Swift package 2.20.2 — 2026-10-03
 
 Tag `v2.20.2`.
