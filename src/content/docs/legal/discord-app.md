@@ -48,11 +48,13 @@ buttons: your Discord user id, the server and channel ids, and what you typed.
   The app does not add your name or id to the clip or its caption (Discord itself
   shows who used a command).
 - Every other clip is the character's own answer or a line we wrote and reviewed.
-- A `/speak` line is checked before it is said, and the app refuses the lines it
-  finds with links, @mentions, real people's names, scams, sexual content, hate,
-  threats, politics or claims about bitHuman.
+- The app says the line you type with `/speak`. It refuses only a line under 3
+  or over 200 characters, one too long to say in a short clip, one with a phone
+  number, an email address or a street address, and sexual content involving
+  children. A line about self-harm gets a help line instead of a clip. An
+  @mention is said but never notifies anyone.
 
-## What is sent to OpenAI
+## What is sent to OpenAI and Cartesia
 
 A new question goes to OpenAI three times:
 
@@ -61,19 +63,16 @@ A new question goes to OpenAI three times:
    checks again.
 3. An OpenAI voice model speaks the answer.
 
-A line typed with `/speak` also goes to OpenAI three times:
+A line typed with `/speak` is not sent to OpenAI. It goes to Cartesia once:
+Cartesia's voice model speaks the line, word for word, in the character's voice.
 
-1. OpenAI's moderation model checks the line.
-2. An OpenAI model checks the line against the app's rules. It only says whether
-   the line may be said; it never writes or changes it.
-3. An OpenAI voice model speaks the line, word for word.
-
-OpenAI receives the question and the answer text, or the typed line. It does not
-receive your Discord user id or your name. A suggested question, a question
-someone already asked the same character, or a line someone already had the same
-character say, sends nothing to OpenAI. A question or line the app refuses before
-these steps goes to OpenAI only when it may be about self-harm: the moderation
-model checks it, so the asker gets a help line instead of a clip.
+OpenAI receives the question and the answer text; Cartesia receives the typed
+line. Neither receives your Discord user id or your name. A suggested question,
+a question someone already asked the same character, or a line someone already
+had the same character say, sends nothing to either. A question the app refuses
+before these steps goes to OpenAI only when it may be about self-harm: the
+moderation model checks it, so the asker gets a help line instead of a clip. A
+`/speak` line the app refuses is sent nowhere.
 
 ## Where clips are made
 
