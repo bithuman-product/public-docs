@@ -1,5 +1,5 @@
 {
- "$comment": "The one source of truth for moved URLs. scripts/gen-redirects.mjs turns it into vercel.json's redirects: every old URL answers one 308 straight to its final page (chains are collapsed), with a trailing-slash twin. `new` is the final page; while that page is not built yet, `interim` is used instead. `legacy` holds the redirects that existed before the 2026-09 IA change, with their original destinations; the generator re-points them through `moves` and `repoint`. A legacy source that is now a page is dropped. `assets` moves a published media file (a capture's poster or clip) to its new path; its `new` is a file in public/. `sitemap_2026_09` is the sitemap before the change: check-redirects-live.mjs asserts each still answers 200, or one 308 then 200. `sitemap_2026_10` is the sitemap before docs v2 (2026-09-29, 90 URLs), under the same guard, so every URL of today's IA keeps answering after the v2 moves; check-redirects.mjs also asserts both lists against the build (a built page, or one redirect to one). `moves_2026_10` holds the docs v2 whole-page moves (mechanism R), each one 308 exactly like `moves`; an anchor that moved off a page that stays is a row of scripts/anchors-moved.json (mechanism A), and the generator re-points every destination whose fragment moved straight to its new home.",
+ "$comment": "The one source of truth for moved URLs. scripts/gen-redirects.mjs turns it into vercel.json's redirects: every old URL answers one 308 straight to its final page (chains are collapsed), with a trailing-slash twin. `new` is the final page; while that page is not built yet, `interim` is used instead. `legacy` holds the redirects that existed before the 2026-09 IA change, with their original destinations; the generator re-points them through `moves` and `repoint`. A legacy source that is now a page is dropped. `assets` moves a published media file (a capture's poster or clip) to its new path; its `new` is a file in public/. `sitemap_2026_09` is the sitemap before the change: check-redirects-live.mjs asserts each still answers 200, or one 308 then 200. `sitemap_2026_10` is the sitemap before docs v2 (2026-09-29, 90 URLs), under the same guard, so every URL of today's IA keeps answering after the v2 moves; check-redirects.mjs also asserts both lists against the build (a built page, or one redirect to one). `moves_2026_10` holds the docs v2 whole-page moves (mechanism R), each one 308 exactly like `moves`; an anchor that moved off a page that stays is a row of scripts/anchors-moved.json (mechanism A), and the generator re-points every destination whose fragment moved straight to its new home. `hosts` retires a whole host served by this project: every path on it answers one 308 to `destination` (an absolute docs.bithuman.ai URL of a built page), emitted first in vercel.json as a `has: host` redirect.",
  "moves": [
   {
    "old": "/sdk",
@@ -559,6 +559,13 @@
   {
    "source": "/images/openai.svg",
    "new": "/images/og-card.jpg"
+  }
+ ],
+ "hosts": [
+  {
+   "host": "releases.bithuman.ai",
+   "destination": "https://docs.bithuman.ai/downloads",
+   "why": "The old releases page (Vercel project bithuman-releases) retired 2026-10: its domain moved onto this project, and /downloads lists the same versions and the release files."
   }
  ],
  "legacy": [

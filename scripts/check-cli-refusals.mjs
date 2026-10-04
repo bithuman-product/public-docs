@@ -53,7 +53,7 @@ import { createServer } from "node:net";
 
 const TAP = "bithuman-product/homebrew-bithuman";
 const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
-const UA = "bithuman-public-docs-cli-refusals (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-cli-refusals (+https://gitlab.com/bithuman/docs/public-docs)";
 const SLUG = "marmalade"; // a showcase avatar: anonymous pull, no account, no charge
 
 class CannotCheck extends Error {}

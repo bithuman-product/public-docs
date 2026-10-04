@@ -44,9 +44,22 @@ On an unsupported platform the CLI installer names the platform and stops, and `
 
 The CLI is not on PyPI. The only bitHuman package on PyPI with the `bithuman` name is the Python library, and it installs no command. Get the CLI from the installer or the Homebrew formula `bithuman-cli`.
 
+## Release files
+
+The files of the current CLI release, each with its `.sha256` file. Every release published on `downloads.bithuman.ai`, old and new, is listed with its files in [releases.json](https://downloads.bithuman.ai/homebrew-bithuman/releases.json), in GitHub's release format, for scripts.
+
+<!-- RELEASE-FILES:TABLE -->
+| Release | File | Size |
+|---|---|---|
+| CLI 2.8.8 | [bithuman-aarch64-apple-darwin.tar.gz](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-apple-darwin.tar.gz) · [sha256](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-apple-darwin.tar.gz.sha256) | 242.3 MB |
+| CLI 2.8.8 | [bithuman-aarch64-unknown-linux-gnu.tar.gz](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-unknown-linux-gnu.tar.gz) · [sha256](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-unknown-linux-gnu.tar.gz.sha256) | 183.3 MB |
+| CLI 2.8.8 | [bithuman-x86_64-pc-windows-msvc.zip](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-pc-windows-msvc.zip) · [sha256](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-pc-windows-msvc.zip.sha256) | 24.5 MB |
+| CLI 2.8.8 | [bithuman-x86_64-unknown-linux-gnu.tar.gz](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-unknown-linux-gnu.tar.gz) · [sha256](https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256) | 191.6 MB |
+<!-- /RELEASE-FILES:TABLE -->
+
 ## Verify a download
 
-The installer checks each tarball against the `.sha256` file published beside it on the [releases page](https://github.com/bithuman-product/homebrew-bithuman/releases), prints `sha256 ok`, and stops on a mismatch. To check a tarball you downloaded yourself, put the `.sha256` file next to it and run:
+The installer checks each tarball against the `.sha256` file published beside it ([Release files](#release-files)), prints `sha256 ok`, and stops on a mismatch. To check a tarball you downloaded yourself, put the `.sha256` file next to it and run:
 
 ```bash
 # Linux

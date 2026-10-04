@@ -47,7 +47,7 @@ import { createHash } from "node:crypto";
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const TAP = "bithuman-product/homebrew-bithuman";
 const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
-const UA = "bithuman-public-docs-cli-sample-check (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-cli-sample-check (+https://gitlab.com/bithuman/docs/public-docs)";
 
 const PAGES = {
   text: "src/content/docs/platforms/cli.md",

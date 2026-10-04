@@ -10,6 +10,11 @@
 //                                             check versions.json itself against PyPI, bitHuman's
 //                                             Maven repository (maven.bithuman.ai, for the Android
 //                                             keys) and the GitHub tags (exit 2 if unreachable)
+//   node scripts/sync-versions.mjs --release-files [--write]
+//                                             src/data/release-files.json (the /downloads
+//                                             "Release files" table) against downloads.bithuman.ai's
+//                                             releases.json for the versions above (exit 2 if
+//                                             unreachable or incomplete); --write rewrites it
 //   node scripts/sync-versions.mjs --examples [DIR] [--write]
 //                                             check the pins in bithuman-examples (a checkout at DIR,
 //                                             or $BITHUMAN_EXAMPLES_DIR; else main on GitHub, exit 2
@@ -117,7 +122,66 @@ export function versionsTable() {
   ].join("\n");
 }
 
-const BLOCKS = [{ open: "<!-- VERSIONS:TABLE -->", close: "<!-- /VERSIONS:TABLE -->", body: versionsTable }];
+// ── Release files (/downloads#release-files): the files of the current CLI release, read from downloads.bithuman.ai's releases.json (GitHub's /releases shape) into
+// src/data/release-files.json by `--release-files --write`. The page block renders offline from
+// that file, so the table is literal markdown like every pin (no fetch at build time).
+const RF_SOURCE = "https://downloads.bithuman.ai/homebrew-bithuman/releases.json";
+const RF_PATH = join(ROOT, "src/data/release-files.json");
+const RF_ABOUT = "The files of the current CLI release on downloads.bithuman.ai, read from its releases.json by `node scripts/sync-versions.mjs --release-files --write`; /downloads renders them.";
+// (CLI only: the engine files carry frozen names the served-vocabulary gate keeps off prose; the
+// pages that need one link it directly.)
+export const RF_KEYS = [
+  { key: "cli", tag: (v) => `cli-v${v}`, label: (v) => `CLI ${v}` },
+];
+export function sizeLabel(n) {
+  if (n >= 1e6) { const t = Math.floor(n / 1e5); return `${Math.floor(t / 10)}.${t % 10} MB`; }
+  const t = Math.floor(n / 100);
+  return `${Math.floor(t / 10)}.${t % 10} KB`;
+}
+/** release-files.json from a releases.json array, at the versions in versions.json. Throws when a
+ *  release is missing, a draft or has no files: an index that answers is not one that is complete. */
+export function releaseFilesFrom(rows) {
+  const byTag = new Map(rows.filter((r) => r && typeof r === "object").map((r) => [r.tag_name, r]));
+  const releases = RF_KEYS.map(({ key, tag, label }) => {
+    const t = tag(V[key]);
+    const r = byTag.get(t);
+    if (!r || r.draft || !Array.isArray(r.assets) || !r.assets.length) throw new Error(`${RF_SOURCE} has no published ${t} with files`);
+    const urls = new Map(r.assets.map((a) => [a.name, a.browser_download_url]));
+    const files = r.assets
+      .filter((a) => !/\.(sha256|checksum)$/.test(a.name))
+      .map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, sha256_url: urls.get(`${a.name}.sha256`) ?? null }))
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    return { key, label: label(V[key]), tag: t, files };
+  });
+  return { schema: 1, about: RF_ABOUT, source: RF_SOURCE, releases };
+}
+function readReleaseFiles() {
+  try { return JSON.parse(readFileSync(RF_PATH, "utf8")); } catch { return null; }
+}
+export function releaseFilesTable() {
+  const rf = readReleaseFiles();
+  if (!rf) return "(src/data/release-files.json is missing: run `node scripts/sync-versions.mjs --release-files --write`)";
+  const rows = rf.releases.flatMap((r) => r.files.map((f) =>
+    `| ${r.label} | [${f.name}](${f.url})${f.sha256_url ? ` · [sha256](${f.sha256_url})` : ""} | ${sizeLabel(f.size)} |`));
+  return ["| Release | File | Size |", "|---|---|---|", ...rows].join("\n");
+}
+/** release-files.json names the releases versions.json names (else: run --release-files --write). */
+function releaseFilesLag() {
+  const rf = readReleaseFiles();
+  if (!rf) return [];
+  return RF_KEYS.filter(({ key, tag }) => (rf.releases.find((r) => r.key === key)?.tag) !== tag(V[key]))
+    .map(({ key, tag }) => `src/data/release-files.json: ${key} is ${rf.releases.find((r) => r.key === key)?.tag ?? "missing"}, versions.json names ${tag(V[key])}`);
+}
+async function fetchReleaseFiles() {
+  const r = await fetch(RF_SOURCE, { headers: { "User-Agent": "bithuman-docs-versions" } });
+  if (!r.ok) throw new Error(`${RF_SOURCE} → ${r.status}`);
+  return releaseFilesFrom(await r.json());
+}
+
+const BLOCKS = [
+  { open: "<!-- VERSIONS:TABLE -->", close: "<!-- /VERSIONS:TABLE -->", body: versionsTable },
+  { open: "<!-- RELEASE-FILES:TABLE -->", close: "<!-- /RELEASE-FILES:TABLE -->", body: releaseFilesTable },
+];
 
 export function syncText(text) {
   const changes = [];
@@ -290,6 +354,26 @@ if (args.includes("--examples")) {
   process.exit(0);
 }
 
+if (args.includes("--release-files")) {
+  // src/data/release-files.json against downloads.bithuman.ai (exit 1 = differs; --write rewrites it)
+  let want;
+  try { want = await fetchReleaseFiles(); } catch (e) {
+    console.error(`UNREACHABLE or incomplete: ${e.message} — this proves nothing, exit 2`);
+    process.exit(2);
+  }
+  const text = JSON.stringify(want, null, 2) + "\n";
+  let have = "";
+  try { have = readFileSync(RF_PATH, "utf8"); } catch { /* first run */ }
+  if (have === text) { console.log(`ok: src/data/release-files.json = ${RF_SOURCE} (${want.releases.map((r) => r.tag).join(", ")})`); process.exit(0); }
+  if (args.includes("--write")) {
+    writeFileSync(RF_PATH, text);
+    console.log(`wrote src/data/release-files.json (${want.releases.map((r) => r.tag).join(", ")}); now run \`node scripts/sync-versions.mjs --write\``);
+    process.exit(0);
+  }
+  console.log(`DIFF src/data/release-files.json differs from ${RF_SOURCE}. Run \`node scripts/sync-versions.mjs --release-files --write\`, then \`--write\`.`);
+  process.exit(1);
+}
+
 if (args.includes("--registries")) {
   let want;
   try { want = await registries(); } catch (e) {
@@ -297,6 +381,17 @@ if (args.includes("--registries")) {
     process.exit(2);
   }
   let bad = 0;
+  try {
+    const rf = JSON.stringify(await fetchReleaseFiles(), null, 2) + "\n";
+    let have = "";
+    try { have = readFileSync(RF_PATH, "utf8"); } catch { /* none */ }
+    const ok = have === rf;
+    if (!ok) bad++;
+    console.log(`${ok ? "ok  " : "DIFF"} ${"release-files".padEnd(20)} src/data/release-files.json ${ok ? "=" : "!="} ${RF_SOURCE}`);
+  } catch (e) {
+    console.error(`UNREACHABLE: ${e.message} — this proves nothing, exit 2`);
+    process.exit(2);
+  }
   for (const [k, v] of Object.entries(want)) {
     const ok = V[k] === v;
     if (!ok) bad++;
@@ -310,6 +405,20 @@ if (args.includes("--registries")) {
 }
 
 const write = args.includes("--write");
+// A release bump stays ONE command (versions.json, then --write): a release-files.json that lags
+// versions.json is refreshed from downloads.bithuman.ai first, so the /downloads block below renders
+// the new release. The release's files must be published there before the docs bump (exit 2 until
+// releases.json lists them); --release-files [--write] does the same step on its own.
+if (write && releaseFilesLag().length) {
+  try {
+    writeFileSync(RF_PATH, JSON.stringify(await fetchReleaseFiles(), null, 2) + "\n");
+    console.log(`wrote src/data/release-files.json from ${RF_SOURCE}`);
+  } catch (e) {
+    console.error(`UNREACHABLE or incomplete: ${e.message} — publish the release's files on downloads.bithuman.ai ` +
+      `(its releases.json must list them), then rerun --write; exit 2`);
+    process.exit(2);
+  }
+}
 let drift = 0, files = 0;
 for (const r of ROOTS) {
   for (const p of walk(join(ROOT, r))) {
@@ -325,6 +434,8 @@ for (const r of ROOTS) {
   }
 }
 if (files < 20) { console.error(`read only ${files} files — the roots moved; refusing to pass`); process.exit(2); }
+for (const l of releaseFilesLag()) { console.log(`DRIFT ${l} — run \`node scripts/sync-versions.mjs --write\` (it refreshes release-files.json from downloads.bithuman.ai)`); drift++; }
+if (drift && write && releaseFilesLag().length) process.exit(1);
 if (drift && !write) {
   console.log(`\n${drift} pin(s) differ from src/data/versions.json. Run \`node scripts/sync-versions.mjs --write\`.`);
   process.exit(1);

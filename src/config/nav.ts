@@ -90,7 +90,7 @@ export const DISCORD_URL = "https://www.bithuman.ai/discord";
 
 /** The footer's first row (one design everywhere); the second row is LEGAL_LINKS and the ©.
  *  The community links follow Marketing's canonical list (2026-10-03): Discord (with its
- *  mark), X, LinkedIn, Bluesky, GitHub. No YouTube, TikTok or Instagram, and not the
+ *  mark), X, LinkedIn, Bluesky, GitLab. No YouTube, TikTok or Instagram, and not the
  *  dormant @bithuman_ai X account. */
 export const FOOTER_LINKS: NavLink[] = [
   { label: "Status", href: "https://status.bithuman.ai", external: true },
@@ -101,7 +101,7 @@ export const FOOTER_LINKS: NavLink[] = [
   { label: "X", href: "https://x.com/steve_gu_1984", external: true },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/bithuman-ai", external: true },
   { label: "Bluesky", href: "https://bsky.app/profile/bithuman.ai", external: true },
-  { label: "GitHub", href: "https://github.com/bithuman-product", external: true },
+  { label: "GitLab", href: "https://gitlab.com/bithuman", external: true },
   { label: "bithuman.ai", href: "https://www.bithuman.ai", external: true },
 ];
 

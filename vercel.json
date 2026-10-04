@@ -2,6 +2,17 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "releases.bithuman.ai"
+        }
+      ],
+      "destination": "https://docs.bithuman.ai/downloads",
+      "permanent": true
+    },
+    {
       "source": "/android",
       "destination": "/platforms/android",
       "permanent": true

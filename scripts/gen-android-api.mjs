@@ -122,7 +122,7 @@ export class CannotCheck extends Error {}
 
 /* ------------------------------------------------------------------ registry */
 
-const UA = "bithuman-public-docs-android-api (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-android-api (+https://gitlab.com/bithuman/docs/public-docs)";
 const RETRY = new Set([403, 408, 429, 500, 502, 503, 504]);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

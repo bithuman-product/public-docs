@@ -40,7 +40,7 @@ const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
 const DIST = "bithuman";
 const EXTRA = "expression-2";
 const SLUG = "marmalade";
-const UA = "bithuman-public-docs-python-refusals (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-python-refusals (+https://gitlab.com/bithuman/docs/public-docs)";
 
 class CannotCheck extends Error {}
 

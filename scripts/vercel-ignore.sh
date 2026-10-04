@@ -56,7 +56,7 @@ case "$PREV" in *[!0-9a-fA-F]*) build "malformed VERCEL_GIT_PREVIOUS_SHA" ;; esa
 [ "$PREV" != "$HEAD_SHA" ] || build "previous deploy sha == HEAD (explicit redeploy)"
 
 if ! git cat-file -e "${PREV}^{commit}" 2>/dev/null; then
-  # Vercel clones shallow; fetch the previous deploy commit (GitHub serves reachable shas).
+  # Vercel clones shallow; fetch the previous deploy commit (GitLab and GitHub both serve reachable shas).
   timeout 60 git fetch --quiet --no-tags --depth=1 origin "$PREV" >/dev/null 2>&1 || true
   git cat-file -e "${PREV}^{commit}" 2>/dev/null || build "previous deploy $PREV not reachable in the clone"
 fi

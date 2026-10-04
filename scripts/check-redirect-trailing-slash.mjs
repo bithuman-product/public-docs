@@ -37,6 +37,7 @@ if (!Array.isArray(redirects) || redirects.length === 0) {
 const bySource = new Map();
 for (const r of redirects) {
   if (!r || typeof r.source !== "string") { console.error("CANNOT MEASURE: a redirect has no string source"); process.exit(2); }
+  if (Array.isArray(r.has)) continue; // a whole-host redirect (`/(.*)` on one host) has no twin to pair
   if (bySource.has(r.source)) { console.error(`FAIL: duplicate source ${r.source}`); process.exit(1); }
   bySource.set(r.source, r);
 }

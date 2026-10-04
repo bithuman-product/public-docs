@@ -23,8 +23,11 @@ bash ci/host-gate.sh status          # who holds the host's CI slots right now
 
 Needs Node 22 (`.nvmrc`; the script finds `~/.nvm` v22), Chrome (Lighthouse),
 `python3.12` and Java 17 (published-wheel / AAR re-extraction), network access and
-`gh` logged in. `GH_TOKEN` falls back to `gh auth token`; `INTERNAL_DENYLIST`
-falls back to the private list in `bithuman-product/platform`. Neither is
+`glab` (the host wrapper) or the GitLab token file (`GITLAB_TOKEN_FILE`, default
+`~/.config/bithuman-release/gitlab.token`) and `gh` logged in.
+`GH_TOKEN` falls back to `gh auth token`; `INTERNAL_DENYLIST`
+falls back to the private list in platform (on GitLab first, as sgu-bithuman through `glab api` or the token file,
+then `gh api` on the archived GitHub copy). Neither is
 printed. `BITHUMAN_*` variables are scrubbed so no refusal driver sees a
 credential. EVERY step (node checks, npm ci, the build, Lighthouse, published binaries)
 runs under `systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=400%
@@ -91,7 +94,7 @@ question.
 - `node scripts/check-performance-floors.mjs --models <bithuman-models checkout>` —
   re-reads the private FLOORS.json record.
 - A Vercel deployment exists for the merged sha
-  (`gh api 'repos/bithuman-product/public-docs/deployments?sha=<sha>'`).
+  (the Vercel API: `GET /v6/deployments?projectId=prj_q5gWLJKSpJQWwZtTg87rKtwY4UCO&target=production`, any git provider).
 
 ## Where the old workflows are
 

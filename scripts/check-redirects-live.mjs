@@ -42,7 +42,18 @@ const landing = async (url) => {
   return destOk.get(key);
 };
 
-await pool(redirects, 8, async (r) => {
+// A whole-host redirect (`has: host`): that host answers one 308 to the destination on any path.
+for (const r of redirects.filter((x) => Array.isArray(x.has))) {
+  const host = r.has.find((h) => h.type === "host")?.value;
+  if (!host) continue;
+  for (const p of ["/", "/index.html"]) {
+    const res = await head(`https://${host}${p}`);
+    if (res.status !== 308 || abs(res.location) !== new URL(r.destination).href)
+      faults.push(`https://${host}${p}: ${res.status || res.error} -> ${res.location}, not one 308 to ${r.destination}`);
+  }
+}
+
+await pool(redirects.filter((x) => !Array.isArray(x.has)), 8, async (r) => {
   const external = /^https?:\/\//.test(r.destination);
   const res = await head(origin + r.source);
   const want = external ? r.destination : origin + r.destination;

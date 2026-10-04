@@ -77,7 +77,7 @@ The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and id
 
 ## Page chrome and frontmatter
 
-Every docs page gets, from `DocLayout`: a breadcrumb, the H1 (= the sidebar label), a one-sentence lede (= `description`), a chips row, page actions, the outline rail, Next cards, "Last updated" and "Edit this page on GitHub", and the pager.
+Every docs page gets, from `DocLayout`: a breadcrumb, the H1 (= the sidebar label), a one-sentence lede (= `description`), a chips row, page actions, the outline rail, Next cards, "Last updated" and "Edit this page on GitLab", and the pager.
 
 | Field | Use |
 |---|---|

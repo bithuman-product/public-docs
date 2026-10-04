@@ -27,6 +27,12 @@ export function grade(redirects, dist) {
   const html = new Map();
   for (const r of redirects) {
     const d = r.destination;
+    if (Array.isArray(r.has)) {
+      // a whole-host redirect lands on a docs page: its path must be built
+      const m = /^https:\/\/docs\.bithuman\.ai(\/[^#?]*)?$/.exec(d);
+      if (!m || !served(dist, m[1] || "/")) faults.push(`${r.source} on ${JSON.stringify(r.has)} -> ${d}: not a built docs page`);
+      continue;
+    }
     if (/^https?:\/\//.test(d)) continue;
     const [path, anchor] = d.split("#");
     if (sources.has(path) || sources.has(path + "/")) { faults.push(`${r.source} -> ${d}: a chain (the destination redirects again)`); continue; }

@@ -31,7 +31,7 @@
 # phases, and while that pass waits its turn the suite gives its slot back (host-gate.sh).
 #
 # Secrets: GH_TOKEN (for the GitHub release lookups) falls back to `gh auth token`;
-# INTERNAL_DENYLIST falls back to the private list in bithuman-product/platform.
+# INTERNAL_DENYLIST falls back to the private list in platform (GitLab, then GitHub).
 # Neither is ever printed. BITHUMAN_* variables are scrubbed from every step so a
 # refusal driver can never find a real credential.
 set -euo pipefail
@@ -167,7 +167,7 @@ add served 0 served:performance-floors      "rc=0; node scripts/check-performanc
 # manual (host / secret needed) — listed, never run by this script
 add manual 0 manual:examples-host-build     "bash scripts/examples-build-gate.sh  # on the Mac/Android build host with Xcode, xcodegen, Gradle (see ci/github-workflows-disabled/examples-extractor-selftest.yml header)"
 add manual 0 manual:perf-floors-vs-models   "node scripts/check-performance-floors.mjs --models <bithuman-models checkout>  # needs the private FLOORS.json record (performance-floors.yml)"
-add manual 0 manual:deployment-exists       "gh api 'repos/bithuman-product/public-docs/deployments?sha=<sha>' --jq length  # after a merge: Vercel must have created a deployment (served-matches-main.yml)"
+add manual 0 manual:deployment-exists       "curl -fsS -H \"Authorization: Bearer \$VERCEL_TOKEN\" 'https://api.vercel.com/v6/deployments?projectId=prj_q5gWLJKSpJQWwZtTg87rKtwY4UCO&teamId=team_VtEqQUEAnhJtzeysiR8MK9Es&target=production&limit=20' | grep -c <sha>  # after a merge: Vercel must have created a production deployment of <sha> (any git provider; served-matches-main.yml)"
 add manual 0 manual:vercel-deploy           "Vercel git integration deploys main; not a check this script can run"
 
 # Run order: every step in registry order, then the EXCLUSIVE_STEPS last (one exclusive pass).
@@ -202,6 +202,21 @@ node -e 'process.exit(+process.versions.node.split(".")[0] >= 22 ? 0 : 1)' || { 
 for v in $(env | awk -F= '/^BITHUMAN_/{print $1}'); do unset "$v"; done
 if [ -z "${GH_TOKEN:-}" ] && command -v gh >/dev/null; then GH_TOKEN="$(gh auth token 2>/dev/null || true)"; fi
 export GH_TOKEN="${GH_TOKEN:-}"
+# The private denylist lives in platform: GitLab first (its home since the internal cutover), as the
+# one GitLab identity (sgu-bithuman): the host glab wrapper, else the token FILE read here at use time
+# (GITLAB_TOKEN_FILE, default ~/.config/bithuman-release/gitlab.token; the deprecated alias
+# BITHUMAN_GITLAB_TOKEN_FILE was scrubbed above with every BITHUMAN_* variable), sent as a header on
+# stdin; then the archived GitHub copy while that still answers. No token is printed or put in argv.
+# Empty after all three = check-internal-content --require-private fails (closed).
+DENYLIST_GL='projects/bithuman%2Fplatform%2Fplatform/repository/files/infra%2Fdocs%2Fpublic-docs-internal-denylist.txt/raw?ref=main'
+if [ -z "${INTERNAL_DENYLIST:-}" ] && command -v glab >/dev/null; then
+  INTERNAL_DENYLIST="$(timeout 60 glab api "$DENYLIST_GL" 2>/dev/null || true)"
+fi
+GL_TOKEN_FILE="${GITLAB_TOKEN_FILE:-$HOME/.config/bithuman-release/gitlab.token}"
+if [ -z "${INTERNAL_DENYLIST:-}" ] && [ -r "$GL_TOKEN_FILE" ]; then
+  INTERNAL_DENYLIST="$(printf 'PRIVATE-TOKEN: %s\n' "$(tr -d '\r\n' < "$GL_TOKEN_FILE")" |
+    curl -fsS --max-time 60 -H @- "https://gitlab.com/api/v4/$DENYLIST_GL" 2>/dev/null || true)"
+fi
 if [ -z "${INTERNAL_DENYLIST:-}" ] && command -v gh >/dev/null; then
   INTERNAL_DENYLIST="$(gh api repos/bithuman-product/platform/contents/infra/docs/public-docs-internal-denylist.txt \
     --jq .content 2>/dev/null | base64 -d 2>/dev/null || true)"

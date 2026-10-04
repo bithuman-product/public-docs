@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "about": "The files of the current CLI release on downloads.bithuman.ai, read from its releases.json by `node scripts/sync-versions.mjs --release-files --write`; /downloads renders them.",
+  "source": "https://downloads.bithuman.ai/homebrew-bithuman/releases.json",
+  "releases": [
+    {
+      "key": "cli",
+      "label": "CLI 2.8.8",
+      "tag": "cli-v2.8.8",
+      "files": [
+        {
+          "name": "bithuman-aarch64-apple-darwin.tar.gz",
+          "size": 242346213,
+          "url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-apple-darwin.tar.gz",
+          "sha256_url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-apple-darwin.tar.gz.sha256"
+        },
+        {
+          "name": "bithuman-aarch64-unknown-linux-gnu.tar.gz",
+          "size": 183323124,
+          "url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-unknown-linux-gnu.tar.gz",
+          "sha256_url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-aarch64-unknown-linux-gnu.tar.gz.sha256"
+        },
+        {
+          "name": "bithuman-x86_64-pc-windows-msvc.zip",
+          "size": 24500917,
+          "url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-pc-windows-msvc.zip",
+          "sha256_url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-pc-windows-msvc.zip.sha256"
+        },
+        {
+          "name": "bithuman-x86_64-unknown-linux-gnu.tar.gz",
+          "size": 191617274,
+          "url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-unknown-linux-gnu.tar.gz",
+          "sha256_url": "https://downloads.bithuman.ai/homebrew-bithuman/cli-v2.8.8/bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256"
+        }
+      ]
+    }
+  ]
+}

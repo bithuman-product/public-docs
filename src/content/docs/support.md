@@ -15,7 +15,7 @@ help: top
 - **The bitHuman app on Discord**: [what it does and what it stores](/legal/discord-app).
 - **Email**: [hello@bithuman.ai](mailto:hello@bithuman.ai) for anything that should not be public.
 - **Status**: [status.bithuman.ai](https://status.bithuman.ai) for live platform and API status.
-- **News and releases**: [X](https://x.com/steve_gu_1984), [LinkedIn](https://www.linkedin.com/company/bithuman-ai), [Bluesky](https://bsky.app/profile/bithuman.ai), [GitHub](https://github.com/bithuman-product) and the [changelog](/changelog).
+- **News and releases**: [X](https://x.com/steve_gu_1984), [LinkedIn](https://www.linkedin.com/company/bithuman-ai), [Bluesky](https://bsky.app/profile/bithuman.ai), [GitLab](https://gitlab.com/bithuman) and the [changelog](/changelog).
 
 When you ask for help, include the command you ran, the version (`bithuman --version`, or `pip show bithuman`), and the full error. Every SDK page ends with a Troubleshooting table that maps common messages to fixes.
 
@@ -25,7 +25,7 @@ When you ask for help, include the command you ran, the version (`bithuman --ver
 |---|---|---|
 | [homebrew-bithuman](https://github.com/bithuman-product/homebrew-bithuman) | SDK releases: CLI, Swift package, Flutter plugin | SDK bugs and feature requests |
 | [bithuman-examples](https://github.com/bithuman-product/bithuman-examples) | Runnable example apps for every platform | An example that does not build or run |
-| [public-docs](https://github.com/bithuman-product/public-docs) | The source of this site | A wrong or unclear page |
+| [public-docs](https://gitlab.com/bithuman/docs/public-docs) | The source of this site | A wrong or unclear page |
 
 ## Contribute
 

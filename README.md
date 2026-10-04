@@ -57,7 +57,7 @@ The reference at `/api/reference` is generated from `src/openapi/bithuman.yaml`
 
 ## Deploy
 
-GitHub push → Vercel build (project `public-docs`) → preview URL. DNS for
+GitLab push → Vercel build (project `public-docs`) → preview URL. DNS for
 `docs.bithuman.ai` is swapped to this project only once the rebuild is approved.
 
 ### ★ A push can succeed while the site keeps serving the old build

@@ -48,7 +48,7 @@ import { join } from "node:path";
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const MANIFEST = "scripts/credential-claims.json";
 const TAP = "bithuman-product/homebrew-bithuman";
-const UA = "bithuman-public-docs-credential-claims (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-credential-claims (+https://gitlab.com/bithuman/docs/public-docs)";
 
 // Pages that may state an unmetered escape hatch. Any page naming the variable
 // must be covered by a claim, so a new one cannot be written without a record.

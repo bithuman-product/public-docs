@@ -12,7 +12,7 @@
 //   * no chain: a destination is never itself a redirect source;
 //   * no shadow: a source is never a page (a legacy source that became a page
 //     is dropped, and listed);
-//   * every source has its trailing-slash twin.
+//   * every source has its trailing-slash twin (a whole-host `hosts` row has none: it is `/(.*)`).
 // Anchors are checked against the built HTML by scripts/check-redirects.mjs.
 // `moves_2026_10` (docs v2 whole-page moves) are rows like `moves`; a destination
 // whose #fragment is a key of scripts/anchors-moved.json is re-pointed to its
@@ -122,7 +122,16 @@ export function generate() {
     if (!built.has(pathOf(v.destination))) errors.push(`${src} -> ${v.destination}: not a built page`);
   }
 
+  // A whole retired host (`hosts`): every path on it answers one 308 to one docs page. It is a
+  // `has: host` redirect, first in vercel.json (redirects run in order, before the filesystem).
+  // The destination is absolute (a relative one would loop on the same host) and a built page.
   const out = [];
+  for (const h of MAP.hosts ?? []) {
+    const u = /^https:\/\/docs\.bithuman\.ai(\/[^#?]*)?$/.exec(h.destination ?? "");
+    if (!h.host || !u) { errors.push(`host ${h.host}: destination ${h.destination} must be an absolute https://docs.bithuman.ai URL`); continue; }
+    if (!built.has(pathOf(u[1] || "/"))) { errors.push(`host ${h.host}: ${h.destination} is not a built page`); continue; }
+    out.push({ source: "/(.*)", has: [{ type: "host", value: h.host }], destination: h.destination, permanent: true });
+  }
   for (const src of [...dest.keys()].sort()) {
     const { destination, permanent } = dest.get(src);
     out.push({ source: src, destination, permanent });

@@ -1002,7 +1002,7 @@ export async function grade(files, registry) {
 // attempt still fails it is CANNOT CHECK, exit 2, never a pass. A 404 is an
 // answer and is not retried. (Since 2026-09-30 ai.bithuman is asked of
 // maven.bithuman.ai alone: scripts/maven-repo.mjs.)
-const UA = "bithuman-public-docs-versions-check (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-versions-check (+https://gitlab.com/bithuman/docs/public-docs)";
 const RETRY = new Set([403, 408, 429, 500, 502, 503, 504]);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

@@ -47,7 +47,7 @@ const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const TAP = "bithuman-product/homebrew-bithuman";
 const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
 const INSTALLER = `https://raw.githubusercontent.com/${TAP}/main/install.sh`;
-const UA = "bithuman-public-docs-env-name-check (+https://github.com/bithuman-product/public-docs)";
+const UA = "bithuman-public-docs-env-name-check (+https://gitlab.com/bithuman/docs/public-docs)";
 
 // Only pages about the CLI. A variable named on a Python or Android page is
 // read by that artifact, not by this binary, and grading it here would produce

@@ -72,11 +72,11 @@ const pageUrl = `https://docs.bithuman.ai${currentPath}`;
 const sourceFile = entry.filePath ?? `src/content/docs/${entry.id}.md`;
 const modified = lastModified(sourceFile);
 const modifiedLabel = modified ? new Date(modified).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }) : null;
-const editUrl = `https://github.com/bithuman-product/public-docs/edit/main/${sourceFile}`;
+const editUrl = `https://gitlab.com/bithuman/docs/public-docs/-/edit/main/${sourceFile}`;
 // No analytics on the docs, so feedback is an issue: titled with the page, its URL in the body.
-const issueUrl = `https://github.com/bithuman-product/public-docs/issues/new?${new URLSearchParams({
-  title: `Docs: ${data.title}`,
-  body: `Page: https://docs.bithuman.ai/${currentPath.replace(/^\//, "")}\n\nWhat was missing or wrong:\n`,
+const issueUrl = `https://gitlab.com/bithuman/docs/public-docs/-/issues/new?${new URLSearchParams({
+  "issue[title]": `Docs: ${data.title}`,
+  "issue[description]": `Page: https://docs.bithuman.ai/${currentPath.replace(/^\//, "")}\n\nWhat was missing or wrong:\n`,
 }).toString()}`;
 // The Overview tab's home is the docs home itself, so its pages skip a second "/" crumb.
 const crumbs = [
