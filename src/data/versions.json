@@ -4,7 +4,7 @@
   "versions": {
     "cli": "2.8.8",
     "python": "2.11.20",
-    "swift": "2.20.4",
+    "swift": "2.20.5",
     "essence2_engine": "1.15.5",
     "expression2_swift": "2.20.4",
     "essence2_android": "0.9.5",
@@ -35,10 +35,10 @@
       "key": "swift",
       "name": "Swift package",
       "platforms": "iOS, iPadOS and macOS on Apple silicon",
-      "install": ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"{v}\")",
+      "install": ".package(url: \"https://gitlab.com/bithuman/sdk/homebrew-bithuman\", from: \"{v}\")",
       "includes": "Essence 2 engine **{essence2_engine}** · Expression 2 engine {expression2_swift}",
-      "registry": "GitHub tag v{v}",
-      "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
+      "registry": "GitLab tag v{v}",
+      "registry_url": "https://gitlab.com/bithuman/sdk/homebrew-bithuman/-/tags",
       "docs": "/platforms/ios"
     },
     {

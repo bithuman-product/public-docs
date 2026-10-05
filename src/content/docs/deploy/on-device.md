@@ -69,7 +69,7 @@ Essence 1 and Expression 1 are not available on phones or in the Swift package.
 
 ```swift tab="iOS & iPadOS"
 // Package.swift (or Xcode → Add Package Dependencies)
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.20.4")
+.package(url: "https://gitlab.com/bithuman/sdk/homebrew-bithuman", from: "2.20.5")
 ```
 
 ```kotlin tab="Android"
