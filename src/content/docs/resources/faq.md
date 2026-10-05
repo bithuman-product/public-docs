@@ -84,6 +84,10 @@ Real-time usage bills active session time, talking or idle, to the second. End s
 
 Creating your own avatar is a one-time 500 credits for Essence 2 or 2,000 credits for Expression 2, and takes about 2 to 2.5 hours. A failed creation is refunded automatically. After that, sessions bill active session time at the rates above.
 
+### Can I buy extra credits?
+
+Yes, on a paid plan (Creator and up): [top up](https://www.bithuman.ai/billing#credits) any time at $1 = 100 credits. Top-up credits never expire. Credits you bought earlier stay usable on any plan.
+
 ### Do you offer annual or enterprise agreements?
 
 Yes. Enterprise customers can choose a flat annual price that covers a committed volume. The SDK still reports usage against that volume, so a phone app needs a network connection during a session. Further discounts are available with an annual commitment and for larger commitments. Start from the published [plans](/pricing), then [contact sales](https://www.bithuman.ai/enterprise?topic=annual-agreement#contact).

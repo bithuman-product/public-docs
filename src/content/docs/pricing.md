@@ -97,7 +97,7 @@ Annual plans bill twelve months of credits up front. When you switch to a cheape
 
 ### Top-up credits
 
-On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits) any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
+On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits) any time at **$1 = 100 credits**. Top-ups are available on paid plans (Creator and up). Top-up credits never expire and are spent after plan credits; credits bought earlier stay usable on any plan.
 
 ### Connectivity
 
