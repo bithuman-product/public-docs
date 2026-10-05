@@ -28,10 +28,10 @@ Recent releases worth a look first.
 | 2026-12-26 (announced 2026-09-27) | REST API | `POST /v1/agent/generate` requires `model`; the bare names `essence` / `expression` and the `version` field are refused with a `400` | send `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1` |
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
+| 2026-10-05 | essence2-android (legacy `ai.bithuman.elevate`) | an Essence 2 avatar downloaded on Android no longer includes `model_b24_fp32.onnx`, so `ElevateFrames(dir, "b24_fp32")` is deprecated and fails on avatars downloaded from today | use `ElevateFrames(dir)` or `Essence2Avatar` with the default model; nothing to change if you never passed `"b24_fp32"` |
 | 2026-10-04 | Flutter plugin 2.6.37 | iOS apps need iOS 16.4 (was 16.0); macOS apps need macOS 14.0 (was 26.0 in 2.6.36); a session whose app is in the background, or takes no frame, for 60 seconds ends and is billed to that point; an API secret whose account may not use the avatar is refused (`AGENT_NOT_ENTITLED`) | set `platform :ios, '16.4'` and `IPHONEOS_DEPLOYMENT_TARGET = 16.4`; set `platform :osx, '14.0'` and `MACOSX_DEPLOYMENT_TARGET = 14.0`; an app that runs on macOS 14 bundles an ONNX Runtime built for macOS 14 (Homebrew's is built for macOS 15); use the API secret of the account that owns the avatar |
 | 2026-10-04 | essence2-android 0.9.5, expression2-android 0.6.1 | an app in the background for more than 60 s gets no avatar frames and its session ends (billed to the 60 s); the next frame while the app is visible starts a new session; an API secret is refused (`403 AGENT_NOT_ENTITLED`) for an agent its account may not render | nothing to change for an on-screen avatar; do not rely on frames while the app is in the background |
 | 2026-10-04 | Flutter plugin 2.6.36 | macOS apps need macOS 26.0 (iOS stays 16.0); `BithumanEntitlementException` is a new exception from `load` and the installers; on Android, an Expression 2 `load` without `apiSecret` fails; the installers need `apiSecret` for an avatar that is not public | set `platform :osx, '26.0'` and `MACOSX_DEPLOYMENT_TARGET = 26.0`; catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)); pass `apiSecret` |
-| 2026-10-04 | essence2-android (legacy `ai.bithuman.elevate`) | an Essence 2 avatar downloaded on Android no longer includes `model_b24_fp32.onnx`, so `ElevateFrames(dir, "b24_fp32")` is deprecated and fails on avatars downloaded from today | use `ElevateFrames(dir)` or `Essence2Avatar` with the default model; nothing to change if you never passed `"b24_fp32"` |
 | 2026-10-04 | essence2-android 0.9.4 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`NOT_FOUND`) |
 | 2026-10-04 | expression2-android 0.6.0 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`404`) |
 | 2026-10-01 | REST API | bitHuman's text-to-speech service is retired: `POST /v1/tts`, `POST /v1/audio/speech`, `GET /v1/voices` and `/v1/studio/*` answer `410 ENDPOINT_RETIRED` | send your own audio (from any TTS provider or a recording) to the [talking video API](/build/talking-video); agent conversation voices and `/v1/agent/{code}/speak` are unchanged |
@@ -48,6 +48,12 @@ Recent releases worth a look first.
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## October 2026
+
+### Essence 2 Android avatar downloads are 25 MB smaller — 2026-10-05
+
+- **Smaller first download:** an Essence 2 avatar's Android download no longer includes `model_b24_fp32.onnx`, a 25 MB model that the Android SDK's default path never opens. The first download of each avatar is about 25 MB smaller, and on its next check an installed app removes the file from the phone. The avatar looks and moves exactly as before.
+- **Deprecated:** `ElevateFrames(dir, "b24_fp32")` in the legacy `ai.bithuman.elevate` package. It fails on avatars downloaded from today. The default `ElevateFrames(dir)` and `Essence2Avatar` are unchanged.
+- **Action:** none, unless your app passes `"b24_fp32"`.
 
 ### Flutter plugin 2.6.37 — 2026-10-04
 
@@ -101,12 +107,6 @@ Tag `flutter-plugin-v2.6.36`. A security release: update every app that caches a
 - **New:** `BithumanAvatar.clearCredentials()`. Call it when an account signs out: the engines forget the secret, and on Android the loads still running end with `load_cancelled`.
 - **Changed:** `engine:` defaults to `'expression2'`, and an unknown engine name fails with `unsupported` on iOS and macOS too. `BithumanRealtimeSession`'s model defaults to `gpt-realtime-mini`. On Android, `pushAudio` plays your speech, and `load` accepts the public model ids (`'essence-2'`, `'expression-2'`).
 - **Action:** pin `ref: flutter-plugin-v2.6.36`. Catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)), pass `apiSecret` to the installers, and raise macOS apps to 26.0.
-
-### Essence 2 Android avatar downloads are 25 MB smaller — 2026-10-04
-
-- **Smaller first download:** an Essence 2 avatar's Android download no longer includes `model_b24_fp32.onnx`, a 25 MB model that the Android SDK's default path never opens. The first download of each avatar is about 25 MB smaller, and on its next check an installed app removes the file from the phone. The avatar looks and moves exactly as before.
-- **Deprecated:** `ElevateFrames(dir, "b24_fp32")` in the legacy `ai.bithuman.elevate` package. It fails on avatars downloaded from today. The default `ElevateFrames(dir)` and `Essence2Avatar` are unchanged.
-- **Action:** none, unless your app passes `"b24_fp32"`.
 
 ### essence2-android 0.9.4 — 2026-10-04
 
