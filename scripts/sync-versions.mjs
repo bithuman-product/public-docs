@@ -29,6 +29,7 @@
 // (they name the exact versions they audited).
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join, relative } from "node:path";
 import { BITHUMAN_GROUP, artifactUrls } from "./maven-repo.mjs";
 
@@ -182,6 +183,16 @@ async function registries() {
     return m[1].trim();
   };
   const tags = (await gh("tags")).map((t) => t.name);
+  const glTags = () => {
+    const url = "https://gitlab.com/bithuman/sdk/homebrew-bithuman.git";
+    let out;
+    try {
+      out = execFileSync("git", ["ls-remote", "--tags", url], { encoding: "utf8", timeout: 120000, env: { ...process.env, GIT_TERMINAL_PROMPT: "0" } });
+    } catch (e) {
+      throw new Error(`git ls-remote ${url} → ${e.message}`);
+    }
+    return out.split("\n").map((l) => l.split("\t")[1]).filter((r) => r && r.startsWith("refs/tags/") && !r.endsWith("^{}")).map((r) => r.slice(10));
+  };
   const releases = (await gh("releases")).filter((r) => !r.draft && !r.prerelease).map((r) => r.tag_name);
   const tagNewest = (prefix, list = tags) => newest(list.filter((t) => t.startsWith(prefix) && new RegExp(`^${prefix}${SEMVER}$`).test(t)).map((t) => t.slice(prefix.length)));
   const want = {
@@ -190,11 +201,12 @@ async function registries() {
     essence2_android: await maven("essence2-android"),
     expression2_android: await maven("expression2-android"),
     cli: tagNewest("cli-v", releases),
-    swift: tagNewest("v"),
+    // The Swift package is tagged on the GitLab tap since 2026-10-05 (the GitHub copy is archived at v2.20.4).
+    swift: tagNewest("v", glTags()),
     flutter_plugin: tagNewest("flutter-plugin-v"),
   };
   // The engines a developer gets are the ones the newest Swift package pins.
-  const pkg = await get(`https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/v${want.swift}/Package.swift`, "text");
+  const pkg = await get(`https://gitlab.com/bithuman/sdk/homebrew-bithuman/-/raw/v${want.swift}/Package.swift`, "text");
   const e2 = pkg.match(/essence2Tag\s*=\s*"essence2-v([^"]+)"/);
   const x2 = pkg.match(/expression2Tag\s*=\s*"v?([^"]+)"/);
   if (e2) want.essence2_engine = e2[1];

@@ -191,8 +191,12 @@ import { mavenBases } from "./maven-repo.mjs";
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 // src/partials: passages a page includes with ```partial (the Swift install is one).
 const CORPUS_ROOTS = ["src/content", "src/pages", "src/partials"];
-const TAP = "bithuman-product/homebrew-bithuman";
-const TAP_URL = `https://github.com/${TAP}.git`;
+// The Swift package's home since 2026-10-05: the public GitLab tap (tags, raw manifest). The archived
+// GitHub copy keeps tags up to v2.20.4 only. Pages and examples may still name the GitHub URL, so the
+// readers below accept both spellings of the same package (identity `homebrew-bithuman`).
+const TAP = "bithuman/sdk/homebrew-bithuman";
+const TAP_URL = `https://gitlab.com/${TAP}.git`;
+const tapRaw = (tag) => `https://gitlab.com/${TAP}/-/raw/${tag}/Package.swift`;
 
 /* ------------------------------------------------------------------ corpus */
 
@@ -401,7 +405,7 @@ export function tapVersions(text) {
   const out = [];
   // Swift manifest: .package(url: "…homebrew-bithuman[.git]" … from: "X")
   // `from:` may sit on a following line, so take a short window after the url.
-  const swiftRe = /\.package\s*\(\s*url:\s*["']https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?["']/g;
+  const swiftRe = /\.package\s*\(\s*url:\s*["']https:\/\/(?:github\.com\/bithuman-product|gitlab\.com\/bithuman\/sdk)\/homebrew-bithuman(?:\.git)?["']/g;
   let m;
   while ((m = swiftRe.exec(text)) !== null) {
     const window = text.slice(m.index, m.index + 400);
@@ -409,7 +413,7 @@ export function tapVersions(text) {
     if (v) out.push({ version: v[1], dialect: "swiftpm", line: lineOf(text, m.index) });
   }
   // XcodeGen: url: https://…homebrew-bithuman.git  /  from: X   (yaml, unquoted)
-  const yamlRe = /^[ \t]*url:\s*https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?[ \t]*$/gm;
+  const yamlRe = /^[ \t]*url:\s*https:\/\/(?:github\.com\/bithuman-product|gitlab\.com\/bithuman\/sdk)\/homebrew-bithuman(?:\.git)?[ \t]*$/gm;
   while ((m = yamlRe.exec(text)) !== null) {
     const window = text.slice(m.index, m.index + 300);
     const v = /^[ \t]*(?:from|exactVersion|version)\s*:\s*["']?([0-9][0-9A-Za-z.\-]*?)["']?[ \t]*$/m.exec(window);
@@ -436,7 +440,7 @@ export function tapProducts(text) {
   const keys = new Set();
   const lines = text.split("\n");
   for (let i = 0; i < lines.length; i++) {
-    const u = /^([ \t]*)url:[ \t]*https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?[ \t]*$/.exec(
+    const u = /^([ \t]*)url:[ \t]*https:\/\/(?:github\.com\/bithuman-product|gitlab\.com\/bithuman\/sdk)\/homebrew-bithuman(?:\.git)?[ \t]*$/.exec(
       lines[i],
     );
     if (!u) continue;
@@ -540,7 +544,7 @@ const liveRegistry = {
   },
 
   async tapProductsAt(tag) {
-    const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+    const url = tapRaw(tag);
     let res;
     try {
       res = await fetch(url, { redirect: "follow" });
@@ -562,7 +566,7 @@ const liveRegistry = {
   // declares it once, as `let essence2Tag = "essence2-vX.Y.Z"`, and every
   // essence-2 binaryTarget URL is built from it.
   async tapEssence2TagAt(tag) {
-    const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+    const url = tapRaw(tag);
     let res;
     try {
       res = await fetch(url, { redirect: "follow" });

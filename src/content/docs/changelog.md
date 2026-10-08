@@ -30,6 +30,7 @@ Recent releases worth a look first.
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
 | 2026-10-04 | Flutter plugin 2.6.37 | iOS apps need iOS 16.4 (was 16.0); macOS apps need macOS 14.0 (was 26.0 in 2.6.36); a session whose app is in the background, or takes no frame, for 60 seconds ends and is billed to that point; an API secret whose account may not use the avatar is refused (`AGENT_NOT_ENTITLED`) | set `platform :ios, '16.4'` and `IPHONEOS_DEPLOYMENT_TARGET = 16.4`; set `platform :osx, '14.0'` and `MACOSX_DEPLOYMENT_TARGET = 14.0`; an app that runs on macOS 14 bundles an ONNX Runtime built for macOS 14 (Homebrew's is built for macOS 15); use the API secret of the account that owns the avatar |
 | 2026-10-04 | essence2-android 0.9.5, expression2-android 0.6.1 | an app in the background for more than 60 s gets no avatar frames and its session ends (billed to the 60 s); the next frame while the app is visible starts a new session; an API secret is refused (`403 AGENT_NOT_ENTITLED`) for an agent its account may not render | nothing to change for an on-screen avatar; do not rely on frames while the app is in the background |
+| 2026-10-05 | Swift package 2.20.5 | the Swift package moved from GitHub to GitLab; versions up to 2.20.4 still download their binary frameworks from GitHub | change the package URL to `https://gitlab.com/bithuman/sdk/homebrew-bithuman` and update to 2.20.5; the package name (`homebrew-bithuman`) and your `.product(...)` lines stay the same |
 | 2026-10-04 | Flutter plugin 2.6.36 | macOS apps need macOS 26.0 (iOS stays 16.0); `BithumanEntitlementException` is a new exception from `load` and the installers; on Android, an Expression 2 `load` without `apiSecret` fails; the installers need `apiSecret` for an avatar that is not public | set `platform :osx, '26.0'` and `MACOSX_DEPLOYMENT_TARGET = 26.0`; catch `BithumanEntitlementException` ([Flutter errors](/platforms/flutter/errors#loading-an-avatar)); pass `apiSecret` |
 | 2026-10-04 | essence2-android 0.9.4 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`NOT_FOUND`) |
 | 2026-10-04 | expression2-android 0.6.0 | a private avatar cached on the phone opens only for an API secret bitHuman has accepted for it; after the update, the first open of each cached avatar asks bitHuman once, so that open needs the network | nothing to change; another account on the same phone gets the download's refusal (`404`) |
@@ -47,6 +48,14 @@ Recent releases worth a look first.
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## October 2026
+
+### Swift package 2.20.5 — 2026-10-05
+
+Tag `v2.20.5` on [gitlab.com/bithuman/sdk/homebrew-bithuman](https://gitlab.com/bithuman/sdk/homebrew-bithuman/-/tags).
+
+- **The package moved to GitLab, and nothing resolves through GitHub any more:** the binary frameworks and Essence 2's runtime files now download from `downloads.bithuman.ai`. They are the same files under the same versions, so the checksums are unchanged. Versions up to 2.20.4 still fetch their frameworks from GitHub.
+- The engines are unchanged: Essence 2 1.15.5, Expression 2 2.20.4 and the macOS engine core 1.0.2.
+- **Action:** `.package(url: "https://gitlab.com/bithuman/sdk/homebrew-bithuman", from: "2.20.5")`. In Xcode, remove the package and add it again by the new URL, or run File › Packages › Reset Package Caches after editing `Package.swift`. The package name (`homebrew-bithuman`), your `.product(...)` lines and your code do not change.
 
 ### Flutter plugin 2.6.37 — 2026-10-04
 

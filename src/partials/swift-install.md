@@ -1,8 +1,8 @@
 <!-- Shared by /platforms/ios and /platforms/macos (```partial swift-install). The pin is written by scripts/sync-versions.mjs. -->
-In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
+In Xcode choose *File → Add Package Dependencies…* and paste `https://gitlab.com/bithuman/sdk/homebrew-bithuman`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.20.4")
+.package(url: "https://gitlab.com/bithuman/sdk/homebrew-bithuman", from: "2.20.5")
 // then attach the product your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
